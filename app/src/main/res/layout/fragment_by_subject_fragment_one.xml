@@ -1,0 +1,19 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="movingforward.tutorapp3.Fragments.BySubjectFragmentOne">
+
+    <!-- TODO: Update blank fragment layout -->
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bySubjectGrid1"
+        android:numColumns="3"
+        android:gravity="center"
+        android:columnWidth="100dp"
+        android:horizontalSpacing="20dp"
+        android:verticalSpacing="20dp"
+        android:stretchMode="columnWidth"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </GridView>
+</FrameLayout>

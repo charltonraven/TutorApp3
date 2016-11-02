@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Find a Tutor">
+        <menu>
+            <item
+                android:id="@+id/TutorSubject"
+                android:title="By Subject"/>
+            <item
+                android:id="@+id/TutorTime"
+                android:title="By Time-Slot"/>
+            <item
+                android:id="@+id/TutorClass"
+                android:title="By Class"/>
+        </menu>
+
+    </item>
+
+    <item android:title="Bulletin">
+        <menu>
+            <item
+                android:id="@+id/BySubject"
+                android:title="By Subject" />
+            <item
+                android:id="@+id/ByTeacher"
+                android:title="By Teacher" />
+        </menu>
+    </item>
+
+</menu>

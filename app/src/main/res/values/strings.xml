@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">TutorApp3</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <!--Strings related to Register or Try Again Dialog buttons-->
+    <string name="register">Register</string>
+    <string name="try_again">Try Again</string>
+
+    <!--Strings For spinners on Register page-->
+    <string-array name="majors_array">
+        <item>Biology</item>
+        <item>Business</item>
+        <item>Chemistry</item>
+        <item>Computer Science</item>
+        <item>Education</item>
+        <item>English</item>
+        <item>General Studies</item>
+        <item>History</item>
+        <item>Mass Comm.</item>
+        <item>Math</item>
+        <item>Modern Lang.</item>
+        <item>Music Industry</item>
+        <item>Nursing</item>
+        <item>Physics</item>
+        <item>Political Science</item>
+        <item>Psychology</item>
+        <item>Sociology</item>
+        <item>Theatre Arts</item>
+        <item>Visual Arts</item>
+    </string-array>
+    <string name="title_activity_register">Sign in</string>
+
+
+    <string name="title_activity_nav__main">Nav_MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
