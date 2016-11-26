@@ -100,7 +100,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              attemptLogin();
+             // attemptLogin();
+                startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
+
 
             }
         });
@@ -297,8 +299,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String type = params[0];
             String username = params[1];
             String password = params[2];
-            //String login_url = "http://10.10.103.160/login.php";
-            String login_url = "http://172.19.10.114/login.php";
+            String login_url = "http://10.10.103.165/login.php";
+            //String login_url = "http://172.19.10.114/login.php";
             //String login_url = "http://10.0.2.2/login.php";
 
 
