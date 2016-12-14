@@ -12,6 +12,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import movingforward.tutorapp3.R;
 
 
@@ -24,6 +26,38 @@ import movingforward.tutorapp3.R;
  * create an instance of this fragment.
  */
 public class BySubjectFragmentOne extends Fragment {
+
+    // references to our images
+    private Integer[] mThumbIds = {
+            R.drawable.accounting,
+            R.drawable.art,
+            R.drawable.biology,
+            R.drawable.cs,
+            R.drawable.profits,
+            R.drawable.lit,
+            R.drawable.french_polynesia,
+            R.drawable.math,
+            R.drawable.physics,
+            R.drawable.spain
+
+
+    };
+
+
+
+    private String[] mThumbStrings = {
+            "Accounting",
+            "Art",
+            "Biology",
+            "Computer Science",
+            "Economics",
+            "English",
+            "French",
+            "Mathematics",
+            "Physics",
+            "Spanish"};
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -92,12 +126,7 @@ public class BySubjectFragmentOne extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-      /*  if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+
     }
 
     @Override
@@ -106,16 +135,6 @@ public class BySubjectFragmentOne extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -129,6 +148,34 @@ public class BySubjectFragmentOne extends Fragment {
         private Context mContext;
         private String[] mobileValues;
         private LayoutInflater layoutInflater;
+
+        // references to our images
+        private Integer[] mThumbIds = {
+                R.drawable.accounting,
+                R.drawable.art,
+                R.drawable.biology,
+                R.drawable.cs,
+                R.drawable.profits,
+                R.drawable.lit,
+                R.drawable.french_polynesia,
+                R.drawable.math,
+                R.drawable.physics,
+                R.drawable.spain
+        };
+        private String[] mThumbStrings = {
+                "Accounting",
+                "Art",
+                "Biology",
+                "Computer Science",
+                "Economics",
+                "English",
+                "French",
+                "Mathematics",
+                "Physics",
+                "Spanish"
+        };
+
+
 
 
         CustomAdapter() {
@@ -154,7 +201,7 @@ public class BySubjectFragmentOne extends Fragment {
             imageView = (ImageView) grid.findViewById(R.id.grid_item_image);
             imageView.setImageResource(mThumbIds[position]);
             textView = (TextView) grid.findViewById(R.id.grid_Text_label);
-            textView.setText(Department[position]);
+            textView.setText(mThumbStrings[position]);
 
             return grid;
         }
@@ -181,78 +228,6 @@ public class BySubjectFragmentOne extends Fragment {
             return 0;
         }
 
-        // references to our images
-        private Integer[] mThumbIds = {
-                R.drawable.accounting,
-                R.drawable.art,
-                R.drawable.biology,
-                R.drawable.business,
-                R.drawable.cs,
-                R.drawable.geography,
-                R.drawable.history,
-                R.drawable.humanities,
-                R.drawable.lit,
-                R.drawable.math,
-                R.drawable.physics,
-                R.drawable.psy,
-                R.drawable.tutor,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone,
-                R.drawable.cone
-        };
-
-        private String[] mThumbStrings = {
-                "Accounting",
-                "Art",
-                "Biology",
-                "Business",
-                "Computer Science",
-                "Geography",
-                "History",
-                "Humanities",
-                "Literature",
-                "Math",
-                "Physics",
-                "Psychology",
-                "Tutor"};
 
 
         String[] Department = {
