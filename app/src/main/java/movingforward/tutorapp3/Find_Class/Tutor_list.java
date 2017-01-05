@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.Fragments;
+package movingforward.tutorapp3.Find_Class;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import movingforward.tutorapp3.R;
-
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ByClassFragmentOne.OnFragmentInteractionListener} interface
+ * {@link Tutor_list.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ByClassFragmentOne#newInstance} factory method to
+ * Use the {@link Tutor_list#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ByClassFragmentOne extends Fragment {
+public class Tutor_list extends Fragment {
+
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +32,7 @@ public class ByClassFragmentOne extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ByClassFragmentOne() {
+    public Tutor_list() {
         // Required empty public constructor
     }
 
@@ -41,11 +42,11 @@ public class ByClassFragmentOne extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ByClassFragmentOne.
+     * @return A new instance of fragment Tutor_list.
      */
     // TODO: Rename and change types and number of parameters
-    public static ByClassFragmentOne newInstance(String param1, String param2) {
-        ByClassFragmentOne fragment = new ByClassFragmentOne();
+    public static Tutor_list newInstance(String param1, String param2) {
+        Tutor_list fragment = new Tutor_list();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,7 +67,41 @@ public class ByClassFragmentOne extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_by_class_fragment_one, container, false);
+
+
+       /* final View rootView = inflater.inflate(R.layout.fragment_by_subject_fragment_one, container, false);
+        SearchView svClass = (SearchView) rootView.findViewById(R.id.svClass);
+        final GridView gridview = (GridView) rootView.findViewById(R.id.bySubjectGrid1);
+        adapter = new BySubjectFragmentOne.CustomAdapter(getActivity(), mThumbIds, mThumbStrings);
+
+        gridview.setAdapter(adapter);
+
+        gridview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Enter Shit HERE!!!!
+            }
+        });
+
+        svClass.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.d("Check", "Entering OnQueryTextChanges");
+                adapter.getFilter().filter(s.toString().toLowerCase());
+
+                return true;
+            }
+        });
+
+
+
+        return rootView;*/
+        return null;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,12 +114,12 @@ public class ByClassFragmentOne extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       /* if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
-        }*/
+        }
     }
 
     @Override

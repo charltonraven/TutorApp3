@@ -1,0 +1,32 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context="movingforward.tutorapp3.Find_Class.Tutor_list"
+android:orientation="horizontal">
+
+<!-- TODO: Update blank fragment layout -->
+
+
+<TextView
+    android:layout_width="200px"
+    android:layout_height="200px"
+    android:id="@+id/grid_Class_Name"
+    android:text="Class Name"/>
+
+<TextView
+    android:layout_width="200px"
+    android:layout_height="200px"
+    android:id="@+id/grid_TutorName"
+    android:text="Tutor Name"
+    />
+    <Button
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:id="@+id/grid_TutorSave"
+        android:text="Save"
+        android:background="@drawable/cone"
+        />
+
+</LinearLayout>

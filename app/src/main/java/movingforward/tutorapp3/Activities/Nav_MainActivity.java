@@ -37,9 +37,7 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
-import movingforward.tutorapp3.Fragments.ByClassFragmentOne;
-import movingforward.tutorapp3.Fragments.BySubjectFragmentOne;
-import movingforward.tutorapp3.Fragments.ByTutorFragmentOne;
+import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
 
 public class Nav_MainActivity extends AppCompatActivity
@@ -114,44 +112,39 @@ public class Nav_MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.TutorSubject) {
+        if (id == R.id.FindClass) {
             Toast.makeText(this, "TUTOR SUBJECT BITCH !", Toast.LENGTH_SHORT).show();
             BySubjectFragmentOne subjectFragmentOne=new BySubjectFragmentOne();
             android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,subjectFragmentOne,subjectFragmentOne.getTag()).commit();
 //
 
-        } else if (id == R.id.TutorTime) {
-            Toast.makeText(this, "TUTOR TIME BITCH !", Toast.LENGTH_SHORT).show();
-
-            Calendar c= Calendar.getInstance();
-            year=c.get(Calendar.YEAR);
-            month=c.get(Calendar.MONTH);
-            day=c.get(Calendar.DAY_OF_MONTH);
+        } else if (id == R.id.ListOfSavedTutors) {
 
 
-            DatePickerDialog datePickerDialog;
-            datePickerDialog = new DatePickerDialog(Nav_MainActivity.this,AlertDialog.THEME_HOLO_DARK,Nav_MainActivity.this,year,
-                    month, day);
-            datePickerDialog.show();
+        } else if (id == R.id.BulletinBoard) {
 
-            ByTutorFragmentOne byTutorFragmentOne=new ByTutorFragmentOne();
-            android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,byTutorFragmentOne,byTutorFragmentOne.getTag()).commit();
-
-        } else if (id == R.id.TutorClass) {
-            Toast.makeText(this, "Tutor CLASS BITCH !", Toast.LENGTH_SHORT).show();
-            ByClassFragmentOne byClassFragmentOne=new ByClassFragmentOne();
-            android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,byClassFragmentOne,byClassFragmentOne.getTag()).commit();
-            //manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,byClassFragmentOne,byClassFragmentOne.getTag()).commit();
-
-        } else if (id == R.id.BySubject) {
+        } else if (id == R.id.StudentSessions) {
             Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
 
 
-        } else if (id == R.id.ByTeacher) {
+        } else if (id == R.id.TeacherSessions) {
             Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
+        } else if (id == R.id.MySessions) {
+            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
+
+        } else if (id == R.id.MyClasses) {
+            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
+        } else if (id == R.id.PostBulletin) {
+            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
+
+        } else if (id == R.id.AppointTutor) {
+            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
         }
 

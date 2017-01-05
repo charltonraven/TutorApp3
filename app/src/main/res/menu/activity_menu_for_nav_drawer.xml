@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Find a Tutor">
+    <item android:title="Student Resources">
         <menu>
             <item
-                android:id="@+id/TutorSubject"
-                android:title="By Subject"/>
+                android:id="@+id/FindClass"
+                android:title="Find Class"/>
             <item
-                android:id="@+id/TutorTime"
-                android:title="By Time-Slot"/>
+                android:id="@+id/ListOfSavedTutors"
+                android:title="My Tutor Sessions"/>
             <item
-                android:id="@+id/TutorClass"
-                android:title="By Class"/>
+                android:id="@+id/BulletinBoard"
+                android:title="Bulletin Board"/>
         </menu>
 
     </item>
 
-    <item android:title="Bulletin">
+    <item android:title="Tutor Resources">
         <menu>
             <item
-                android:id="@+id/BySubject"
-                android:title="By Subject" />
+                android:id="@+id/StudentSessions"
+                android:title="My Student Sessions" />
             <item
-                android:id="@+id/ByTeacher"
-                android:title="By Teacher" />
+                android:id="@+id/TeacherSessions"
+                android:title="My Teacher Sessions" />
         </menu>
+    </item>
+
+    <item android:title="Teacher Resources">
+        <menu>
+            <item
+                android:id="@+id/MySessions"
+                android:title="Find Class"/>
+            <item
+                android:id="@+id/MyClasses"
+                android:title="My Tutor Sessions"/>
+            <item
+                android:id="@+id/PostBulletin"
+                android:title="Bulletin Board"/>
+            <Item
+            android:id="@+id/AppointTutor"
+            android:title="Bulletin Board"/>
+        </menu>
+
     </item>
 
 </menu>
