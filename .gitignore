@@ -7,3 +7,5 @@
 /build
 /captures
 .externalNativeBuild
+
+app/src/main/java/movingforward/tutorapp3/Fragments/BySubjectFragmentOne.java

@@ -1,0 +1,30 @@
+﻿Merge remote-tracking branch 'origin/master'
+
+# Conflicts:
+#	app/src/main/java/movingforward/tutorapp3/Fragments/ByClassFragmentOne.java
+#	app/src/main/java/movingforward/tutorapp3/Fragments/BySubjectFragmentOne.java
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 1 and 1 different commits each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	new file:   .idea/.name
+#	modified:   .idea/gradle.xml
+#	new file:   .idea/vcs.xml
+#	modified:   app/src/main/java/movingforward/tutorapp3/Activities/Nav_MainActivity.java
+#	modified:   app/src/main/java/movingforward/tutorapp3/Find_Class/BySubjectFragmentOne.java
+#	new file:   app/src/main/java/movingforward/tutorapp3/Fragments/BySubjectFragmentOne.java
+#
+

@@ -166,7 +166,6 @@ public class Nav_MainActivity extends AppCompatActivity
         TimePickerDialog timePickerDialog=new TimePickerDialog(Nav_MainActivity.this,AlertDialog.THEME_HOLO_DARK,Nav_MainActivity.this,hour,minute, DateFormat.is24HourFormat(this));
         timePickerDialog.show();
     }
-
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 

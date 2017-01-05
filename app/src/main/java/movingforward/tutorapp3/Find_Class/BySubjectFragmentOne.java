@@ -16,6 +16,7 @@ import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ import movingforward.tutorapp3.R;
 public class BySubjectFragmentOne extends Fragment {
     SearchView svClass;
     CustomAdapter adapter;
+
 
     // references to our images
     private int[] mThumbIds = {
@@ -120,6 +122,14 @@ public class BySubjectFragmentOne extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String text=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
+                Toast.makeText(getActivity(),text,Toast.LENGTH_SHORT).show();
+
+                Log.d("OnItemClick","Position: "+position);
+                Log.d("OnItemClick","Text: "+text);
+
+
 
             }
         });
