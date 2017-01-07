@@ -2,11 +2,28 @@ package movingforward.tutorapp3.Find_Class;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
+import movingforward.tutorapp3.Entities.class_Helper.TutorList;
+import movingforward.tutorapp3.R;
 
 
 /**
@@ -19,6 +36,20 @@ import android.view.ViewGroup;
  */
 public class Tutor_list extends Fragment {
 
+    ListView lv;
+    InputStream content;
+    TutorListAdapter adapter;
+    ArrayList<TutorList> TutorsAndClasses=new ArrayList<>();
+
+    //String TutorList_url = "http://10.10.103.165/android/CreateListorGrids/TutorList.php";
+    //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
+
+
+    String line = null;
+    String result;
+    public String[] data;
+    public String[] data2;
+    String ClassName;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -35,6 +66,11 @@ public class Tutor_list extends Fragment {
     public Tutor_list() {
         // Required empty public constructor
     }
+
+    public void setClassName(final String ClassName) {
+        this.ClassName = ClassName;
+    }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -66,43 +102,32 @@ public class Tutor_list extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        final View listview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
+        lv = (ListView) listview.findViewById(R.id.lvTutorList);
+
+        //get ClassName from BySubject
 
 
-       /* final View rootView = inflater.inflate(R.layout.fragment_by_subject_fragment_one, container, false);
-        SearchView svClass = (SearchView) rootView.findViewById(R.id.svClass);
-        final GridView gridview = (GridView) rootView.findViewById(R.id.bySubjectGrid1);
-        adapter = new BySubjectFragmentOne.CustomAdapter(getActivity(), mThumbIds, mThumbStrings);
-
-        gridview.setAdapter(adapter);
-
-        gridview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Enter Shit HERE!!!!
-            }
-        });
-
-        svClass.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                Log.d("Check", "Entering OnQueryTextChanges");
-                adapter.getFilter().filter(s.toString().toLowerCase());
-
-                return true;
-            }
-        });
+        try {
+            String blah=new TutorListTask().execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
 
-
-        return rootView;*/
-        return null;
+        return listview;
     }
+
+    private void getData(String ClassName) {
+
+
+    }
+    /*public void updateInfo(String ClassName){
+        Toast.makeText(getActivity(),ClassName,Toast.LENGTH_SHORT);
+
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -111,7 +136,7 @@ public class Tutor_list extends Fragment {
         }
     }
 
-    @Override
+ /*   @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -120,7 +145,7 @@ public class Tutor_list extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
+    }*/
 
     @Override
     public void onDetach() {
@@ -141,5 +166,136 @@ public class Tutor_list extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void StartTask() {
+        try {
+            new TutorListTask().execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class TutorListTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpHandler sh = new HttpHandler();
+
+            //String TutorList_url = "http://10.10.103.74/android/CreateListorGrids/TutorList.php";
+            String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
+            //Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(TutorList_url);
+
+
+
+            if (jsonStr != null) {
+                try {
+                    //JSONObject jsonObject = new JSONObject(jsonStr);
+
+
+                    //getting JSON Array node
+                    JSONArray TutorList = new JSONArray(jsonStr);
+                    //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
+                    for(int i=0;i<TutorList.length();i++){
+                        JSONObject T=TutorList.getJSONObject(i);
+                        String Class=T.getString("ClassTutor");
+                        String FName=T.getString("firstName");
+                        String LName=T.getString("lastName");
+                        TutorsAndClasses.add(new TutorList(Class,FName,LName));
+
+                        String Test="Test";
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getActivity(),"Generating Tutors",Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+
+            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1,TutorsAndClasses);
+            lv.setAdapter(adapter);
+        }
+    }
+    //--------------------------------------------------------------------------------------------------------------
+    public static class TutorListAdapter extends ArrayAdapter<Tutor_list>{
+
+
+        ArrayList<TutorList> values;
+
+        public TutorListAdapter(Context context, int resource, ArrayList<TutorList> values) {
+            super(context,resource);
+            this.values=values;
+        }
+
+        public TutorListAdapter(Context context, int resource) {
+            super(context, resource);
+        }
+
+        @Override
+        public void add(Tutor_list object) {
+            super.add(object);
+        }
+
+        @Override
+        public void addAll(Collection<? extends Tutor_list> collection) {
+            super.addAll(collection);
+        }
+
+        @Override
+        public int getCount() {
+            return values.size();
+        }
+
+
+
+        @Override
+        public int getPosition(Tutor_list item) {
+            return super.getPosition(item);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return super.getItemId(position);
+        }
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v=convertView;
+            TextView tvClassName;
+            TextView tvTutorName;
+
+
+            if(v==null){
+                LayoutInflater vi;
+                vi = LayoutInflater.from(getContext());
+                v = vi.inflate(R.layout.txt_txt_template, null);
+            }else{
+                v=(View) convertView;
+            }
+
+            tvClassName=(TextView) v.findViewById(R.id.tv_Class_Name);
+            tvTutorName=(TextView) v.findViewById(R.id.tv_TutorName);
+
+            tvClassName.setText(values.get(position).ClassTutored);
+            tvTutorName.setText(values.get(position).getfName()+" "+values.get(position).getlName());
+
+
+            return v;
+        }
     }
 }

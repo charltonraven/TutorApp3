@@ -4,7 +4,8 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context="movingforward.tutorapp3.Find_Class.Tutor_list"
-android:orientation="horizontal">
+android:orientation="horizontal"
+    android:weightSum="1">
 
 <!-- TODO: Update blank fragment layout -->
 
@@ -12,15 +13,19 @@ android:orientation="horizontal">
 <TextView
     android:layout_width="200px"
     android:layout_height="200px"
-    android:id="@+id/grid_Class_Name"
-    android:text="Class Name"/>
+    android:id="@+id/tv_Class_Name"
+    android:text="Class Name"
+    android:textSize="12pt"
+    android:layout_weight="0.50" />
 
-<TextView
-    android:layout_width="200px"
-    android:layout_height="200px"
-    android:id="@+id/grid_TutorName"
-    android:text="Tutor Name"
-    />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="200px"
+        android:id="@+id/tv_TutorName"
+        android:text="Tutor Name"
+        android:textSize="12pt"
+        android:layout_weight="0.24" />
+
     <Button
         android:layout_width="100px"
         android:layout_height="100px"

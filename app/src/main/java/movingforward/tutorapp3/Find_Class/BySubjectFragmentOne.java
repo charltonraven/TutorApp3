@@ -35,6 +35,7 @@ import movingforward.tutorapp3.R;
 public class BySubjectFragmentOne extends Fragment {
     SearchView svClass;
     CustomAdapter adapter;
+    OnClassNameListener onClassNameListener;
 
 
     // references to our images
@@ -123,11 +124,22 @@ public class BySubjectFragmentOne extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String text=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
-                Toast.makeText(getActivity(),text,Toast.LENGTH_SHORT).show();
+                String ClassName=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
+                Toast.makeText(getActivity(),ClassName,Toast.LENGTH_SHORT).show();
+                onClassNameListener.setClassName(ClassName);
+
+               /* Tutor_list tl=new Tutor_list();
+                Bundle bundle=new Bundle();
+                bundle.putString("ClassName",ClassName);
+
+                Tutor_list tutor_list=new Tutor_list();
+                FragmentManager manager=getFragmentManager();
+                manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tutor_list,tutor_list.getTag()).commit();
+
+*/
 
                 Log.d("OnItemClick","Position: "+position);
-                Log.d("OnItemClick","Text: "+text);
+                Log.d("OnItemClick","Text: "+ClassName);
 
 
 
@@ -153,6 +165,18 @@ public class BySubjectFragmentOne extends Fragment {
         return rootView;
     }
 
+    public interface OnClassNameListener{
+        public void setClassName(String ClassName);
+
+
+
+    }
+
+    /*@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -164,6 +188,12 @@ public class BySubjectFragmentOne extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        try {
+            onClassNameListener = (OnClassNameListener) context;
+        }catch (ClassCastException e){
+
+            throw new ClassCastException(context.toString() + " must implement OnClassNameListener");
+        }
 
     }
 

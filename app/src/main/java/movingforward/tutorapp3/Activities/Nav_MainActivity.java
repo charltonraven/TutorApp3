@@ -38,10 +38,11 @@ import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
+import movingforward.tutorapp3.Find_Class.Tutor_list;
 import movingforward.tutorapp3.R;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
+        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener ,BySubjectFragmentOne.OnClassNameListener{
 
     int day,month,year,hour,minute;
     int dayFinal, monthFinal,yearFinal,hourFinal,minuteFinal;
@@ -183,6 +184,30 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
     }
+
+    @Override
+    public void setClassName(String ClassName) {
+
+        Toast.makeText(this, "TUTOR SUBJECT BITCH !", Toast.LENGTH_SHORT).show();
+        Tutor_list tl=new Tutor_list();
+        android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tl,tl.getTag()).commit();
+        if(tl != null){
+            tl.setClassName(ClassName);
+
+        }else {
+            Tutor_list fragment=new Tutor_list();
+            Bundle args=new Bundle();
+            args.putString("ClassName", ClassName);
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,fragment).addToBackStack(null).commit();
+            fragment.StartTask();
+        }
+
+
+
+    }
+
     public static class AppointmentTask extends AsyncTask<String, Void, String> {
         Appointment appointment;
         AlertDialog.Builder RegorTry;
