@@ -15,7 +15,7 @@ android:orientation="horizontal"
     android:layout_height="200px"
     android:id="@+id/tv_Class_Name"
     android:text="Class Name"
-    android:textSize="12pt"
+    android:textSize="20sp"
     android:layout_weight="0.50" />
 
     <TextView
@@ -23,7 +23,7 @@ android:orientation="horizontal"
         android:layout_height="200px"
         android:id="@+id/tv_TutorName"
         android:text="Tutor Name"
-        android:textSize="12pt"
+        android:textSize="20sp"
         android:layout_weight="0.24" />
 
     <Button

@@ -138,10 +138,6 @@ public class BySubjectFragmentOne extends Fragment {
 
 */
 
-                Log.d("OnItemClick","Position: "+position);
-                Log.d("OnItemClick","Text: "+ClassName);
-
-
 
             }
         });

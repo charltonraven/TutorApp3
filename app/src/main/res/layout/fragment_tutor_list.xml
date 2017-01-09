@@ -8,6 +8,7 @@
     android:horizontalSpacing="20dp"
     android:verticalSpacing="20dp"
     android:id="@+id/lvTutorList"
-    android:stretchMode="columnWidth">
+    android:stretchMode="columnWidth"
+    >
 
 </ListView>

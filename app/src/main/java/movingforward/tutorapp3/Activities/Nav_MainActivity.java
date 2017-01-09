@@ -114,7 +114,6 @@ public class Nav_MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.FindClass) {
-            Toast.makeText(this, "TUTOR SUBJECT BITCH !", Toast.LENGTH_SHORT).show();
             BySubjectFragmentOne subjectFragmentOne=new BySubjectFragmentOne();
             android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,subjectFragmentOne,subjectFragmentOne.getTag()).commit();
@@ -126,11 +125,11 @@ public class Nav_MainActivity extends AppCompatActivity
         } else if (id == R.id.BulletinBoard) {
 
         } else if (id == R.id.StudentSessions) {
-            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
 
 
         } else if (id == R.id.TeacherSessions) {
-            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
         } else if (id == R.id.MySessions) {
             Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
