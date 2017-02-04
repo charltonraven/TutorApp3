@@ -185,7 +185,7 @@ public class Tutor_list extends Fragment {
             HttpHandler sh = new HttpHandler();
 
             //String TutorList_url = "http://10.10.103.74/android/CreateListorGrids/TutorList.php";
-            String TutorList_url = "http://172.19.10.128/android/CreateListorGrids/TutorList.php";
+            String TutorList_url = "http://192.168.1.16/android/CreateListorGrids/TutorList.php";
             //Making a request to url and getting response
            // String jsonStr = sh.makeServiceCallGet(TutorList_url);
 
