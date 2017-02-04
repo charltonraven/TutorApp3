@@ -1,4 +1,6 @@
-package movingforward.tutorapp3.Entities.class_Helper;
+package movingforward.tutorapp3.Entities;
+
+
 
 /**
  * Created by raven on 1/7/2017.

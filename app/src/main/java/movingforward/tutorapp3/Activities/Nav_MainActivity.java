@@ -6,9 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,10 +16,8 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,16 +34,17 @@ import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
-import movingforward.tutorapp3.Find_Class.Tutor_list;
 import movingforward.tutorapp3.R;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener ,BySubjectFragmentOne.OnClassNameListener{
+        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
 
     int day,month,year,hour,minute;
     int dayFinal, monthFinal,yearFinal,hourFinal,minuteFinal;
+NavigationView navigationView;
+private void hideItems(){
 
-
+}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,14 +52,46 @@ public class Nav_MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        MenuItem miFindClass=(MenuItem)findViewById(R.id.FindClass);
+        MenuItem miListOfSavedTutors=(MenuItem)findViewById(R.id.ListOfSavedTutors);
+        MenuItem miBulletinBoard=(MenuItem)findViewById(R.id.BulletinBoard);
+
+        MenuItem miStudentSessions=(MenuItem)findViewById(R.id.StudentSessions);
+        MenuItem miTeacherSessions=(MenuItem)findViewById(R.id.TeacherSessions);
+
+        MenuItem miMySessions=(MenuItem)findViewById(R.id.MySessions);
+        MenuItem miMyClasses=(MenuItem)findViewById(R.id.MyClasses);
+        MenuItem miPostBulletin=(MenuItem)findViewById(R.id.PostBulletin);
+
+
+
+        String UserType=getIntent().getStringExtra("User_Type");
+
+        if(UserType=="Tutor"){
+            miMyClasses.setEnabled(false);
+            miMySessions.setEnabled(false);
+            miPostBulletin.setEnabled(false);
+
+
+        }else if(UserType=="Student"){
+            miMyClasses.setVisible(false);
+            miMySessions.setVisible(false);
+            miPostBulletin.setVisible(false);
+           miTeacherSessions.setVisible(false);
+            miStudentSessions.setVisible(false);
+
+
+        }else if(UserType=="Teacher"){
+            miFindClass.setVisible(false);
+            miListOfSavedTutors.setVisible(false);
+            miBulletinBoard.setVisible(false);
+            miStudentSessions.setVisible(false);
+            miTeacherSessions.setVisible(false);
+
+
+
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -114,12 +143,15 @@ public class Nav_MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.FindClass) {
+
             BySubjectFragmentOne subjectFragmentOne=new BySubjectFragmentOne();
             android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,subjectFragmentOne,subjectFragmentOne.getTag()).commit();
 //
 
         } else if (id == R.id.ListOfSavedTutors) {
+
+
 
 
         } else if (id == R.id.BulletinBoard) {
@@ -132,18 +164,18 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.MySessions) {
-            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
 
 
         } else if (id == R.id.MyClasses) {
-            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
         } else if (id == R.id.PostBulletin) {
-            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
 
 
         } else if (id == R.id.AppointTutor) {
-            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
 
         }
@@ -183,30 +215,6 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
     }
-
-    @Override
-    public void setClassName(String ClassName) {
-
-        Toast.makeText(this, "TUTOR SUBJECT BITCH !", Toast.LENGTH_SHORT).show();
-        Tutor_list tl=new Tutor_list();
-        android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tl,tl.getTag()).commit();
-        if(tl != null){
-            tl.setClassName(ClassName);
-
-        }else {
-            Tutor_list fragment=new Tutor_list();
-            Bundle args=new Bundle();
-            args.putString("ClassName", ClassName);
-            fragment.setArguments(args);
-            getSupportFragmentManager().beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,fragment).addToBackStack(null).commit();
-            fragment.StartTask();
-        }
-
-
-
-    }
-
     public static class AppointmentTask extends AsyncTask<String, Void, String> {
         Appointment appointment;
         AlertDialog.Builder RegorTry;

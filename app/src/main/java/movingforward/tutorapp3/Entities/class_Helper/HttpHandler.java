@@ -1,5 +1,4 @@
 package movingforward.tutorapp3.Entities.class_Helper;
-
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -21,28 +20,57 @@ public class HttpHandler {
     private static final String TAG = HttpHandler.class.getSimpleName();
 
     public HttpHandler() {
+
     }
 
-    public String makeServiceCallPost(String reqUrl,String ClassName) {
+    public String makeServiceCallPost(String reqUrl,String ClassName, String Username, String Password) {
         String response = null;
-        try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
 
-            OutputStream out  =  conn.getOutputStream();
+        //Runs the Tutor_List to generate Tutors
+        if(ClassName!=null &&Username==null && Password==null) {
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
 
-            response = PutInVariables(out,conn,ClassName);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "MalformedURLException: " + e.getMessage());
-        } catch (ProtocolException e) {
-            Log.e(TAG, "ProtocolException: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+                OutputStream out = conn.getOutputStream();
+
+                response = PutInVariables(out, conn, ClassName,null,null);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+            return response;
+        }
+        else if(Username!=null && Password!=null){
+
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                OutputStream out = conn.getOutputStream();
+                response = PutInVariables(out, conn, ClassName,Username,Password);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+
+
+
         }
         return response;
     }
@@ -67,6 +95,45 @@ public class HttpHandler {
         return response;
     }
 
+
+    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department,String Username, String Password) {
+        String response = "";
+        if (Username == null && Password == null && department != null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("department", "UTF-8") + "=" + URLEncoder.encode(department, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                out.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        return response;
+    }
+
+    else if(Username!=null && Password!=null &&department==null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(Password, "UTF-8");;
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        return response;
+
+
+    }
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -87,23 +154,5 @@ public class HttpHandler {
         }
 
         return sb.toString();
-    }
-    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department){
-        String response="";
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            String post_data = URLEncoder.encode("department", "UTF-8") + "=" + URLEncoder.encode(department, "UTF-8");
-            bufferedWriter.write(post_data);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            InputStream in= conn.getInputStream();
-            response =convertStreamToString(in);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-         return response;
-
-
     }
 }
