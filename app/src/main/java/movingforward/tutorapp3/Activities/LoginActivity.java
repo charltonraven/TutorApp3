@@ -2,6 +2,7 @@ package movingforward.tutorapp3.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -294,13 +296,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String type = params[0];
                 String username = params[1];
                 String password = params[2];
-                // String login_url = "http://10.254.13.38/android/Inserts/login.php";
-<<<<<<< HEAD
-                String login_url = "http://172.19.10.48/android/Inserts/login.php";
-=======
+
                 String login_url =  "http://" + StaticHelper.getDeviceIP() + "/android/Inserts/login.php";
->>>>>>> origin/master
-                //String login_url = "http://10.0.2.2/login.php";
+
                 HttpHandler LoginHandler = new HttpHandler();
                 response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
             }

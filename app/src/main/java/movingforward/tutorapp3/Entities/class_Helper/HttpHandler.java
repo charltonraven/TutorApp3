@@ -171,6 +171,7 @@ public class HttpHandler {
                 response = convertStreamToString(in);
             } catch (Exception e) {
                 e.printStackTrace();
+                response=e.toString();
             }
         }
         return response;

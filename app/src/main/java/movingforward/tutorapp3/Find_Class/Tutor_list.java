@@ -184,22 +184,8 @@ public class Tutor_list extends Fragment {
         @Override
         protected String doInBackground(String... params) {
                   HttpHandler sh = new HttpHandler();
-
-            //String TutorList_url = "http://10.10.103.74/android/CreateListorGrids/TutorList.php";
-            //String TutorList_url = "http://172.19.10.128/android/CreateListorGrids/TutorList.php";
-            //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
-            //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
-            //  String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
-
-
-<<<<<<< HEAD
-          //  String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
-
-
-            String TutorList_url = "http://172.19.10.48/android/CreateListorGrids/TutorList.php";
-=======
+            
             String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
->>>>>>> origin/master
 
             //Making a request to url and getting response
             String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName,null,null,null);
