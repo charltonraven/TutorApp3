@@ -28,7 +28,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                   // attemptLogin();
+                    // attemptLogin();
                     return true;
                 }
                 return false;
@@ -91,8 +90,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               attemptLogin();
-              //  startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
+                attemptLogin();
+                //  startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
 
 
             }
@@ -160,14 +159,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String password = mPasswordView.getText().toString();
             String who = "login";
 
-           mAuthTask = new UserLoginTask(this);
+            mAuthTask = new UserLoginTask(this);
             mAuthTask.execute(who, email, password);
 
 
         } catch (Exception e) {
             System.out.println(e);
         }
-
 
 
     }
@@ -289,15 +287,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected String doInBackground(String... params) {
             // TODO: attempt authentication against a network service.
-            String type = params[0];
-            String username = params[1];
-            String password = params[2];
-            String login_url = "http://10.254.13.38/android/Inserts/login.php";
-            //String login_url = "http://172.19.10.114/login.php";
-            //String login_url = "http://10.0.2.2/login.php";
-            HttpHandler LoginHandler=new HttpHandler();
-            String response=LoginHandler.makeServiceCallPost(login_url,null,username,password);
+            String response = "";
+            if (params[1].equals("") && params[2].equals("")) {
+                response = "";
 
+            } else {
+                String type = params[0];
+                String username = params[1];
+                String password = params[2];
+                // String login_url = "http://10.254.13.38/android/Inserts/login.php";
+                String login_url = "http://192.168.1.5/android/Inserts/login.php";
+                //String login_url = "http://10.0.2.2/login.php";
+                HttpHandler LoginHandler = new HttpHandler();
+                response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
+            }
             return response;
         }
 
@@ -313,16 +316,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             RegorTry = new AlertDialog.Builder(context);
             alertDialog.setMessage(result);
 
+            String Type = "";
+            String Email = " ";
+            if (!result.equals("")) {
+                String[] TypeEmail = result.split(" ");
+                Type = TypeEmail[0];
+                Email = TypeEmail[1];
+            }
 
-            if (result.equals("Student\n") || result.equals("Teacher\n")|| result.equals("Tutor\n")) {
-                String Type=result.trim();
-                Intent startNav_Activity=new Intent(context,Nav_MainActivity.class);
-                startNav_Activity.putExtra("User_Type", Type);
+            if (!result.equals("")) {
+                if (Type.equals("Student") || Type.equals("Teacher") || Type.equals("Tutor")) {
 
-                alertDialog.setMessage("Login Successful");
-                alertDialog.show();
-                context.startActivity(startNav_Activity);
+                    Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("Email", Email);
 
+                    alertDialog.setMessage("Login Successful");
+                    alertDialog.show();
+                    context.startActivity(startNav_Activity);
+
+                }
+            } else if (result.equals("")) {
+                context.startActivity(new Intent(context, RegisterActivity.class));
             } else {
                 RegorTry = new AlertDialog.Builder(context);
                 RegorTry.setTitle("Incorrect! Would you like to register");
@@ -339,8 +354,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     }
                 });
-                Toast.makeText(context, "Failed to Do SomeShit", Toast.LENGTH_SHORT).show();
-              
+
 
             }
 

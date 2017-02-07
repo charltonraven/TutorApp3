@@ -23,7 +23,7 @@ public class HttpHandler {
 
     }
 
-    public String makeServiceCallPost(String reqUrl,String ClassName, String Username, String Password) {
+    public String makeServiceCallPost(String reqUrl,String ClassName, String Username, String Password,String [] registerInfo) {
         String response = null;
 
         //Runs the Tutor_List to generate Tutors
@@ -37,7 +37,7 @@ public class HttpHandler {
 
                 OutputStream out = conn.getOutputStream();
 
-                response = PutInVariables(out, conn, ClassName,null,null);
+                response = PutInVariables(out, conn, ClassName,null,null,null);
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLException: " + e.getMessage());
             } catch (ProtocolException e) {
@@ -49,6 +49,7 @@ public class HttpHandler {
             }
             return response;
         }
+        //Runs the Login
         else if(Username!=null && Password!=null){
 
             try {
@@ -58,7 +59,7 @@ public class HttpHandler {
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 OutputStream out = conn.getOutputStream();
-                response = PutInVariables(out, conn, ClassName,Username,Password);
+                response = PutInVariables(out, conn, ClassName,Username,Password,null);
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLException: " + e.getMessage());
             } catch (ProtocolException e) {
@@ -70,6 +71,30 @@ public class HttpHandler {
             }
 
 
+
+        }
+        //Register new users to application
+        else if(registerInfo!= null){
+
+            /*(id, firstName,LastName,Email,major)*/
+
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                OutputStream out = conn.getOutputStream();
+                response = PutInVariables(out, conn, null,null,null,registerInfo);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
 
         }
         return response;
@@ -96,7 +121,7 @@ public class HttpHandler {
     }
 
 
-    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department,String Username, String Password) {
+    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department,String Username, String Password,String [] RegisterInfo) {
         String response = "";
         if (Username == null && Password == null && department != null){
             try {
@@ -129,6 +154,24 @@ public class HttpHandler {
             }
 
 
+        }
+        else if (RegisterInfo!=null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[0], "UTF-8") + "&"
+                        + URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[1], "UTF-8") + "&"
+                        + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[2], "UTF-8") + "&"
+                        + URLEncoder.encode("firstname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[3], "UTF-8") + "&"
+                        + URLEncoder.encode("lastname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[4], "UTF-8") + "&"
+                        + URLEncoder.encode("major", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[5], "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return response;
 

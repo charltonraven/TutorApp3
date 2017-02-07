@@ -16,7 +16,9 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.io.BufferedReader;
@@ -41,10 +43,9 @@ public class Nav_MainActivity extends AppCompatActivity
 
     int day,month,year,hour,minute;
     int dayFinal, monthFinal,yearFinal,hourFinal,minuteFinal;
-NavigationView navigationView;
-private void hideItems(){
+    NavigationView navigationView;
 
-}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,56 +53,53 @@ private void hideItems(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MenuItem miFindClass=(MenuItem)findViewById(R.id.FindClass);
-        MenuItem miListOfSavedTutors=(MenuItem)findViewById(R.id.ListOfSavedTutors);
-        MenuItem miBulletinBoard=(MenuItem)findViewById(R.id.BulletinBoard);
-
-        MenuItem miStudentSessions=(MenuItem)findViewById(R.id.StudentSessions);
-        MenuItem miTeacherSessions=(MenuItem)findViewById(R.id.TeacherSessions);
-
-        MenuItem miMySessions=(MenuItem)findViewById(R.id.MySessions);
-        MenuItem miMyClasses=(MenuItem)findViewById(R.id.MyClasses);
-        MenuItem miPostBulletin=(MenuItem)findViewById(R.id.PostBulletin);
-
-
-
-        String UserType=getIntent().getStringExtra("User_Type");
-
-        if(UserType=="Tutor"){
-            miMyClasses.setEnabled(false);
-            miMySessions.setEnabled(false);
-            miPostBulletin.setEnabled(false);
-
-
-        }else if(UserType=="Student"){
-            miMyClasses.setVisible(false);
-            miMySessions.setVisible(false);
-            miPostBulletin.setVisible(false);
-           miTeacherSessions.setVisible(false);
-            miStudentSessions.setVisible(false);
-
-
-        }else if(UserType=="Teacher"){
-            miFindClass.setVisible(false);
-            miListOfSavedTutors.setVisible(false);
-            miBulletinBoard.setVisible(false);
-            miStudentSessions.setVisible(false);
-            miTeacherSessions.setVisible(false);
-
-
-
-        }
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+
+        TextView tvType;
+        TextView tvEmail;
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        String UserType=getIntent().getStringExtra("User_Type");
+        String Email=getIntent().getStringExtra("Email");
+
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView=navigationView.getHeaderView(0);
+        tvType=(TextView)hView.findViewById(R.id.tvType);
+        tvEmail=(TextView)hView.findViewById(R.id.tvEmail);
+        tvEmail.setText(Email);
+        tvType.setText("Logged in as "+UserType.toUpperCase());
+
+        switch (UserType){
+            case "Tutor":
+                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                break;
+            case "Student":
+                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+
+                break;
+            case "Teacher":
+                navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
+                navigationView.getMenu().findItem(R.id.ListOfSavedTutors).setVisible(false);
+                navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+
+                break;
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
-        drawer.openDrawer(Gravity.LEFT);
+       drawer.openDrawer(Gravity.LEFT);
     }
 
     @Override
