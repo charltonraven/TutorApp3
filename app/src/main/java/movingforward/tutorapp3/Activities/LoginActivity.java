@@ -296,7 +296,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String username = params[1];
                 String password = params[2];
                 // String login_url = "http://10.254.13.38/android/Inserts/login.php";
-                String login_url = "http://192.168.1.5/android/Inserts/login.php";
+                String login_url = "http://172.19.10.48/android/Inserts/login.php";
                 //String login_url = "http://10.0.2.2/login.php";
                 HttpHandler LoginHandler = new HttpHandler();
                 response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);

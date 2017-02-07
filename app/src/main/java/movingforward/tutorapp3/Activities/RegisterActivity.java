@@ -110,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             String[] UserInfo={who,id,Email,firstname,lastname,major};
 
-            String register_url = "http://10.254.13.38/android/Inserts/insert.php";
+            String register_url = "http://172.19.10.48/android/Inserts/insert.php";
             HttpHandler Register=new HttpHandler();
             String response =Register.makeServiceCallPost(register_url,null,null,null,UserInfo);
 
