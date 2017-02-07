@@ -2,6 +2,7 @@
     <string name="app_name">TutorApp3</string>
 
     <!-- Strings related to login -->
+    <string name="ip_address">192.168.1.16</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
