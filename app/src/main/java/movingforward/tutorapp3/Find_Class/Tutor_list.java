@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
+import movingforward.tutorapp3.Entities.TutorList;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
-import movingforward.tutorapp3.Entities.class_Helper.TutorList;
 import movingforward.tutorapp3.R;
 
 
@@ -49,7 +49,7 @@ public class Tutor_list extends Fragment {
     String result;
     public String[] data;
     public String[] data2;
-    String ClassName;
+    String ClassName="";
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -185,11 +185,22 @@ public class Tutor_list extends Fragment {
             HttpHandler sh = new HttpHandler();
 
             //String TutorList_url = "http://10.10.103.74/android/CreateListorGrids/TutorList.php";
-            String TutorList_url = "http://192.168.1.16/android/CreateListorGrids/TutorList.php";
-            //Making a request to url and getting response
-           // String jsonStr = sh.makeServiceCallGet(TutorList_url);
 
-            String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName);
+            //String TutorList_url = "http://172.19.10.128/android/CreateListorGrids/TutorList.php";
+
+            //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
+
+
+            //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
+
+
+          //  String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
+
+
+            String TutorList_url = "http://10.254.13.38/android/CreateListorGrids/TutorList.php";
+
+            //Making a request to url and getting response
+            String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName,null,null,null);
 
 
 

@@ -29,20 +29,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -64,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
-};
+    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -89,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    // attemptLogin();
                     return true;
                 }
                 return false;
@@ -100,8 +90,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             // attemptLogin();
-                startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
+                attemptLogin();
+                //  startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
 
 
             }
@@ -169,14 +159,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String password = mPasswordView.getText().toString();
             String who = "login";
 
-            UserLoginTask userLoginTask = new UserLoginTask(this);
-            userLoginTask.execute(who, email, password);
+            mAuthTask = new UserLoginTask(this);
+            mAuthTask.execute(who, email, password);
 
 
         } catch (Exception e) {
             System.out.println(e);
         }
-
 
 
     }
@@ -298,63 +287,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected String doInBackground(String... params) {
             // TODO: attempt authentication against a network service.
-            String type = params[0];
-            String username = params[1];
-            String password = params[2];
-            String login_url = "http://10.10.103.165/login.php";
-            //String login_url = "http://172.19.10.114/login.php";
-            //String login_url = "http://10.0.2.2/login.php";
+            String response = "";
+            if (params[1].equals("") && params[2].equals("")) {
+                response = "";
 
-
-
-            if (type.equals("login")) {
-
-                try {
-                    URL url = new URL(login_url);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    httpURLConnection.setRequestMethod("POST");
-                    httpURLConnection.setDoOutput(true);
-                    httpURLConnection.setDoInput(true);
-                    OutputStream outputStream = httpURLConnection.getOutputStream();
-
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                    String post_data =  URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-                    bufferedWriter.write(post_data);
-                    bufferedWriter.flush();
-                    bufferedWriter.close();
-                    outputStream.close();
-                    InputStream inputStream = httpURLConnection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-
-                    String result = "";
-                    String line;
-
-                    while ((line = bufferedReader.readLine()) != null) {
-                        result += line;
-                    }
-
-                    bufferedReader.close();
-                    inputStream.close();
-                    httpURLConnection.disconnect();
-
-
-                    System.out.println(result);
-
-
-                    return result;
-
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
+            } else {
+                String type = params[0];
+                String username = params[1];
+                String password = params[2];
+                // String login_url = "http://10.254.13.38/android/Inserts/login.php";
+                String login_url = "http://192.168.1.5/android/Inserts/login.php";
+                //String login_url = "http://10.0.2.2/login.php";
+                HttpHandler LoginHandler = new HttpHandler();
+                response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
             }
-
-
-            return null;
+            return response;
         }
 
         @Override
@@ -369,13 +316,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             RegorTry = new AlertDialog.Builder(context);
             alertDialog.setMessage(result);
 
-            if (result.equals("Login Successful")) {
-                alertDialog.setMessage(result);
-                alertDialog.show();
-                context.startActivity(new Intent(context, Nav_MainActivity.class));
+            String Type = "";
+            String Email = " ";
+            if (!result.equals("")) {
+                String[] TypeEmail = result.split(" ");
+                Type = TypeEmail[0];
+                Email = TypeEmail[1];
+            }
 
+            if (!result.equals("")) {
+                if (Type.equals("Student") || Type.equals("Teacher") || Type.equals("Tutor")) {
+
+                    Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("Email", Email);
+
+                    alertDialog.setMessage("Login Successful");
+                    alertDialog.show();
+                    context.startActivity(startNav_Activity);
+
+                }
+            } else if (result.equals("")) {
+                context.startActivity(new Intent(context, RegisterActivity.class));
             } else {
-
                 RegorTry = new AlertDialog.Builder(context);
                 RegorTry.setTitle("Incorrect! Would you like to register");
 
@@ -391,6 +354,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     }
                 });
+
 
             }
 

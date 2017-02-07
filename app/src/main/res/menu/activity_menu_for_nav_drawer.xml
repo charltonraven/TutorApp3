@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Student Resources">
+
+    <group android:id="@+id/grp1" android:checkableBehavior="single"></group>
+    <item android:title="Student Resources"
+        android:id="@+id/mStudentResources">
         <menu>
             <item
                 android:id="@+id/FindClass"
@@ -15,7 +18,8 @@
 
     </item>
 
-    <item android:title="Tutor Resources">
+    <item android:title="Tutor Resources"
+        android:id="@+id/mTutorResources">
         <menu>
             <item
                 android:id="@+id/StudentSessions"
@@ -26,11 +30,12 @@
         </menu>
     </item>
 
-    <item android:title="Teacher Resources">
+    <item android:title="Teacher Resources"
+        android:id="@+id/mTeacherSessions">
         <menu>
             <item
                 android:id="@+id/MySessions"
-                android:title="Find Class"/>
+                android:title="My Class"/>
             <item
                 android:id="@+id/MyClasses"
                 android:title="My Tutor Sessions"/>
@@ -38,8 +43,8 @@
                 android:id="@+id/PostBulletin"
                 android:title="Bulletin Board"/>
             <Item
-            android:id="@+id/AppointTutor"
-            android:title="Bulletin Board"/>
+                android:id="@+id/AppointTutor"
+                android:title="Bulletin Board"/>
         </menu>
 
     </item>

@@ -13,18 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.R;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -35,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Spinner mMajorView;
     private CheckBox mTeacherCheckBox;
     private Button mRegisterButton;
+
 
     ArrayAdapter<CharSequence> adapter;
 
@@ -73,19 +63,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void Register() {
 
-        String who = "student";
+        String who = "Student";
         String email = mEmailView.getText().toString();
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
         String major = mMajorView.getSelectedItem().toString();
         if (mTeacherCheckBox.isChecked()) {
-            who = "teacher";
+            who = "Teacher";
         }
         if (mMajorView.getSelectedItem() == "") {
             mMajorView = null;
         }
 
-        String type = "student";
+
 
         RegisterUser registerUser = new RegisterUser(this);
         registerUser.execute(who, firstName, lastName, email, major);
@@ -96,6 +86,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         AlertDialog alertDialog;
         Context context;
+        public String who ="";
+        public String firstname = "";
+        public String lastname = "";
+        public String Email = "";
+        public String major = "";
 
         RegisterUser(Context context) {
             this.context = context;
@@ -105,63 +100,25 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             // TODO: attempt authentication against a network service.
-            String who = params[0];
-            String firstname = params[1];
-            String lastname = params[2];
-            String email = params[3];
-            String major = params[4];
-            String register_url = "http://172.19.10.114/insert.php";
-            //String register_url = "http://10.0.2.2/insert.php";
+             who = params[0];
+             firstname = params[1];
+             lastname = params[2];
+             Email = params[3];
+             major = params[4];
+            String [] subID=Email.split("\\@");
+            String id=subID[0];
+
+            String[] UserInfo={who,id,Email,firstname,lastname,major};
+
+            String register_url = "http://10.254.13.38/android/Inserts/insert.php";
+            HttpHandler Register=new HttpHandler();
+            String response =Register.makeServiceCallPost(register_url,null,null,null,UserInfo);
 
 
-            try {
-                URL url = new URL(register_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-
-                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(who, "UTF-8") + "&"
-                        + URLEncoder.encode("firstname", "UTF-8") + "=" + URLEncoder.encode(firstname, "UTF-8") + "&"
-                        + URLEncoder.encode("lastname", "UTF-8") + "=" + URLEncoder.encode(lastname, "UTF-8") + "&"
-                        + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(email, "UTF-8") + "&"
-                        + URLEncoder.encode("major", "UTF-8") + "=" + URLEncoder.encode(major, "UTF-8");
-
-                bufferedWriter.write(post_data);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-
-                String result = "";
-                String line;
-
-                while ((line = bufferedReader.readLine()) != null) {
-                    result += line;
-                }
-
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
 
 
-                System.out.println(result);
 
-
-                return result;
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            return null;
+            return response;
         }
 
         @Override
@@ -172,10 +129,17 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result.equals("Complete")) {
+            String response=result.trim();
+            if (response.equals("Complete")) {
                 alertDialog.setMessage("You are now Registered");
                 alertDialog.show();
-                context.startActivity(new Intent(context, Nav_MainActivity.class));
+
+                Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+                startNav_Activity.putExtra("Email", Email);
+                startNav_Activity.putExtra("User_Type", who);
+
+
+                context.startActivity(startNav_Activity);
             } else {
                 alertDialog.setMessage("Something went wrong");
                 alertDialog.show();

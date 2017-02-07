@@ -1,5 +1,4 @@
 package movingforward.tutorapp3.Entities.class_Helper;
-
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -21,28 +20,82 @@ public class HttpHandler {
     private static final String TAG = HttpHandler.class.getSimpleName();
 
     public HttpHandler() {
+
     }
 
-    public String makeServiceCallPost(String reqUrl,String ClassName) {
+    public String makeServiceCallPost(String reqUrl,String ClassName, String Username, String Password,String [] registerInfo) {
         String response = null;
-        try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
 
-            OutputStream out  =  conn.getOutputStream();
+        //Runs the Tutor_List to generate Tutors
+        if(ClassName!=null &&Username==null && Password==null) {
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
 
-            response = PutInVariables(out,conn,ClassName);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "MalformedURLException: " + e.getMessage());
-        } catch (ProtocolException e) {
-            Log.e(TAG, "ProtocolException: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+                OutputStream out = conn.getOutputStream();
+
+                response = PutInVariables(out, conn, ClassName,null,null,null);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+            return response;
+        }
+        //Runs the Login
+        else if(Username!=null && Password!=null){
+
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                OutputStream out = conn.getOutputStream();
+                response = PutInVariables(out, conn, ClassName,Username,Password,null);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+
+
+
+        }
+        //Register new users to application
+        else if(registerInfo!= null){
+
+            /*(id, firstName,LastName,Email,major)*/
+
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                OutputStream out = conn.getOutputStream();
+                response = PutInVariables(out, conn, null,null,null,registerInfo);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+
         }
         return response;
     }
@@ -67,6 +120,63 @@ public class HttpHandler {
         return response;
     }
 
+
+    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department,String Username, String Password,String [] RegisterInfo) {
+        String response = "";
+        if (Username == null && Password == null && department != null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("department", "UTF-8") + "=" + URLEncoder.encode(department, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                out.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        return response;
+    }
+
+    else if(Username!=null && Password!=null &&department==null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(Password, "UTF-8");;
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        else if (RegisterInfo!=null){
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[0], "UTF-8") + "&"
+                        + URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[1], "UTF-8") + "&"
+                        + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[2], "UTF-8") + "&"
+                        + URLEncoder.encode("firstname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[3], "UTF-8") + "&"
+                        + URLEncoder.encode("lastname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[4], "UTF-8") + "&"
+                        + URLEncoder.encode("major", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[5], "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return response;
+
+
+    }
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -87,23 +197,5 @@ public class HttpHandler {
         }
 
         return sb.toString();
-    }
-    private String PutInVariables(OutputStream out,HttpURLConnection conn,String department){
-        String response="";
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            String post_data = URLEncoder.encode("department", "UTF-8") + "=" + URLEncoder.encode(department, "UTF-8");
-            bufferedWriter.write(post_data);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            InputStream in= conn.getInputStream();
-            response =convertStreamToString(in);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-         return response;
-
-
     }
 }

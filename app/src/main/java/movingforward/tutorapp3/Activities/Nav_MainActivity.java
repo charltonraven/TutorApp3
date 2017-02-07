@@ -6,9 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,8 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,14 +36,14 @@ import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
-import movingforward.tutorapp3.Find_Class.Tutor_list;
 import movingforward.tutorapp3.R;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener ,BySubjectFragmentOne.OnClassNameListener{
+        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
 
     int day,month,year,hour,minute;
     int dayFinal, monthFinal,yearFinal,hourFinal,minuteFinal;
+    NavigationView navigationView;
 
 
     @Override
@@ -55,24 +53,53 @@ public class Nav_MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+
+        TextView tvType;
+        TextView tvEmail;
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        String UserType=getIntent().getStringExtra("User_Type");
+        String Email=getIntent().getStringExtra("Email");
+
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView=navigationView.getHeaderView(0);
+        tvType=(TextView)hView.findViewById(R.id.tvType);
+        tvEmail=(TextView)hView.findViewById(R.id.tvEmail);
+        tvEmail.setText(Email);
+        tvType.setText("Logged in as "+UserType.toUpperCase());
+
+        switch (UserType){
+            case "Tutor":
+                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                break;
+            case "Student":
+                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+
+                break;
+            case "Teacher":
+                navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
+                navigationView.getMenu().findItem(R.id.ListOfSavedTutors).setVisible(false);
+                navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+
+                break;
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
-        drawer.openDrawer(Gravity.LEFT);
+       drawer.openDrawer(Gravity.LEFT);
     }
 
     @Override
@@ -114,12 +141,15 @@ public class Nav_MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.FindClass) {
+
             BySubjectFragmentOne subjectFragmentOne=new BySubjectFragmentOne();
             android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,subjectFragmentOne,subjectFragmentOne.getTag()).commit();
 //
 
         } else if (id == R.id.ListOfSavedTutors) {
+
+
 
 
         } else if (id == R.id.BulletinBoard) {
@@ -132,18 +162,18 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.MySessions) {
-            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
 
 
         } else if (id == R.id.MyClasses) {
-            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
         } else if (id == R.id.PostBulletin) {
-            Toast.makeText(this, "Subject Bulletin BITCH !", Toast.LENGTH_SHORT).show();
+
 
 
         } else if (id == R.id.AppointTutor) {
-            Toast.makeText(this, "Teacher Bulletin Bitch !", Toast.LENGTH_SHORT).show();
+
 
 
         }
@@ -183,30 +213,6 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
     }
-
-    @Override
-    public void setClassName(String ClassName) {
-
-        Toast.makeText(this, "TUTOR SUBJECT BITCH !", Toast.LENGTH_SHORT).show();
-        Tutor_list tl=new Tutor_list();
-        android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tl,tl.getTag()).commit();
-        if(tl != null){
-            tl.setClassName(ClassName);
-
-        }else {
-            Tutor_list fragment=new Tutor_list();
-            Bundle args=new Bundle();
-            args.putString("ClassName", ClassName);
-            fragment.setArguments(args);
-            getSupportFragmentManager().beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,fragment).addToBackStack(null).commit();
-            fragment.StartTask();
-        }
-
-
-
-    }
-
     public static class AppointmentTask extends AsyncTask<String, Void, String> {
         Appointment appointment;
         AlertDialog.Builder RegorTry;

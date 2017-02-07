@@ -29,13 +29,15 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
-
+-keep class com.quickblox.core.account.model.** { *; }
 
 ##---------------End: proguard configuration for Gson  ----------
 
 ##---------------Begin: proguard configuration for quickblox  ----------
 
-#
+
+#quickblox videochat-webrtc module
+-keep class org.webrtc.** { *; }
 
 ##---------------End: proguard configuration for quickblox  ----------
 

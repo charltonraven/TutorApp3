@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,6 @@ import movingforward.tutorapp3.R;
 public class BySubjectFragmentOne extends Fragment {
     SearchView svClass;
     CustomAdapter adapter;
-    OnClassNameListener onClassNameListener;
 
 
     // references to our images
@@ -124,19 +123,14 @@ public class BySubjectFragmentOne extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String ClassName=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
-                Toast.makeText(getActivity(),ClassName,Toast.LENGTH_SHORT).show();
-                onClassNameListener.setClassName(ClassName);
 
-               /* Tutor_list tl=new Tutor_list();
-                Bundle bundle=new Bundle();
-                bundle.putString("ClassName",ClassName);
+                String ClassName=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
 
                 Tutor_list tutor_list=new Tutor_list();
+                tutor_list.setClassName(ClassName);
                 FragmentManager manager=getFragmentManager();
                 manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tutor_list,tutor_list.getTag()).commit();
 
-*/
 
 
             }
@@ -161,18 +155,6 @@ public class BySubjectFragmentOne extends Fragment {
         return rootView;
     }
 
-    public interface OnClassNameListener{
-        public void setClassName(String ClassName);
-
-
-
-    }
-
-    /*@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -184,12 +166,6 @@ public class BySubjectFragmentOne extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            onClassNameListener = (OnClassNameListener) context;
-        }catch (ClassCastException e){
-
-            throw new ClassCastException(context.toString() + " must implement OnClassNameListener");
-        }
 
     }
 
