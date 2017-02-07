@@ -12,14 +12,21 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "URL_SERVER", '"' + getLocalIPv4() + '"'
+
+
+
     }
-    buildTypes {
+
+
+        buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -48,6 +55,20 @@ allprojects {
         }
     }
 }
+
+
+def getLocalIPv4() {
+    def ip4s = []
+    NetworkInterface.getNetworkInterfaces()
+            .findAll { it.isUp() && !it.isLoopback() && !it.isVirtual() }
+            .each {
+        it.getInetAddresses()
+                .findAll { !it.isLoopbackAddress() && it instanceof Inet4Address }
+                .each { ip4s << it }
+    }
+    return ip4s
+}
+
 
 apply plugin: 'com.google.gms.google-services'
 

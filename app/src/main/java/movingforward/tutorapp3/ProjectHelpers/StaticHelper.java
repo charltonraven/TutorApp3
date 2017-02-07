@@ -1,16 +1,6 @@
 package movingforward.tutorapp3.ProjectHelpers;
 
-import android.util.Log;
-import android.widget.EditText;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.URL;
-import java.util.Enumeration;
-
-import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.BuildConfig;
 
 /**
  * Created by Jeebus Prime on 2/7/2017.
@@ -18,41 +8,15 @@ import movingforward.tutorapp3.R;
 
 public class StaticHelper {
 
-    public static String getDeviceIP()
-    {
-        URL myIP;
-        try {
-            myIP = new URL("http://api.externalip.net/ip/");
+    public static String getDeviceIP() {
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(myIP.openStream())
-            );
-            return in.readLine();
-        } catch (Exception e)
-        {
-            try
-            {
-                myIP = new URL("http://myip.dnsomatic.com/");
 
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(myIP.openStream())
-                );
-                return in.readLine();
-            } catch (Exception e1)
-            {
-                try {
-                    myIP = new URL("http://icanhazip.com/");
 
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(myIP.openStream())
-                    );
-                    return in.readLine();
-                } catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            }
-        }
+       String test = BuildConfig.URL_SERVER;
+        String [] split= test.split(",");
+        String ip= split[0].substring(2,14);
 
-        return null;
+
+        return ip;
     }
 }

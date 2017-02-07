@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
+import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -110,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             String[] UserInfo={who,id,Email,firstname,lastname,major};
 
-            String register_url = "http://172.19.10.48/android/Inserts/insert.php";
+            String register_url = "http://" + StaticHelper.getDeviceIP() +"/android/Inserts/insert.php";
             HttpHandler Register=new HttpHandler();
             String response =Register.makeServiceCallPost(register_url,null,null,null,UserInfo);
 
