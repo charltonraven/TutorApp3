@@ -41,11 +41,7 @@ public class Tutor_list extends Fragment {
     InputStream content;
     TutorListAdapter adapter;
     ArrayList<TutorList> TutorsAndClasses=new ArrayList<>();
-
-    //String TutorList_url = "http://10.10.103.165/android/CreateListorGrids/TutorList.php";
-    //String TutorList_url = "http://192.168.1.10/android/CreateListorGrids/TutorList.php";
-
-
+    
     String line = null;
     String result;
     public String[] data;

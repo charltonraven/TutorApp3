@@ -9,13 +9,9 @@ import movingforward.tutorapp3.BuildConfig;
 public class StaticHelper {
 
     public static String getDeviceIP() {
-
-
-
-       String test = BuildConfig.URL_SERVER;
-        String [] split= test.split(",");
-        String ip= split[0].substring(2,14);
-
+        String test = BuildConfig.URL_SERVER;
+        String[] split = test.split(",");
+        String ip = split[0].substring(2, 14);
 
         return ip;
     }
