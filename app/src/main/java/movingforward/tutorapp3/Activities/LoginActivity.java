@@ -333,7 +333,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
                     Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                    startNav_Activity.putExtra("User_Type", "Test");
+                    startNav_Activity.putExtra("User_Type",Type);
                     startNav_Activity.putExtra("Email", Email);
 
                     alertDialog.setMessage("Login Successful");
