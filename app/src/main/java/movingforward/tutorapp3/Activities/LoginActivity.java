@@ -329,10 +329,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if (!result.equals("")) {
-                if (Type.equals("Student") || Type.equals("Teacher") || Type.equals("Tutor")) {
+                if (Type.contains("Student") || Type.contains("Teacher") || Type.contains("Tutor")) {
+
 
                     Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("User_Type", "Test");
                     startNav_Activity.putExtra("Email", Email);
 
                     alertDialog.setMessage("Login Successful");
