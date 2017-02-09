@@ -66,6 +66,7 @@ def getLocalIPv4() {
                 .findAll { !it.isLoopbackAddress() && it instanceof Inet4Address }
                 .each { ip4s << it }
     }
+
     return ip4s
 }
 
