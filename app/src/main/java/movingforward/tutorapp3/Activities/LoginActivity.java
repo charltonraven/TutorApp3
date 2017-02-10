@@ -32,6 +32,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import movingforward.tutorapp3.Entities.Student;
+import movingforward.tutorapp3.Entities.Teacher;
+import movingforward.tutorapp3.Entities.Tutor;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
@@ -280,6 +283,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         AlertDialog.Builder RegorTry;
         AlertDialog alertDialog;
         Context context;
+        String username;
+        String password;
 
         UserLoginTask(Context context) {
             this.context = context;
@@ -294,8 +299,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             } else {
                 String type = params[0];
-                String username = params[1];
-                String password = params[2];
+                 username = params[1];
+                 password = params[2];
 
                 String login_url =  "http://" + StaticHelper.getDeviceIP() + "/android/Inserts/login.php";
 
@@ -329,17 +334,50 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if (!result.equals("")) {
-                if (Type.contains("Student") || Type.contains("Teacher") || Type.contains("Tutor")) {
+                if (Type.contains("Student") ) {
+
+                    Student student=new Student(Email,password);
 
 
                     Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                    startNav_Activity.putExtra("User_Type",Type);
-                    startNav_Activity.putExtra("Email", Email);
+                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("Email", student.getEmail());
+                    startNav_Activity.putExtra("Password", student.getPassword());
 
                     alertDialog.setMessage("Login Successful");
                     alertDialog.show();
                     context.startActivity(startNav_Activity);
 
+                }else if(Type.contains("Teacher")){
+                    Teacher teacher=new Teacher(Email,password);
+
+                    Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+<<<<<<< Updated upstream
+                    startNav_Activity.putExtra("User_Type",Type);
+                    startNav_Activity.putExtra("Email", Email);
+=======
+                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("Email", teacher.getEmail());
+                    startNav_Activity.putExtra("Password", teacher.getPassword());
+>>>>>>> Stashed changes
+
+                    alertDialog.setMessage("Login Successful");
+                    alertDialog.show();
+                    context.startActivity(startNav_Activity);
+
+
+                }else if(Type.contains("Tutor")){
+                    Tutor tutor=new Tutor(Email,password);
+
+
+                    Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+                    startNav_Activity.putExtra("User_Type", Type);
+                    startNav_Activity.putExtra("Email", tutor.getEmail());
+                    startNav_Activity.putExtra("Password", tutor.getPassword());
+
+                    alertDialog.setMessage("Login Successful");
+                    alertDialog.show();
+                    context.startActivity(startNav_Activity);
                 }
             } else if (result.equals("")) {
                 context.startActivity(new Intent(context, RegisterActivity.class));

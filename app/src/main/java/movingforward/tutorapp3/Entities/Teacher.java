@@ -4,31 +4,23 @@ package movingforward.tutorapp3.Entities;
  * Created by Jeebus Prime on 10/5/2016.
  */
 
-public class Teacher
-{
+public class Teacher extends  User {
     private String name;
     private String email;
+    private Role permission;
     private boolean admin;
 
-    public Teacher(String name, String email)
-    {
-        this.name = name;
-        this.email = email;
-        admin = false;
+    public Teacher(String email, String password){
+        this.email=email;
+        this.password=password;
+        this.permission=Role.Teacher;
+    }
+    public String getPassword() {
+        return password;
     }
 
-    public Teacher(String name, String email, boolean admin) {
-        this.name = name;
-        this.email = email;
-        this.admin = admin;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -39,11 +31,12 @@ public class Teacher
         this.email = email;
     }
 
-    public boolean isAdmin() {
-        return admin;
+    public Role getPermission() {
+        return permission;
     }
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setPermission(Role permission) {
+        this.permission = permission;
     }
+
 }

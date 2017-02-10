@@ -10,9 +10,9 @@ public class StaticHelper {
 
     public static String getDeviceIP() {
         String test = BuildConfig.URL_SERVER;
-        String[] split = test.split(",");
-        int n = split[0].length() - 1;
-        String ip = split[0].substring(2, n);
+       /* String[] split = test.split(",");
+        int n = split[0].length() - 1;*/
+        String ip = test.replace("/","");
 
         return ip;
     }

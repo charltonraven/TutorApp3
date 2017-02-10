@@ -67,7 +67,7 @@ def getLocalIPv4() {
                 .each { ip4s << it }
     }
 
-    return ip4s
+    return ip4s[0]
 }
 
 
