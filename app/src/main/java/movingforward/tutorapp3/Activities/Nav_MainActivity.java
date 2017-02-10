@@ -39,6 +39,7 @@ import java.util.Calendar;
 import movingforward.tutorapp3.Entities.Appointment;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.TutChat.ChatActivity;
 
 public class Nav_MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
@@ -167,7 +168,7 @@ public class Nav_MainActivity extends AppCompatActivity
 
         } else if (id == R.id.StudentSessions) {
 
-
+            startActivity(new Intent(this, ChatActivity.class));
 
         } else if (id == R.id.TeacherSessions) {
 
