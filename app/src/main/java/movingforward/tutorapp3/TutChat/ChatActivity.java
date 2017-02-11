@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import movingforward.tutorapp3.Activities.LoginActivity;
 import movingforward.tutorapp3.Entities.Teacher;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
@@ -83,6 +84,7 @@ public class ChatActivity extends AppCompatActivity implements
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
+    private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mUsername;
     private String mPhotoUrl;
@@ -105,11 +107,20 @@ public class ChatActivity extends AppCompatActivity implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent i = getIntent();
-        Teacher user1 = (Teacher)i.getSerializableExtra("sampleObject");
+        Teacher user = (Teacher)i.getSerializableExtra("sampleObject");
 
-        // Set default username is anonymous.
-        mUsername = user1.getEmail();
-        mFirebaseUser = new FirebaseUser()
+        mFirebaseAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword());
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        } else {
+            mUsername = mFirebaseUser.getDisplayName();
+            mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+        }
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
