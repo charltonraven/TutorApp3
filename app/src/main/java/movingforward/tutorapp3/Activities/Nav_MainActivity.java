@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,6 +38,8 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
+import movingforward.tutorapp3.Entities.Teacher;
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.ChatActivity;
@@ -166,9 +169,12 @@ public class Nav_MainActivity extends AppCompatActivity
 
         } else if (id == R.id.BulletinBoard) {
 
-        } else if (id == R.id.StudentSessions) {
-
-            startActivity(new Intent(this, ChatActivity.class));
+        } else if (id == R.id.StudentSessions)
+        {
+            User test = new Teacher("Email", "Password");
+            Intent i = new Intent(this,  ChatActivity.class);
+            i.putExtra("sampleObject", test);
+            startActivity(i);
 
         } else if (id == R.id.TeacherSessions) {
 

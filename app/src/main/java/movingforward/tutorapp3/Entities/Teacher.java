@@ -1,10 +1,12 @@
 package movingforward.tutorapp3.Entities;
 
+import java.io.Serializable;
+
 /**
  * Created by Jeebus Prime on 10/5/2016.
  */
 
-public class Teacher extends  User {
+public class Teacher extends  User implements Serializable {
     private String name;
     private String email;
     private Role permission;

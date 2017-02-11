@@ -1,10 +1,12 @@
 package movingforward.tutorapp3.Entities;
 
+import java.io.Serializable;
+
 /**
  * Created by raven on 2/9/2017.
  */
 
-public abstract class User {
+public abstract class User implements Serializable {
     String email;
     String password;
     Role permission;

@@ -57,6 +57,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import movingforward.tutorapp3.Entities.Teacher;
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 
 public class ChatActivity extends AppCompatActivity implements
@@ -81,10 +83,11 @@ public class ChatActivity extends AppCompatActivity implements
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
+    private FirebaseUser mFirebaseUser;
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
-  //  private GoogleApiClient mGoogleApiClient;
+    //  private GoogleApiClient mGoogleApiClient;
     private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
 
     private Button mSendButton;
@@ -100,8 +103,13 @@ public class ChatActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Intent i = getIntent();
+        Teacher user1 = (Teacher)i.getSerializableExtra("sampleObject");
+
         // Set default username is anonymous.
-        mUsername = ANONYMOUS;
+        mUsername = user1.getEmail();
+        mFirebaseUser = new FirebaseUser()
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
