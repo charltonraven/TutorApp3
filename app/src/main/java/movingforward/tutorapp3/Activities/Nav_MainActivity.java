@@ -52,6 +52,8 @@ public class Nav_MainActivity extends AppCompatActivity
     int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
     NavigationView navigationView;
     User mUser;
+    String mEmail;
+    String mPassword;
 
 
     @Override
@@ -75,14 +77,15 @@ public class Nav_MainActivity extends AppCompatActivity
         toggle.syncState();
 
         String UserType = mUser.getPermission().toString();
-        String Email = mUser.getEmail();
+        mEmail = mUser.getEmail();
+        mPassword = mUser.getPassword();
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
         tvType = (TextView) hView.findViewById(R.id.tvType);
         tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
-        tvEmail.setText(Email);
+        tvEmail.setText(mEmail);
         tvType.setText("Logged in as " + UserType.toUpperCase());
 
         switch (UserType)
@@ -178,6 +181,9 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.ListOfSavedTutors)
         {
+            User nUser = new User(mEmail, mPassword);
+            mUser = nUser;
+
             Intent chatIntent = new Intent(this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
             startActivity(chatIntent);
