@@ -4,7 +4,7 @@ package movingforward.tutorapp3.Entities;
  * Created by raven on 12/28/2016.
  */
 
-public class Tutor extends User {
+public class Tutor {
 
     private String email;
     private Role permission;

@@ -63,14 +63,17 @@ import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 
 public class ChatActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener
+{
 
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder
+    {
         public TextView messageTextView;
         public TextView messengerTextView;
         public CircleImageView messengerImageView;
 
-        public MessageViewHolder(View v) {
+        public MessageViewHolder(View v)
+        {
             super(v);
             messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
             messengerTextView = (TextView) itemView.findViewById(R.id.messengerTextView);
@@ -101,23 +104,27 @@ public class ChatActivity extends AppCompatActivity implements
     // Firebase instance variables
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent i = getIntent();
-        Teacher user = (Teacher)i.getSerializableExtra("sampleObject");
+        User mUser = (User) i.getSerializableExtra("mUser");
 
-        mFirebaseAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword());
+        mFirebaseAuth.createUserWithEmailAndPassword(mUser.getEmail(), mUser.getPassword());
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        if (mFirebaseUser == null) {
+        if (mFirebaseUser == null)
+        {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
-        } else {
+        }
+        else
+        {
             mUsername = mFirebaseUser.getDisplayName();
             mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
         }
@@ -139,70 +146,86 @@ public class ChatActivity extends AppCompatActivity implements
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mSharedPreferences
                 .getInt(CodelabPreferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT))});
-        mMessageEditText.addTextChangedListener(new TextWatcher() {
+        mMessageEditText.addTextChangedListener(new TextWatcher()
+        {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0) {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
+                if (charSequence.toString().trim().length() > 0)
+                {
                     mSendButton.setEnabled(true);
-                } else {
+                }
+                else
+                {
                     mSendButton.setEnabled(false);
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
+            public void afterTextChanged(Editable editable)
+            {
             }
         });
 
         mSendButton = (Button) findViewById(R.id.sendButton);
-        mSendButton.setOnClickListener(new View.OnClickListener() {
+        mSendButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 // Send messages on click.
             }
         });
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         // Check if user is signed in.
         // TODO: Add code to check if user is signed in.
     }
 
     @Override
-    public void onPause() {
+    public void onPause()
+    {
         super.onPause();
     }
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.chat_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
