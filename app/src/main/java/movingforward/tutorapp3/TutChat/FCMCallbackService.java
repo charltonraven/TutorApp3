@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.FirebaseHelpers;
+package movingforward.tutorapp3.TutChat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

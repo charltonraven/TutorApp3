@@ -17,7 +17,6 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -37,19 +36,27 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
+import movingforward.tutorapp3.Entities.Role;
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.TutChat.ChatActivity;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener
+{
 
-    int day,month,year,hour,minute;
-    int dayFinal, monthFinal,yearFinal,hourFinal,minuteFinal;
+    int day, month, year, hour, minute;
+    int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
     NavigationView navigationView;
+    User mUser;
+    String mEmail;
+    String mPassword;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav__main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,28 +66,34 @@ public class Nav_MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
+        Intent navIntent = getIntent();
+        User mUser = (User) navIntent.getSerializableExtra("mUser");
+        mUser.setEmail(mUser.getEmail().trim());
 
         TextView tvType;
         TextView tvEmail;
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        String UserType=getIntent().getStringExtra("User_Type");
-        String Email=getIntent().getStringExtra("Email");
+        String UserType = mUser.getPermission().toString();
+        mEmail = mUser.getEmail();
+        mPassword = mUser.getPassword();
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView=navigationView.getHeaderView(0);
-        tvType=(TextView)hView.findViewById(R.id.tvType);
-        tvEmail=(TextView)hView.findViewById(R.id.tvEmail);
-        tvEmail.setText(Email);
-        tvType.setText("Logged in as "+UserType.toUpperCase());
+        View hView = navigationView.getHeaderView(0);
+        tvType = (TextView) hView.findViewById(R.id.tvType);
+        tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
+        tvEmail.setText(mEmail);
+        tvType.setText("Logged in as " + UserType.toUpperCase());
 
-        switch (UserType){
+        switch (UserType)
+        {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                mUser.setPermission(Role.Tutor);
                 break;
             case "Student":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
@@ -88,6 +101,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                mUser.setPermission(Role.Student);
 
                 break;
             case "Teacher":
@@ -96,44 +110,53 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+                mUser.setPermission(Role.Teacher);
 
                 break;
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-       drawer.openDrawer(Gravity.LEFT);
+        drawer.openDrawer(Gravity.LEFT);
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer.isDrawerOpen(GravityCompat.START))
+        {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else
+        {
             super.onBackPressed();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.nav__main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
-        switch (item.getItemId()) {
+        switch (item.getItemId())
+        {
             case R.id.sign_out_menu:
                 //mFirebaseAuth.signOut();
                 //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
@@ -147,44 +170,56 @@ public class Nav_MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item)
+    {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.FindClass) {
+        if (id == R.id.FindClass)
+        {
+            BySubjectFragmentOne subjectFragmentOne = new BySubjectFragmentOne();
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
+        }
+        else if (id == R.id.ListOfSavedTutors)
+        {
+            User nUser = new User(mEmail, mPassword);
+            mUser = nUser;
 
-            BySubjectFragmentOne subjectFragmentOne=new BySubjectFragmentOne();
-            android.support.v4.app.FragmentManager manager=getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,subjectFragmentOne,subjectFragmentOne.getTag()).commit();
-//
+            Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
+            chatIntent.putExtra("mUser", mUser);
+            startActivity(chatIntent);
+        }
+        else if (id == R.id.BulletinBoard)
+        {
 
-        } else if (id == R.id.ListOfSavedTutors) {
+        }
+        else if (id == R.id.StudentSessions)
+        {
 
-
-
-
-        } else if (id == R.id.BulletinBoard) {
-
-        } else if (id == R.id.StudentSessions) {
-
-
-
-        } else if (id == R.id.TeacherSessions) {
-
-
-        } else if (id == R.id.MySessions) {
-
-
-
-        } else if (id == R.id.MyClasses) {
-
-
-        } else if (id == R.id.PostBulletin) {
+        }
+        else if (id == R.id.TeacherSessions)
+        {
 
 
+        }
+      else if (id == R.id.MySessions)
+        {
 
-        } else if (id == R.id.AppointTutor) {
 
+        }
+        else if (id == R.id.MyClasses)
+        {
+
+
+        }
+        else if (id == R.id.PostBulletin)
+        {
+
+
+        }
+        else if (id == R.id.AppointTutor)
+        {
 
 
         }
@@ -195,56 +230,64 @@ public class Nav_MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        this.yearFinal=year;
-        this.monthFinal=month+1;
-        this.dayFinal=day;
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
+    {
+        this.yearFinal = year;
+        this.monthFinal = month + 1;
+        this.dayFinal = day;
 
-        Calendar c=Calendar.getInstance();
-        hour=c.get(Calendar.HOUR_OF_DAY);
-        minute=c.get(Calendar.MINUTE);
+        Calendar c = Calendar.getInstance();
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
 
-        TimePickerDialog timePickerDialog=new TimePickerDialog(Nav_MainActivity.this,AlertDialog.THEME_HOLO_DARK,Nav_MainActivity.this,hour,minute, DateFormat.is24HourFormat(this));
+        TimePickerDialog timePickerDialog = new TimePickerDialog(Nav_MainActivity.this, AlertDialog.THEME_HOLO_DARK, Nav_MainActivity.this, hour, minute, DateFormat.is24HourFormat(this));
         timePickerDialog.show();
     }
+
     @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute)
+    {
 
-        this.hourFinal=hour;
-        this.minuteFinal=minute;
-        String readthis="year: "+yearFinal+"\n"+
-                "month: "+monthFinal+"\n"+
-                "day: "+dayFinal+"\n"+
-                "hour: "+hourFinal+"\n"+
-                "minute: "+minuteFinal;
+        this.hourFinal = hour;
+        this.minuteFinal = minute;
+        String readthis = "year: " + yearFinal + "\n" +
+                "month: " + monthFinal + "\n" +
+                "day: " + dayFinal + "\n" +
+                "hour: " + hourFinal + "\n" +
+                "minute: " + minuteFinal;
 
-        Appointment appointment=new Appointment("TestEmail@g.fmarion.edu","Help with classes",monthFinal,dayFinal,yearFinal,hourFinal,minuteFinal);
-        AppointmentTask appointmentTask=new AppointmentTask(this,appointment);
+        Appointment appointment = new Appointment("TestEmail@g.fmarion.edu", "Help with classes", monthFinal, dayFinal, yearFinal, hourFinal, minuteFinal);
+        AppointmentTask appointmentTask = new AppointmentTask(this, appointment);
         appointmentTask.execute();
 
 
     }
-    public static class AppointmentTask extends AsyncTask<String, Void, String> {
+
+    public static class AppointmentTask extends AsyncTask<String, Void, String>
+    {
         Appointment appointment;
         AlertDialog.Builder RegorTry;
         AlertDialog alertDialog;
         Context context;
 
-        AppointmentTask(Context context,Appointment appointment) {
+        AppointmentTask(Context context, Appointment appointment)
+        {
             this.context = context;
-            this.appointment=appointment;
+            this.appointment = appointment;
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... params)
+        {
             String login_url = "http://10.10.103.185/insertAppointment.php";
-            String month=Integer.toString(appointment.month);
-            String day=Integer.toString(appointment.day);
-            String year=Integer.toString(appointment.year);
-            String hour=Integer.toString(appointment.hour);
-            String minute=Integer.toString(appointment.minute);
+            String month = Integer.toString(appointment.month);
+            String day = Integer.toString(appointment.day);
+            String year = Integer.toString(appointment.year);
+            String hour = Integer.toString(appointment.hour);
+            String minute = Integer.toString(appointment.minute);
 
-            try {
+            try
+            {
                 URL url = new URL(login_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
@@ -252,7 +295,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 httpURLConnection.setDoInput(true);
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                String post_data =  URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(appointment.EmailAddress, "UTF-8") + "&" + URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(appointment.Subject, "UTF-8")
+                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(appointment.EmailAddress, "UTF-8") + "&" + URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(appointment.Subject, "UTF-8")
                         + "&" + URLEncoder.encode("month", "UTF-8") + "=" + URLEncoder.encode(month, "UTF-8")
                         + "&" + URLEncoder.encode("day", "UTF-8") + "=" + URLEncoder.encode(day, "UTF-8")
                         + "&" + URLEncoder.encode("year", "UTF-8") + "=" + URLEncoder.encode(year, "UTF-8")
@@ -269,7 +312,8 @@ public class Nav_MainActivity extends AppCompatActivity
                 String result = "";
                 String line;
 
-                while ((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null)
+                {
                     result += line;
                 }
 
@@ -278,15 +322,14 @@ public class Nav_MainActivity extends AppCompatActivity
                 httpURLConnection.disconnect();
 
 
-
-
-
                 return result;
 
 
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException e)
+            {
                 e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
 
@@ -294,12 +337,14 @@ public class Nav_MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             super.onPreExecute();
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String s)
+        {
             super.onPostExecute(s);
         }
     }
