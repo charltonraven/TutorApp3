@@ -17,7 +17,6 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +36,7 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 
 import movingforward.tutorapp3.Entities.Appointment;
-import movingforward.tutorapp3.Entities.Teacher;
+import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
@@ -70,6 +68,7 @@ public class Nav_MainActivity extends AppCompatActivity
 
         Intent navIntent = getIntent();
         User mUser = (User) navIntent.getSerializableExtra("mUser");
+        mUser.setEmail(mUser.getEmail().trim());
 
         TextView tvType;
         TextView tvEmail;
@@ -94,6 +93,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                mUser.setPermission(Role.Tutor);
                 break;
             case "Student":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
@@ -101,6 +101,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                mUser.setPermission(Role.Student);
 
                 break;
             case "Teacher":
@@ -109,6 +110,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+                mUser.setPermission(Role.Teacher);
 
                 break;
         }
@@ -184,22 +186,24 @@ public class Nav_MainActivity extends AppCompatActivity
             User nUser = new User(mEmail, mPassword);
             mUser = nUser;
 
-            Intent chatIntent = new Intent(this, ChatActivity.class);
+            Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
             startActivity(chatIntent);
         }
         else if (id == R.id.BulletinBoard)
         {
+
         }
         else if (id == R.id.StudentSessions)
         {
+
         }
         else if (id == R.id.TeacherSessions)
         {
 
 
         }
-        else if (id == R.id.MySessions)
+      else if (id == R.id.MySessions)
         {
 
 

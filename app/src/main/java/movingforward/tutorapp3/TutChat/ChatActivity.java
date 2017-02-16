@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,44 +26,25 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.appinvite.AppInviteInvitation;
-//import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.appindexing.Action;
-import com.google.firebase.appindexing.FirebaseAppIndex;
-import com.google.firebase.appindexing.FirebaseUserActions;
-import com.google.firebase.appindexing.Indexable;
-import com.google.firebase.appindexing.builders.Indexables;
-import com.google.firebase.appindexing.builders.PersonBuilder;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import movingforward.tutorapp3.Activities.LoginActivity;
-import movingforward.tutorapp3.Entities.Teacher;
+import movingforward.tutorapp3.Activities.Nav_MainActivity;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
+
+//import com.google.android.gms.auth.api.Auth;
 
 public class ChatActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener
 {
+
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
     {
@@ -87,11 +67,12 @@ public class ChatActivity extends AppCompatActivity implements
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
-    private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
+    public FirebaseAuth.AuthStateListener mAuthListener;
+    public FirebaseAuth mFirebaseAuth;
     //  private GoogleApiClient mGoogleApiClient;
     private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
 
@@ -111,23 +92,51 @@ public class ChatActivity extends AppCompatActivity implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent i = getIntent();
-        User mUser = (User) i.getSerializableExtra("mUser");
+        final User mUser = (User) i.getSerializableExtra("mUser");
 
-        mFirebaseAuth.createUserWithEmailAndPassword(mUser.getEmail(), mUser.getPassword());
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mAuthListener=new FirebaseAuth.AuthStateListener(){
 
-        if (mFirebaseUser == null)
-        {
-            // Not signed in, launch the Sign In activity
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-            return;
-        }
-        else
-        {
-            mUsername = mFirebaseUser.getDisplayName();
-            mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-        }
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                mFirebaseUser=firebaseAuth.getCurrentUser();
+                if (mFirebaseUser != null) {
+                    // User is signed in
+                    Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
+
+                    // Authenticated successfully with authData
+                    Intent intent = new Intent(ChatActivity.this, Nav_MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+
+                } else {
+                    // User is signed out
+                    Log.d("TAG", "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+
+
+       // final DatabaseReference ref= FirebaseDatabase.getInstance().getReference();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth.createUserWithEmailAndPassword("cwilliams2638@g.fmarion.edu", "password").addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG,"Create"+task.isSuccessful());
+                if(task.isSuccessful()){
+                    Toast.makeText(ChatActivity.this,"HOLY SHIT IT WORKED !",Toast.LENGTH_SHORT).show();
+                }
+                if(!task.isSuccessful()){
+                    Toast.makeText(ChatActivity.this,"it failed",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
+
+
+
 
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -231,4 +240,5 @@ public class ChatActivity extends AppCompatActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
+
 }

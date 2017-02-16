@@ -49,6 +49,18 @@
         </activity>
 
         <activity android:name=".Activities.RegisterActivity"/>
+        <activity android:name=".TutChat.ChatActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="tutitup-71061.firebaseio.com"
+                    android:scheme="http"
+                    android:pathPrefix="/message"
+                    />
+            </intent-filter>
+        </activity>
 
         //added MyFBMS
         <service
