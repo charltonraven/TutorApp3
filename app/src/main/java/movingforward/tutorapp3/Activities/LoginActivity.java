@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import movingforward.tutorapp3.Entities.Role;
-import movingforward.tutorapp3.Entities.Student;
-import movingforward.tutorapp3.Entities.Teacher;
-import movingforward.tutorapp3.Entities.Tutor;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
@@ -367,53 +364,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(String result)
         {
+            RegorTry = new AlertDialog.Builder(context);
+            alertDialog.setMessage(result);
 
             if (result == null)
             {
                 result = "";
             }
 
-            RegorTry = new AlertDialog.Builder(context);
-            alertDialog.setMessage(result);
+            result=result.trim();
 
-            String Type = "";
-            String Email = "";
-            if (!result.equals(""))
-            {
-                String[] TypeEmail = result.split(" ");
-                Type = TypeEmail[0];
-                Email = TypeEmail[1];
-            }
 
-            if (!result.equals(""))
-            {
+            String Type;
+            String Email;
+            if(!result.contains("Login Not Successful")){
 
-                User mUser = new User(Email, password);
-
-                if (Type.contains("Student"))
+                if (!result.equals(""))
                 {
-                    mUser.setPermission(Role.Student);
-                }
-                else if (Type.contains("Teacher"))
-                {
-                    mUser.setPermission(Role.Teacher);
+                    String[] TypeEmail = result.split(" ");
+                    Type = TypeEmail[0];
+                    Email = TypeEmail[1];
+
+                    User mUser = new User(Email, password);
+
+                    if (Type.contains("Student"))
+                    {
+                        mUser.setPermission(Role.Student);
+                    }
+                    else if (Type.contains("Teacher"))
+                    {
+                        mUser.setPermission(Role.Teacher);
+
+                    }
+                    else if (Type.contains("Tutor"))
+                    {
+                        mUser.setPermission(Role.Tutor);
+                    }
+
+                    Intent navIntent = new Intent(context, Nav_MainActivity.class);
+                    navIntent.putExtra("mUser", mUser);
+
+                    alertDialog.setMessage("Login Successful");
+                    alertDialog.show();
+
+                    context.startActivity(navIntent);
 
                 }
-                else if (Type.contains("Tutor"))
-                {
-                    mUser.setPermission(Role.Tutor);
-                }
-
-                Intent navIntent = new Intent(context, Nav_MainActivity.class);
-                navIntent.putExtra("mUser", mUser);
-
-                alertDialog.setMessage("Login Successful");
-                alertDialog.show();
-
-                context.startActivity(navIntent);
-
-            }
-            else
+            } else
             {
                 RegorTry = new AlertDialog.Builder(context);
                 RegorTry.setTitle("Incorrect! Would you like to register");
