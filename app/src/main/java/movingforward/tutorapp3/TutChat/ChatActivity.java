@@ -45,6 +45,28 @@ public class ChatActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener
 {
 
+    private static final String TAG = "MainActivity";
+    public static final String MESSAGES_CHILD = "messages";
+    private static final int REQUEST_INVITE = 1;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
+    public static final String ANONYMOUS = "anonymous";
+    private static final String MESSAGE_SENT_EVENT = "message_sent";
+    private static FirebaseUser mFirebaseUser;
+    private String mUsername;
+    private String mPhotoUrl;
+    private SharedPreferences mSharedPreferences;
+    private static FirebaseAuth mFirebaseAuth;
+    //  private GoogleApiClient mGoogleApiClient;
+    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
+    public static FirebaseAuth.AuthStateListener mAuthListener;
+
+    private Button mSendButton;
+    private RecyclerView mMessageRecyclerView;
+    private LinearLayoutManager mLinearLayoutManager;
+    private ProgressBar mProgressBar;
+    private EditText mMessageEditText;
+
+    // Firebase instance variables
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
     {
@@ -61,29 +83,6 @@ public class ChatActivity extends AppCompatActivity implements
         }
     }
 
-    private static final String TAG = "MainActivity";
-    public static final String MESSAGES_CHILD = "messages";
-    private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
-    public static final String ANONYMOUS = "anonymous";
-    private static final String MESSAGE_SENT_EVENT = "message_sent";
-    private FirebaseUser mFirebaseUser;
-    private String mUsername;
-    private String mPhotoUrl;
-    private SharedPreferences mSharedPreferences;
-    public FirebaseAuth.AuthStateListener mAuthListener;
-    public FirebaseAuth mFirebaseAuth;
-    //  private GoogleApiClient mGoogleApiClient;
-    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
-
-    private Button mSendButton;
-    private RecyclerView mMessageRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ProgressBar mProgressBar;
-    private EditText mMessageEditText;
-
-    // Firebase instance variables
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -93,12 +92,10 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         final User mUser = (User) i.getSerializableExtra("mUser");
-
-        mAuthListener=new FirebaseAuth.AuthStateListener(){
-
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mFirebaseUser=firebaseAuth.getCurrentUser();
+                mFirebaseUser = firebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null) {
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
@@ -119,7 +116,7 @@ public class ChatActivity extends AppCompatActivity implements
 
        // final DatabaseReference ref= FirebaseDatabase.getInstance().getReference();
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseAuth.createUserWithEmailAndPassword("cwilliams2638@g.fmarion.edu", "password").addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+        mFirebaseAuth.createUserWithEmailAndPassword(mUser.getEmail(), mUser.getPassword()).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d(TAG,"Create"+task.isSuccessful());
@@ -193,10 +190,18 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        /*if (mAuthListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthListener);
+        }*/
+    }
+
+    @Override
     public void onStart()
     {
         super.onStart();
-        // Check if user is signed in.
+       // mFirebaseAuth.addAuthStateListener(mAuthListener);
         // TODO: Add code to check if user is signed in.
     }
 
