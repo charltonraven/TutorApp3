@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,13 +27,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.appindexing.Action;
+import com.google.firebase.appindexing.FirebaseAppIndex;
+import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.appindexing.Indexable;
+import com.google.firebase.appindexing.builders.Indexables;
+import com.google.firebase.appindexing.builders.PersonBuilder;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Activities.Nav_MainActivity;
@@ -64,7 +76,7 @@ public class ChatActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     public static final String MESSAGES_CHILD = "messages";
     private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 100;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
@@ -73,14 +85,17 @@ public class ChatActivity extends AppCompatActivity implements
     private SharedPreferences mSharedPreferences;
     public FirebaseAuth.AuthStateListener mAuthListener;
     public FirebaseAuth mFirebaseAuth;
-    //  private GoogleApiClient mGoogleApiClient;
-    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
+    private static final String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/message/";
+
+    private DatabaseReference mFirebaseDatabaseReference;
+    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
 
     private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
+    public User mUser;
 
 
     @Override
@@ -91,17 +106,24 @@ public class ChatActivity extends AppCompatActivity implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent i = getIntent();
-        final User mUser = (User) i.getSerializableExtra("mUser");
+        mUser = (User) i.getSerializableExtra("mUser");
+
+        mUsername = mUser.getEmail();
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-
-        mAuthListener=new FirebaseAuth.AuthStateListener(){
+        mAuthListener = new FirebaseAuth.AuthStateListener()
+        {
 
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mFirebaseUser=firebaseAuth.getCurrentUser();
-                if (mFirebaseUser != null) {
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+                mFirebaseUser = firebaseAuth.getCurrentUser();
+                if (mFirebaseUser != null)
+                {
+                    mUsername = mFirebaseUser.getDisplayName();
+                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
 
@@ -111,28 +133,19 @@ public class ChatActivity extends AppCompatActivity implements
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
 
-                } else {
+                }
+                else
+                {
                     // User is signed out
                     Log.d("TAG", "onAuthStateChanged:signed_out");
                 }
             }
         };
 
+        signIn(mUser.getEmail(), mUser.getPassword());
 
-       // final DatabaseReference ref= FirebaseDatabase.getInstance().getReference();
-
-        signIn(mUser.getEmail(),mUser.getPassword());
-
-
-
-
-
-
-
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API)
-//                .build();
+        mUsername = mFirebaseUser.getDisplayName();
+        mPhotoUrl = mFirebaseUser.getPhotoUrl() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
 
         // Initialize ProgressBar and RecyclerView.
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -141,7 +154,81 @@ public class ChatActivity extends AppCompatActivity implements
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+
+        // New child entries
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage,
+                MessageViewHolder>(
+                FriendlyMessage.class,
+                R.layout.item_message,
+                MessageViewHolder.class,
+                mFirebaseDatabaseReference.child(MESSAGES_CHILD))
+        {
+
+            @Override
+            protected FriendlyMessage parseSnapshot(DataSnapshot snapshot)
+            {
+                FriendlyMessage friendlyMessage = super.parseSnapshot(snapshot);
+                if (friendlyMessage != null)
+                {
+                    friendlyMessage.setId(snapshot.getKey());
+                }
+                return friendlyMessage;
+            }
+
+            @Override
+            protected void populateViewHolder(MessageViewHolder viewHolder,
+                                              FriendlyMessage friendlyMessage, int position)
+            {
+                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                viewHolder.messageTextView.setText(friendlyMessage.getText());
+                viewHolder.messengerTextView.setText(friendlyMessage.getName());
+                if (friendlyMessage.getPhotoUrl() == null)
+                {
+                    viewHolder.messengerImageView
+                            .setImageDrawable(ContextCompat
+                                    .getDrawable(ChatActivity.this,
+                                            R.drawable.ic_account_circle_black_36dp));
+                }
+                else
+                {
+                    Glide.with(ChatActivity.this)
+                            .load(friendlyMessage.getPhotoUrl())
+                            .into(viewHolder.messengerImageView);
+                }
+
+                // write this message to the on-device index
+                FirebaseAppIndex.getInstance().update(getMessageIndexable(friendlyMessage));
+
+                // log a view action on it
+                FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
+            }
+        };
+
+        mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver()
+        {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount)
+            {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int friendlyMessageCount = mFirebaseAdapter.getItemCount();
+                int lastVisiblePosition =
+                        mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+                // If the recycler view is initially being loaded or the
+                // user is at the bottom of the list, scroll to the bottom
+                // of the list to show the newly added message.
+                if (lastVisiblePosition == -1 ||
+                        (positionStart >= (friendlyMessageCount - 1) &&
+                                lastVisiblePosition == (positionStart - 1)))
+                {
+                    mMessageRecyclerView.scrollToPosition(positionStart);
+                }
+            }
+        });
+
+        mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mMessageRecyclerView.setAdapter(mFirebaseAdapter);
+
 
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mSharedPreferences
@@ -178,7 +265,13 @@ public class ChatActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view)
             {
-                // Send messages on click.
+                FriendlyMessage friendlyMessage = new
+                        FriendlyMessage(mMessageEditText.getText().toString(),
+                        mUsername,
+                        mPhotoUrl);
+                mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                        .push().setValue(friendlyMessage);
+                mMessageEditText.setText("");
             }
         });
     }
@@ -223,6 +316,38 @@ public class ChatActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    private Indexable getMessageIndexable(FriendlyMessage friendlyMessage)
+    {
+        mUsername = mUser.getEmail();
+        friendlyMessage.setName(mUsername);
+
+        PersonBuilder sender = Indexables.personBuilder()
+                .setIsSelf(mUsername == friendlyMessage.getName())
+                .setName(friendlyMessage.getName())
+                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId() + "/sender"));
+
+        PersonBuilder recipient = Indexables.personBuilder()
+                .setName(mUsername)
+                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId() + "/recipient"));
+
+        Indexable messageToIndex = Indexables.messageBuilder()
+                .setName(friendlyMessage.getText())
+                .setUrl(MESSAGE_URL.concat(friendlyMessage.getId()))
+                .setSender(sender)
+                .setRecipient(recipient)
+                .build();
+
+        return messageToIndex;
+    }
+
+    private Action getMessageViewAction(FriendlyMessage friendlyMessage)
+    {
+        return new Action.Builder(Action.Builder.VIEW_ACTION)
+                .setObject(friendlyMessage.getName(), MESSAGE_URL.concat(friendlyMessage.getId()))
+                .setMetadata(new Action.Metadata.Builder().setUpload(false))
+                .build();
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
@@ -231,39 +356,52 @@ public class ChatActivity extends AppCompatActivity implements
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
-    private void createAccount(String Email, String Password){
 
-        mFirebaseAuth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+    private void createAccount(String Email, String Password)
+    {
+
+        mFirebaseAuth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>()
+        {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d(TAG,"Create"+task.isSuccessful());
-                if(task.isSuccessful()){
-                    Toast.makeText(ChatActivity.this,"HOLY SHIT IT WORKED !",Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task)
+            {
+                Log.d(TAG, "Create" + task.isSuccessful());
+                if (task.isSuccessful())
+                {
+                    Toast.makeText(ChatActivity.this, "HOLY SHIT IT WORKED !", Toast.LENGTH_SHORT).show();
                 }
-                if(!task.isSuccessful()){
-                    Toast.makeText(ChatActivity.this,"it failed",Toast.LENGTH_SHORT).show();
+                if (!task.isSuccessful())
+                {
+                    Toast.makeText(ChatActivity.this, "it failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
-    private void signIn(final String Email, final String Password){
 
-        mFirebaseAuth.signInWithEmailAndPassword(Email,Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+    private void signIn(final String Email, final String Password)
+    {
+
+        mFirebaseAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>()
+        {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Toast.makeText(ChatActivity.this,"Sign in Successful",Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task)
+            {
+                Toast.makeText(ChatActivity.this, "Sign in Successful", Toast.LENGTH_SHORT).show();
 
-                if(!task.isSuccessful()){
-                    Toast.makeText(ChatActivity.this,"Sign in NOT Successful",Toast.LENGTH_SHORT).show();
-                    Toast.makeText(ChatActivity.this,"Attempting to create user",Toast.LENGTH_SHORT).show();
-                    createAccount(Email,Password);
+                if (!task.isSuccessful())
+                {
+                    Toast.makeText(ChatActivity.this, "Sign in NOT Successful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Attempting to create user", Toast.LENGTH_SHORT).show();
+                    createAccount(Email, Password);
                 }
             }
         });
 
     }
-    private void signOut(){
+
+    private void signOut()
+    {
         mFirebaseAuth.signOut();
     }
 
