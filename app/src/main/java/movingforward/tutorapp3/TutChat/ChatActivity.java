@@ -45,26 +45,6 @@ public class ChatActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener
 {
 
-    private static final String TAG = "MainActivity";
-    public static final String MESSAGES_CHILD = "messages";
-    private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
-    public static final String ANONYMOUS = "anonymous";
-    private static final String MESSAGE_SENT_EVENT = "message_sent";
-    private static FirebaseUser mFirebaseUser;
-    private String mUsername;
-    private String mPhotoUrl;
-    private SharedPreferences mSharedPreferences;
-    private static FirebaseAuth mFirebaseAuth;
-    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
-    public static FirebaseAuth.AuthStateListener mAuthListener;
-
-    private Button mSendButton;
-    private RecyclerView mMessageRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ProgressBar mProgressBar;
-    private EditText mMessageEditText;
-
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
     {
@@ -81,6 +61,28 @@ public class ChatActivity extends AppCompatActivity implements
         }
     }
 
+    private static final String TAG = "MainActivity";
+    public static final String MESSAGES_CHILD = "messages";
+    private static final int REQUEST_INVITE = 1;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
+    public static final String ANONYMOUS = "anonymous";
+    private static final String MESSAGE_SENT_EVENT = "message_sent";
+    private FirebaseUser mFirebaseUser;
+    private String mUsername;
+    private String mPhotoUrl;
+    private SharedPreferences mSharedPreferences;
+    public FirebaseAuth.AuthStateListener mAuthListener;
+    public FirebaseAuth mFirebaseAuth;
+    //  private GoogleApiClient mGoogleApiClient;
+    private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
+
+    private Button mSendButton;
+    private RecyclerView mMessageRecyclerView;
+    private LinearLayoutManager mLinearLayoutManager;
+    private ProgressBar mProgressBar;
+    private EditText mMessageEditText;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -90,10 +92,15 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         final User mUser = (User) i.getSerializableExtra("mUser");
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+
+        mAuthListener=new FirebaseAuth.AuthStateListener(){
+
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mFirebaseUser = firebaseAuth.getCurrentUser();
+                mFirebaseUser=firebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null) {
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
@@ -113,19 +120,8 @@ public class ChatActivity extends AppCompatActivity implements
 
 
        // final DatabaseReference ref= FirebaseDatabase.getInstance().getReference();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseAuth.createUserWithEmailAndPassword(mUser.getEmail(), mUser.getPassword()).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d(TAG,"Create"+task.isSuccessful());
-                if(task.isSuccessful()){
-                    Toast.makeText(ChatActivity.this,"HOLY SHIT IT WORKED !",Toast.LENGTH_SHORT).show();
-                }
-                if(!task.isSuccessful()){
-                    Toast.makeText(ChatActivity.this,"it failed",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
+        signIn(mUser.getEmail(),mUser.getPassword());
 
 
 
@@ -188,18 +184,10 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
     public void onStart()
     {
         super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthListener);
+        // Check if user is signed in.
         // TODO: Add code to check if user is signed in.
     }
 
@@ -242,6 +230,41 @@ public class ChatActivity extends AppCompatActivity implements
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+    private void createAccount(String Email, String Password){
+
+        mFirebaseAuth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG,"Create"+task.isSuccessful());
+                if(task.isSuccessful()){
+                    Toast.makeText(ChatActivity.this,"HOLY SHIT IT WORKED !",Toast.LENGTH_SHORT).show();
+                }
+                if(!task.isSuccessful()){
+                    Toast.makeText(ChatActivity.this,"it failed",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+    private void signIn(final String Email, final String Password){
+
+        mFirebaseAuth.signInWithEmailAndPassword(Email,Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Toast.makeText(ChatActivity.this,"Sign in Successful",Toast.LENGTH_SHORT).show();
+
+                if(!task.isSuccessful()){
+                    Toast.makeText(ChatActivity.this,"Sign in NOT Successful",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this,"Attempting to create user",Toast.LENGTH_SHORT).show();
+                    createAccount(Email,Password);
+                }
+            }
+        });
+
+    }
+    private void signOut(){
+        mFirebaseAuth.signOut();
     }
 
 }
