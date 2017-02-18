@@ -56,7 +56,6 @@ public class ChatActivity extends AppCompatActivity implements
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
     private static FirebaseAuth mFirebaseAuth;
-    //  private GoogleApiClient mGoogleApiClient;
     private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
     public static FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -66,7 +65,6 @@ public class ChatActivity extends AppCompatActivity implements
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
 
-    // Firebase instance variables
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
     {
@@ -192,16 +190,16 @@ public class ChatActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        /*if (mAuthListener != null) {
+        if (mAuthListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthListener);
-        }*/
+        }
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-       // mFirebaseAuth.addAuthStateListener(mAuthListener);
+        mFirebaseAuth.addAuthStateListener(mAuthListener);
         // TODO: Add code to check if user is signed in.
     }
 

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,7 +24,7 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -77,4 +77,21 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+    <Button
+        android:text="DEBUG Tutor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/debugTutor_button"
+        android:layout_alignBaseline="@+id/debugStudent_Button"
+        android:layout_alignBottom="@+id/debugStudent_Button"
+        android:layout_toRightOf="@+id/debugStudent_Button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:id="@+id/debugStudent_Button"
+        android:text="DEBUG student"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_form"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

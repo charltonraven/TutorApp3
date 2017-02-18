@@ -95,15 +95,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button dubugStudentButton = (Button) findViewById(R.id.debugStudent_Button);
+        Button dubugTutorButton = (Button) findViewById(R.id.debugTutor_button);
+
         mEmailSignInButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
                 attemptLogin();
-                //  startActivity(new Intent(LoginActivity.this, Nav_MainActivity.class));
+            }
+        });
 
+        dubugStudentButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                attemptLogin("DLeon4743@gmail.com", "password");
+            }
+        });
 
+        dubugTutorButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                attemptLogin("CWilliams2638@g.fmarion.edu", "password");
             }
         });
 
@@ -187,13 +205,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(this);
             mAuthTask.execute(who, email, password);
 
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    private void attemptLogin(String email, String password)
+    {
+
+        try
+        {
+            String who = "login";
+
+            mAuthTask = new UserLoginTask(this);
+            mAuthTask.execute(who, email, password);
 
         } catch (Exception e)
         {
             System.out.println(e);
         }
-
-
     }
 
 
