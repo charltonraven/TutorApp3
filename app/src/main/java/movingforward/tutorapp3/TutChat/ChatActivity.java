@@ -368,7 +368,7 @@ public class ChatActivity extends AppCompatActivity implements
                 Log.d(TAG, "Create" + task.isSuccessful());
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "HOLY SHIT IT WORKED !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "IT WORKED !", Toast.LENGTH_SHORT).show();
                 }
                 if (!task.isSuccessful())
                 {
