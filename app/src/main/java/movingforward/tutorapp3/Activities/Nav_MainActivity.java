@@ -50,6 +50,7 @@ public class Nav_MainActivity extends AppCompatActivity
     int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
     NavigationView navigationView;
     User mUser;
+    User nUser;
     String mEmail;
     String mPassword;
 
@@ -183,11 +184,18 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.ListOfSavedTutors)
         {
-            User nUser = new User(mEmail, mPassword);
-            mUser = nUser;
+            User tempUser = new User(mEmail, mPassword);
+            mUser = tempUser;
+
+            if(mEmail.equals("dleon4743@gmail.com"))
+                tempUser = new User("cwilliams2638@g.fmarion.edu", mPassword);
+            else
+                tempUser = new User("dleon4743@gmail.com", mPassword);
+            nUser = tempUser;
 
             Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
+            chatIntent.putExtra("nUser", nUser);
             startActivity(chatIntent);
         }
         else if (id == R.id.BulletinBoard)
