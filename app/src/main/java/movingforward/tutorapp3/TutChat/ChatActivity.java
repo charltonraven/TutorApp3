@@ -6,6 +6,7 @@ package movingforward.tutorapp3.TutChat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -117,8 +118,12 @@ public class ChatActivity extends AppCompatActivity implements
         nUsername = nUser.getEmail();
 
         MESSAGES_CHILD = mUsername.compareTo(mUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + nUsername);
+        MESSAGES_CHILD += "/";
 
-        MESSAGE_URL += MESSAGES_CHILD + "/";
+        MESSAGE_URL += MESSAGES_CHILD;
+
+        Uri mUri = i.getData();
+        String pathPrefix = mUri.getQueryParameter(MESSAGES_CHILD);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();

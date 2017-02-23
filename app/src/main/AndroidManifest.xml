@@ -65,9 +65,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="tutitup-71061.firebaseio.com"
                     android:scheme="http"
-                    android:pathPrefix="/message"
+                    android:host="tutitup-71061.firebaseio.com"
+                    android:pathPattern="/.*"
                     />
             </intent-filter>
         </activity>
