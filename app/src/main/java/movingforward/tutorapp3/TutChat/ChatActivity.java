@@ -48,6 +48,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import movingforward.tutorapp3.Activities.LoginActivity;
 import movingforward.tutorapp3.Activities.Nav_MainActivity;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
@@ -113,20 +114,17 @@ public class ChatActivity extends AppCompatActivity implements
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
         mUsername = mUser.getEmail();
+        mUsername = mUsername.substring(0, mUsername.length()-15);
 
         nUser = (User) i.getSerializableExtra("nUser");
         nUsername = nUser.getEmail();
+        nUsername = nUsername.substring(0, nUsername.length()-15);
 
-        MESSAGES_CHILD = mUsername.compareTo(mUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + nUsername);
-        MESSAGES_CHILD += "/";
-
-        MESSAGE_URL += MESSAGES_CHILD;
-
-        Uri mUri = i.getData();
-        String pathPrefix = mUri.getQueryParameter(MESSAGES_CHILD);
+        MESSAGES_CHILD = mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -328,7 +326,15 @@ public class ChatActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                mUsername = ANONYMOUS;
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private Indexable getMessageIndexable(FriendlyMessage friendlyMessage)

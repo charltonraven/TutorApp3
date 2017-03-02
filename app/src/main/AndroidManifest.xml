@@ -51,7 +51,7 @@
 
                 <data
                     android:host="tutitup-71061.firebaseio.com"
-                    android:pathPrefix="/message"
+                    android:pathPattern="*"
                     android:scheme="http"
                     />
 
