@@ -139,7 +139,7 @@ public class ChatActivity extends AppCompatActivity implements
                 if (mFirebaseUser != null)
                 {
                     mUsername = mFirebaseUser.getDisplayName();
-                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
 
@@ -159,8 +159,6 @@ public class ChatActivity extends AppCompatActivity implements
         };
 
         signIn(mUser.getEmail(), mUser.getPassword());
-
-        mPhotoUrl = mFirebaseUser.getPhotoUrl() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
 
         // Initialize ProgressBar and RecyclerView.
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
