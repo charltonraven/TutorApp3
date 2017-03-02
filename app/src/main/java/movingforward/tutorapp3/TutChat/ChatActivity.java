@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -159,7 +160,6 @@ public class ChatActivity extends AppCompatActivity implements
 
         signIn(mUser.getEmail(), mUser.getPassword());
 
-        mUsername = mFirebaseUser.getDisplayName();
         mPhotoUrl = mFirebaseUser.getPhotoUrl() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
 
         // Initialize ProgressBar and RecyclerView.
@@ -198,7 +198,7 @@ public class ChatActivity extends AppCompatActivity implements
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 viewHolder.messageTextView.setText(friendlyMessage.getText());
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
-                if (friendlyMessage.getPhotoUrl() == null)
+                if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
                 {
                     viewHolder.messengerImageView
                             .setImageDrawable(ContextCompat
