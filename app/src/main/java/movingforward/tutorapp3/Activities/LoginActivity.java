@@ -416,7 +416,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Type = TypeEmail[0];
                     Email = TypeEmail[1];
 
-                    User mUser = new User(Email, password);
+                    User mUser = new User(Email.toLowerCase(), password);
 
                     if (Type.contains("Student"))
                     {

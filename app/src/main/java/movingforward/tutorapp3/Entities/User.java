@@ -12,10 +12,21 @@ public class User implements Serializable {
     String password;
     Role permission;
 
+    String firebaseToken = "";
+
+    public User(){};
+
     public User(String email, String password)
     {
         this.email = email;
         this.password = password;
+    }
+
+    public User(String email, String password, String firebaseToken)
+    {
+        this.email = email;
+        this.password = password;
+        this.firebaseToken = firebaseToken;
     }
 
     public String getEmail()
@@ -46,6 +57,16 @@ public class User implements Serializable {
     public Role getPermission()
     {
         return permission;
+    }
+
+    public String getFirebaseToken()
+    {
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken)
+    {
+        this.firebaseToken = firebaseToken;
     }
 }
 

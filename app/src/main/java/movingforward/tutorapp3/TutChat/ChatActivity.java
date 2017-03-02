@@ -6,6 +6,7 @@ package movingforward.tutorapp3.TutChat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -47,6 +48,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import movingforward.tutorapp3.Activities.LoginActivity;
 import movingforward.tutorapp3.Activities.Nav_MainActivity;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
@@ -74,18 +76,17 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     private static final String TAG = "MainActivity";
-    public static final String MESSAGES_CHILD = "messages";
+    public static String MESSAGES_CHILD;
     private static final int REQUEST_INVITE = 1;
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 100;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
-    private String mUsername;
     private String mPhotoUrl;
     private SharedPreferences mSharedPreferences;
     public FirebaseAuth.AuthStateListener mAuthListener;
     public FirebaseAuth mFirebaseAuth;
-    private static final String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/message/";
+    private static String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/";
 
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
@@ -96,6 +97,9 @@ public class ChatActivity extends AppCompatActivity implements
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
     public User mUser;
+    private String mUsername;
+    public User nUser;
+    private String nUsername;
 
 
     @Override
@@ -105,13 +109,22 @@ public class ChatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+
+
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
-
         mUsername = mUser.getEmail();
+        mUsername = mUsername.substring(0, mUsername.length()-15);
+
+        nUser = (User) i.getSerializableExtra("nUser");
+        nUsername = nUser.getEmail();
+        nUsername = nUsername.substring(0, nUsername.length()-15);
+
+        MESSAGES_CHILD = mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -313,7 +326,15 @@ public class ChatActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                mUsername = ANONYMOUS;
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private Indexable getMessageIndexable(FriendlyMessage friendlyMessage)
@@ -368,7 +389,7 @@ public class ChatActivity extends AppCompatActivity implements
                 Log.d(TAG, "Create" + task.isSuccessful());
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "HOLY SHIT IT WORKED !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "IT WORKED !", Toast.LENGTH_SHORT).show();
                 }
                 if (!task.isSuccessful())
                 {
