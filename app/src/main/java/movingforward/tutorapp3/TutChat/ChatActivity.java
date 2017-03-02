@@ -114,11 +114,13 @@ public class ChatActivity extends AppCompatActivity implements
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
         mUsername = mUser.getEmail();
-        mUsername = mUsername.substring(0, mUsername.length()-15);
+        String[] parts = mUsername.split("@");
+        mUsername = parts[0];
 
         nUser = (User) i.getSerializableExtra("nUser");
         nUsername = nUser.getEmail();
-        nUsername = nUsername.substring(0, nUsername.length()-15);
+        parts = nUsername.split("@");
+        nUsername = parts[0];
 
         MESSAGES_CHILD = mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername);
 
@@ -340,6 +342,9 @@ public class ChatActivity extends AppCompatActivity implements
     private Indexable getMessageIndexable(FriendlyMessage friendlyMessage)
     {
         mUsername = mUser.getEmail();
+        String[] parts = mUsername.split("@");
+        mUsername = parts[0];
+
         friendlyMessage.setName(mUsername);
 
         PersonBuilder sender = Indexables.personBuilder()
