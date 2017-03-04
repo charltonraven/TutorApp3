@@ -79,7 +79,7 @@ public class ChatActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     public static String MESSAGES_CHILD;
     private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 100;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
