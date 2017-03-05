@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -57,6 +58,7 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav__main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,7 +69,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         Intent navIntent = getIntent();
-        User mUser = (User) navIntent.getSerializableExtra("mUser");
+        mUser = (User) navIntent.getSerializableExtra("mUser");
         mUser.setEmail(mUser.getEmail().trim());
 
         TextView tvType;
@@ -87,7 +89,7 @@ public class Nav_MainActivity extends AppCompatActivity
         tvEmail.setText(mEmail);
         tvType.setText("Logged in as " + UserType.toUpperCase());
 
-        switch (UserType)
+        switch (mUser.getPermission().toString())
         {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
@@ -172,19 +174,25 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
+        //User nUser = new User(mEmail, mPassword);
+        //mUser = nUser;
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("mUser",mUser);
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.FindClass)
         {
-            BySubjectFragmentOne subjectFragmentOne = new BySubjectFragmentOne();
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            BySubjectFragmentOne subjectFragmentOne = BySubjectFragmentOne.newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
+
         }
         else if (id == R.id.ListOfSavedTutors)
         {
-            User nUser = new User(mEmail, mPassword);
-            mUser = nUser;
 
             Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);

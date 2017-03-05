@@ -14,6 +14,7 @@
         android:layout_width="200px"
         android:layout_height="200px"
         android:id="@+id/tv_Class_Name"
+        android:focusable="false"
         android:text="Class Name"
         android:textSize="12pt"
         android:layout_weight="0.50" />
@@ -21,6 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="200px"
+        android:focusable="false"
         android:id="@+id/tv_TutorName"
         android:text="Tutor Name"
         android:textSize="12pt"
@@ -28,6 +30,7 @@
 
     <Button
         android:layout_width="100px"
+        android:focusable="false"
         android:layout_height="100px"
         android:id="@+id/grid_TutorSave"
         android:text="Save"

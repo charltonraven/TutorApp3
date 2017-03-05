@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.getImageText;
 import movingforward.tutorapp3.R;
 
@@ -35,6 +37,8 @@ import movingforward.tutorapp3.R;
 public class BySubjectFragmentOne extends Fragment {
     SearchView svClass;
     CustomAdapter adapter;
+    User mUser;
+
 
 
     // references to our images
@@ -79,20 +83,12 @@ public class BySubjectFragmentOne extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BySubjectFragmentOne.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static BySubjectFragmentOne newInstance(String param1, String param2) {
+    public static BySubjectFragmentOne newInstance(User user) {
         BySubjectFragmentOne fragment = new BySubjectFragmentOne();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("mUser",user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -111,6 +107,7 @@ public class BySubjectFragmentOne extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        mUser= (User) getArguments().getSerializable("mUser");
 
         final View rootView = inflater.inflate(R.layout.fragment_by_subject_fragment_one, container, false);
         SearchView svClass = (SearchView) rootView.findViewById(R.id.svClass);
@@ -122,12 +119,15 @@ public class BySubjectFragmentOne extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 String ClassName=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
-
                 Tutor_list tutor_list=new Tutor_list();
                 tutor_list.setClassName(ClassName);
+
+                FragmentTransaction ft=getActivity().getSupportFragmentManager().beginTransaction();//cw
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN); //cw
+                Bundle bundle=new Bundle();//cw
+                bundle.putSerializable("mUser",mUser);//cw
+                tutor_list.setArguments(bundle);//cw
                 FragmentManager manager=getFragmentManager();
                 manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tutor_list,tutor_list.getTag()).commit();
 
