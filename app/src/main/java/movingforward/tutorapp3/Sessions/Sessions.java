@@ -2,12 +2,24 @@ package movingforward.tutorapp3.Sessions;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import movingforward.tutorapp3.Entities.TutorList;
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
+import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
+import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
 /**
@@ -19,6 +31,12 @@ import movingforward.tutorapp3.R;
  * create an instance of this fragment.
  */
 public class Sessions extends Fragment {
+
+    TextView tvClassName;
+    TextView tvTutorName;
+    ListView lv;
+    TutorListAdapter adapter;
+    ArrayList<TutorList> TutorsAndClasses=new ArrayList<>();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,7 +83,15 @@ public class Sessions extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        final View rootview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
+        Bundle bundle=getArguments();
+
+
+        lv = (ListView) rootview.findViewById(R.id.lvTutorList);
+
+        //get ClassName from BySubject
+        lv.setAdapter(adapter);
+
         return inflater.inflate(R.layout.fragment_sessions, container, false);
     }
 
@@ -106,5 +132,58 @@ public class Sessions extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    private class SessionItemList extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpHandler sh = new HttpHandler();
+
+            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
+
+            //Making a request to url and getting response
+            String jsonStr = sh.makeServiceCallPost(TutorList_url, null, null, null, null);
+
+
+            if (jsonStr != null) {
+                try {
+                    //JSONObject jsonObject = new JSONObject(jsonStr);
+
+
+                    //getting JSON Array node
+                    JSONArray TutorList = new JSONArray(jsonStr);
+                    //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
+                    for (int i = 0; i < TutorList.length(); i++) {
+                        JSONObject T = TutorList.getJSONObject(i);
+                        String Class = T.getString("ClassTutor");
+                        String FName = T.getString("firstName");
+                        String LName = T.getString("lastName");
+                        TutorsAndClasses.add(new TutorList(Class, FName, LName));
+
+                        String Test = "Test";
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //Toast.makeText(getActivity(), "Generating Tutors", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+
+            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
+            lv.setAdapter(adapter);
+        }
     }
 }

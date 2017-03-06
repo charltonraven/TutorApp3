@@ -108,7 +108,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 break;
             case "Teacher":
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
-                navigationView.getMenu().findItem(R.id.ListOfSavedTutors).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TutorSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
@@ -191,7 +191,7 @@ public class Nav_MainActivity extends AppCompatActivity
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
 
         }
-        else if (id == R.id.ListOfSavedTutors)
+        else if (id == R.id.TutorSessions)
         {
 
             Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
@@ -204,6 +204,12 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.StudentSessions)
         {
+            //for Tutor
+
+        }
+        else if (id == R.id.TutorSessions)
+        {
+            //for student
 
         }
         else if (id == R.id.TeacherSessions)
