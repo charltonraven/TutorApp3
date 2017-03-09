@@ -15,22 +15,22 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class HttpHandler2 {
+public class HttpListHandler {
 
     private static final String TAG = HttpHandler.class.getSimpleName();
 
-    public HttpHandler2() {
+    public HttpListHandler() {
 
     }
 
 
 
-    public String makeServiceCallPost(String reqUrl,String [] ACFL,String [] saveInfo) {
+    public String makeServiceCallPost(String reqUrl,String userID,String who) {
         String response = null;
 
         //Runs the Tutor_List to generate Tutors
 
-        if(ACFL != null) {
+        if(userID != null) {
             try {
                 URL url = new URL(reqUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -40,7 +40,7 @@ public class HttpHandler2 {
 
                 OutputStream out = conn.getOutputStream();
 
-                response = PutInVariables(out, conn, ACFL,null);
+                response = PutInVariables(out, conn, userID,who);
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLException: " + e.getMessage());
             } catch (ProtocolException e) {
@@ -54,29 +54,7 @@ public class HttpHandler2 {
 
 
         }
-        if(saveInfo!=null){
-            try{
-            URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
 
-            OutputStream out = conn.getOutputStream();
-                //String test="INSERT INTO tutor_chathistory VALUES('"+ saveInfo[0]+"','"+ saveInfo[1]+"','"+ saveInfo[2].trim()+"','"+ saveInfo[3]+"','"+ saveInfo[4]+"','2017-03-05');";
-            response = PutInVariables(out, conn, null,saveInfo);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "MalformedURLException: " + e.getMessage());
-        } catch (ProtocolException e) {
-            Log.e(TAG, "ProtocolException: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
-        }
-
-            return response;
-        }
         return response;
     }
 
@@ -105,13 +83,13 @@ public class HttpHandler2 {
     }
 
 
-    private String PutInVariables(OutputStream out,HttpURLConnection conn,String [] ACFL,String [] saveInfo) {
+    private String PutInVariables(OutputStream out,HttpURLConnection conn,String userID,String who) {
         String response = "";
 
-        if(ACFL!=null) {
+        if(userID!=null) {
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                String post_data = URLEncoder.encode("Abbr", "UTF-8") + "=" + URLEncoder.encode(ACFL[0], "UTF-8") + "&" + URLEncoder.encode("ClassName", "UTF-8") + "=" + URLEncoder.encode(ACFL[1], "UTF-8") + "&" + URLEncoder.encode("firstName", "UTF-8") + "=" + URLEncoder.encode(ACFL[2], "UTF-8") + "&" + URLEncoder.encode("lastName", "UTF-8") + "=" + URLEncoder.encode(ACFL[3], "UTF-8");
+                String post_data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8") + "&" + URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode("Student", "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
@@ -121,25 +99,6 @@ public class HttpHandler2 {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return response;
-        }
-
-        if(saveInfo!=null){
-            try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(saveInfo[0], "UTF-8") + "&" +URLEncoder.encode("toID", "UTF-8") + "=" + URLEncoder.encode(saveInfo[1], "UTF-8") + "&" + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(saveInfo[2], "UTF-8") + "&" + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(saveInfo[3], "UTF-8")+ "&" + URLEncoder.encode("classname", "UTF-8") + "=" + URLEncoder.encode(saveInfo[4], "UTF-8")+ "&" + URLEncoder.encode("fromID", "UTF-8") + "=" + URLEncoder.encode(saveInfo[5], "UTF-8");
-                bufferedWriter.write(post_data);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                out.close();
-                InputStream in = conn.getInputStream();
-                response = convertStreamToString(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
 
             return response;
         }

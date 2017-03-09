@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import movingforward.tutorapp3.Entities.TutorList;
+import movingforward.tutorapp3.Entities.ListItemHolder;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
@@ -42,7 +42,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
     ListView lv;
     InputStream content;
     TutorListAdapter adapter;
-    ArrayList<TutorList> TutorsAndClasses = new ArrayList<>();
+    ArrayList<ListItemHolder> TutorsAndClasses = new ArrayList<>();
     private SaveHistoryTask saveHistoryTask=null;
 
     String line = null;
@@ -163,10 +163,11 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         String [] FirstLastName=tutorname.split(" ");
         String FirstName=FirstLastName[0];
         String LastName=FirstLastName[1];
+        //String studentPermission="Student";
 
 
         try {
-            new SaveHistoryTask().execute(Abbr,ClassName,FirstName,LastName).get();
+            new SaveHistoryTask().execute(Abbr,ClassName,FirstName,LastName,"Student").get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -202,26 +203,29 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         protected String doInBackground(String... params) {
             String Abbr=params[0];
             String ClassName=params[1];
-            String FirstName=params[2];
-            String LastName=params[3];
-            String role=mUser.getPermission().toString();
+            String tutorFirstName=params[2];
+            String tutorLastName=params[3];
+            //String role=mUser.getPermission().toString();
+            String role=params[4];
+            String studnetFirstName;
+            String studentLastName;
 
             String Email="";
-            String [] ACFL={Abbr,ClassName,FirstName,LastName};
+            String [] ACFLFL={Abbr,ClassName,tutorFirstName,tutorLastName};
 
             HttpHandler2 sh=new HttpHandler2();
 
             String getEmail = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getEmailAddress.php";
-             Email=sh.makeServiceCallPost(getEmail,ACFL,null);
+             Email=sh.makeServiceCallPost(getEmail,ACFLFL,null);
             String toID=Email.split("\\@")[0];
             String fromID=mUser.getEmail().split("\\@")[0];
 
 
 
 
-            String [] saveInfo={role,toID,Email,FirstName+" "+LastName,Abbr+ClassName,fromID};
+            String [] saveInfo={role,toID,Email,tutorFirstName+" "+tutorLastName,Abbr+ClassName,fromID};
             String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo);
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo);//saves to Student
 
             System.out.println("");
             return null;
@@ -247,7 +251,8 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
 
             //Making a request to url and getting response
-            String jsonStr = sh.makeServiceCallPost(TutorList_url, ClassName, null, null, null);
+            String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName,null,null,null);
+
 
 
             if (jsonStr != null) {
@@ -258,14 +263,14 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
                     //getting JSON Array node
                     JSONArray TutorList = new JSONArray(jsonStr);
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
-                    for (int i = 0; i < TutorList.length(); i++) {
+                    for(int i=0;i<TutorList.length();i++){
                         JSONObject T = TutorList.getJSONObject(i);
-                        String Class = T.getString("ClassTutor");
-                        String FName = T.getString("firstName");
-                        String LName = T.getString("lastName");
-                        TutorsAndClasses.add(new TutorList(Class, FName, LName));
+                        String Class=T.getString("ClassTutor");
+                        String FName=T.getString("firstName");
+                        String LName=T.getString("lastName");
+                        TutorsAndClasses.add(new ListItemHolder(Class,FName,LName));
 
-                        String Test = "Test";
+                        String Test="Test";
                     }
 
                 } catch (Exception e) {
@@ -274,6 +279,8 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             }
             return null;
         }
+
+
 
         @Override
         protected void onPreExecute() {

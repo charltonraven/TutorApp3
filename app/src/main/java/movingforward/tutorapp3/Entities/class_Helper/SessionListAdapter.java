@@ -19,17 +19,17 @@ import movingforward.tutorapp3.R;
  * Created by raven on 3/2/2017.
  */
 
-public class TutorListAdapter extends ArrayAdapter<Tutor_list> implements AdapterView.OnItemClickListener {
+public class SessionListAdapter extends ArrayAdapter<Tutor_list> implements AdapterView.OnItemClickListener {
 
 
     ArrayList<ListItemHolder> values;
 
-    public TutorListAdapter(Context context, int resource, ArrayList<ListItemHolder> values) {
+    public SessionListAdapter(Context context, int resource, ArrayList<ListItemHolder> values) {
         super(context, resource);
         this.values = values;
     }
 
-    public TutorListAdapter(Context context, int resource) {
+    public SessionListAdapter(Context context, int resource) {
         super(context, resource);
     }
 
@@ -79,11 +79,12 @@ public class TutorListAdapter extends ArrayAdapter<Tutor_list> implements Adapte
         tvTutorName = (TextView) v.findViewById(R.id.tv_TutorName);
 
         tvClassName.setText(values.get(position).ClassTutored);
-        tvTutorName.setText(values.get(position).getfName() + " " + values.get(position).getlName());
+        tvTutorName.setText(values.get(position).fullName);
 
 
         return v;
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

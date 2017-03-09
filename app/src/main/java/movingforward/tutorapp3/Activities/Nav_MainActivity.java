@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -41,10 +42,14 @@ import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.Sessions.Sessions;
+
+import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
+import static movingforward.tutorapp3.R.id.TutorSessions;
+//import static movingforward.tutorapp3.Sessions.Sessions.newInstance;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener
+        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,Sessions.OnFragmentInteractionListener
 {
 
     int day, month, year, hour, minute;
@@ -108,7 +113,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 break;
             case "Teacher":
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
-                navigationView.getMenu().findItem(R.id.TutorSessions).setVisible(false);
+                navigationView.getMenu().findItem(TutorSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
@@ -186,17 +191,24 @@ public class Nav_MainActivity extends AppCompatActivity
         {
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            BySubjectFragmentOne subjectFragmentOne = BySubjectFragmentOne.newInstance(mUser);
+            BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
 
         }
-        else if (id == R.id.TutorSessions)
+        else if (id == TutorSessions)
         {
 
-            Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
+           /* Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
-            startActivity(chatIntent);
+            startActivity(chatIntent);*/
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions TutorSessions = Sessions.newInstance(mUser,"tutor");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
+
+
         }
         else if (id == R.id.BulletinBoard)
         {
@@ -204,16 +216,19 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.StudentSessions)
         {
-            //for Tutor
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions StudentSessions = Sessions.newInstance(mUser,"student");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
 
         }
-        else if (id == R.id.TutorSessions)
-        {
-            //for student
 
-        }
         else if (id == R.id.TeacherSessions)
         {
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions TeacherSession = Sessions.newInstance(mUser,"teacher");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
 
 
         }
@@ -274,6 +289,11 @@ public class Nav_MainActivity extends AppCompatActivity
         AppointmentTask appointmentTask = new AppointmentTask(this, appointment);
         appointmentTask.execute();
 
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 

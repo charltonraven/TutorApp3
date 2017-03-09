@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -15,10 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-import movingforward.tutorapp3.Entities.TutorList;
-import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
-import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
+import movingforward.tutorapp3.Entities.ListItemHolder;
+import movingforward.tutorapp3.Entities.User;
+import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
+import movingforward.tutorapp3.Entities.class_Helper.SessionListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
@@ -30,13 +33,16 @@ import movingforward.tutorapp3.R;
  * Use the {@link Sessions#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Sessions extends Fragment {
+public class Sessions extends Fragment implements AdapterView.OnItemClickListener {
 
     TextView tvClassName;
     TextView tvTutorName;
     ListView lv;
-    TutorListAdapter adapter;
-    ArrayList<TutorList> TutorsAndClasses=new ArrayList<>();
+    SessionListAdapter adapter;
+    ArrayList<ListItemHolder> TutorsAndClasses=new ArrayList<>();
+    User mUser;
+    String who="";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,21 +58,12 @@ public class Sessions extends Fragment {
         // Required empty public constructor
     }
 
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Sessions.
-     */
     // TODO: Rename and change types and number of parameters
-    public static Sessions newInstance(String param1, String param2) {
+    public static Sessions newInstance(User user, String who) {
         Sessions fragment = new Sessions();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("mUser",user);
+        args.putString("who",who);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,16 +80,27 @@ public class Sessions extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
+        final View rootview = inflater.inflate(R.layout.fragment_sessions, container, false);
         Bundle bundle=getArguments();
 
+        mUser= (User) bundle.getSerializable("mUser");
 
-        lv = (ListView) rootview.findViewById(R.id.lvTutorList);
+        lv = (ListView) rootview.findViewById(R.id.lvSessionList);
 
         //get ClassName from BySubject
         lv.setAdapter(adapter);
 
-        return inflater.inflate(R.layout.fragment_sessions, container, false);
+        lv.setOnItemClickListener(Sessions.this);
+
+        try {
+            new SessionItemList().execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return rootview;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -119,6 +127,11 @@ public class Sessions extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -139,13 +152,30 @@ public class Sessions extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            HttpHandler sh = new HttpHandler();
+            HttpListHandler sh = new HttpListHandler();
+            String jsonStr="";
 
-            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
+            if(who=="student") {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
+                String userID = mUser.getEmail().split("\\@")[0];
 
-            //Making a request to url and getting response
-            String jsonStr = sh.makeServiceCallPost(TutorList_url, null, null, null, null);
+                //Making a request to url and getting response
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+            }
+            if(who=="tutor") {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
+                String userID = mUser.getEmail().split("\\@")[0];
 
+                //Making a request to url and getting response
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+            }
+            if(who=="teacher") {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
+                String userID = mUser.getEmail().split("\\@")[0];
+
+                //Making a request to url and getting response
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+            }
 
             if (jsonStr != null) {
                 try {
@@ -157,10 +187,10 @@ public class Sessions extends Fragment {
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
                     for (int i = 0; i < TutorList.length(); i++) {
                         JSONObject T = TutorList.getJSONObject(i);
-                        String Class = T.getString("ClassTutor");
-                        String FName = T.getString("firstName");
-                        String LName = T.getString("lastName");
-                        TutorsAndClasses.add(new TutorList(Class, FName, LName));
+                        String Class = T.getString("classname");
+                        String Name = T.getString("name");
+
+                        TutorsAndClasses.add(new ListItemHolder(Class, Name));
 
                         String Test = "Test";
                     }
@@ -182,7 +212,7 @@ public class Sessions extends Fragment {
         protected void onPostExecute(String s) {
 
 
-            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
+            adapter = new SessionListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
             lv.setAdapter(adapter);
         }
     }

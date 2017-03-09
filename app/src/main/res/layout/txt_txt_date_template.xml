@@ -15,7 +15,7 @@
         android:layout_height="200px"
         android:id="@+id/tv_Class_Name"
         android:focusable="false"
-        android:text="Class Name"
+        android:text="ClassName"
         android:textSize="12pt"
         android:layout_weight="0.50" />
 
@@ -23,8 +23,16 @@
         android:layout_width="wrap_content"
         android:layout_height="200px"
         android:focusable="false"
-        android:id="@+id/tv_TutorName"
+        android:id="@+id/tv_Name"
         android:text="Tutor Name"
+        android:textSize="12pt"
+        android:layout_weight="0.24" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="200px"
+        android:focusable="false"
+        android:id="@+id/tv_date"
+        android:text="date"
         android:textSize="12pt"
         android:layout_weight="0.24" />
 
