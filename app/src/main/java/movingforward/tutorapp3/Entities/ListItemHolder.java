@@ -6,16 +6,21 @@ package movingforward.tutorapp3.Entities;
  * Created by raven on 1/7/2017.
  */
 
-public class TutorList {
+public class ListItemHolder {
 
     public String ClassTutored;
     public String fName;
     public String lName;
+    public String fullName;
 
-    public TutorList(String classTutored, String fName, String lName) {
+    public ListItemHolder(String classTutored, String fName, String lName) {
         ClassTutored = classTutored;
         this.fName = fName;
         this.lName = lName;
+    }
+    public ListItemHolder(String Class, String name){
+        this.ClassTutored=Class;
+        this.fullName=name;
     }
 
     public String getClassTutored() {

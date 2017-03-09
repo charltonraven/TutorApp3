@@ -69,6 +69,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    String FirstName="";
+    String LastName="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -381,6 +383,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 HttpHandler LoginHandler = new HttpHandler();
                 response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
+
+
             }
             return response;
         }

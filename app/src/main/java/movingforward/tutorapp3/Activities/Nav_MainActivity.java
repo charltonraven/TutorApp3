@@ -5,9 +5,11 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -40,10 +42,14 @@ import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.Sessions.Sessions;
+
+import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
+import static movingforward.tutorapp3.R.id.TutorSessions;
+//import static movingforward.tutorapp3.Sessions.Sessions.newInstance;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener
+        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,Sessions.OnFragmentInteractionListener
 {
 
     int day, month, year, hour, minute;
@@ -58,6 +64,7 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav__main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +75,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         Intent navIntent = getIntent();
-        User mUser = (User) navIntent.getSerializableExtra("mUser");
+        mUser = (User) navIntent.getSerializableExtra("mUser");
         mUser.setEmail(mUser.getEmail().trim());
 
         TextView tvType;
@@ -88,7 +95,7 @@ public class Nav_MainActivity extends AppCompatActivity
         tvEmail.setText(mEmail);
         tvType.setText("Logged in as " + UserType.toUpperCase());
 
-        switch (UserType)
+        switch (mUser.getPermission().toString())
         {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
@@ -107,7 +114,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 break;
             case "Teacher":
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
-                navigationView.getMenu().findItem(R.id.ListOfSavedTutors).setVisible(false);
+                navigationView.getMenu().findItem(TutorSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
@@ -173,30 +180,38 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
+        //User nUser = new User(mEmail, mPassword);
+        //mUser = nUser;
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("mUser",mUser);
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.FindClass)
         {
-            BySubjectFragmentOne subjectFragmentOne = new BySubjectFragmentOne();
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
+
         }
-        else if (id == R.id.ListOfSavedTutors)
+        else if (id == TutorSessions)
         {
             User tempUser = new User(mEmail, mPassword);
             mUser = tempUser;
 
-            if(mEmail.equals("dleon4743@gmail.com"))
-                tempUser = new User("cwilliams2638@g.fmarion.edu", mPassword);
-            else
-                tempUser = new User("dleon4743@gmail.com", mPassword);
-            nUser = tempUser;
-
-            Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
+           /* Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
-            chatIntent.putExtra("nUser", nUser);
-            startActivity(chatIntent);
+            startActivity(chatIntent);*/
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions TutorSessions = Sessions.newInstance(mUser,"tutor");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
+
+
         }
         else if (id == R.id.BulletinBoard)
         {
@@ -204,10 +219,19 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.StudentSessions)
         {
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions StudentSessions = Sessions.newInstance(mUser,"student");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
 
         }
+
         else if (id == R.id.TeacherSessions)
         {
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions TeacherSession = Sessions.newInstance(mUser,"teacher");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
 
 
         }
@@ -268,6 +292,11 @@ public class Nav_MainActivity extends AppCompatActivity
         AppointmentTask appointmentTask = new AppointmentTask(this, appointment);
         appointmentTask.execute();
 
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 

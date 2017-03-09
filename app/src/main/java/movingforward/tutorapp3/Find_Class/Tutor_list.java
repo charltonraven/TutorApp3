@@ -1,6 +1,5 @@
 package movingforward.tutorapp3.Find_Class;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,21 +7,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
-import movingforward.tutorapp3.Entities.TutorList;
+import movingforward.tutorapp3.Entities.ListItemHolder;
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
+import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
@@ -35,18 +35,22 @@ import movingforward.tutorapp3.R;
  * Use the {@link Tutor_list#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Tutor_list extends Fragment {
-
+public class Tutor_list extends Fragment implements AdapterView.OnItemClickListener{
+    User mUser;
+    TextView tvClassName;
+   TextView tvTutorName;
     ListView lv;
     InputStream content;
     TutorListAdapter adapter;
-    ArrayList<TutorList> TutorsAndClasses=new ArrayList<>();
-    
+    ArrayList<ListItemHolder> TutorsAndClasses = new ArrayList<>();
+    private SaveHistoryTask saveHistoryTask=null;
+
     String line = null;
     String result;
     public String[] data;
     public String[] data2;
-    String ClassName="";
+    String ClassName = "";
+    private static final String TAG = "Tutor_list";
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -99,14 +103,21 @@ public class Tutor_list extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View listview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
-        lv = (ListView) listview.findViewById(R.id.lvTutorList);
+        final View rootview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
+        Bundle bundle=getArguments();
+        mUser= (User) bundle.getSerializable("mUser");
+
+        lv = (ListView) rootview.findViewById(R.id.lvTutorList);
 
         //get ClassName from BySubject
+        lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(Tutor_list.this);
 
 
         try {
-            String blah=new TutorListTask().execute().get();
+            String blah = new TutorListTask().execute().get();
+            String test=blah;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -114,17 +125,10 @@ public class Tutor_list extends Fragment {
         }
 
 
-        return listview;
+
+        return rootview;
     }
 
-    private void getData(String ClassName) {
-
-
-    }
-    /*public void updateInfo(String ClassName){
-        Toast.makeText(getActivity(),ClassName,Toast.LENGTH_SHORT);
-
-    }*/
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -133,16 +137,6 @@ public class Tutor_list extends Fragment {
         }
     }
 
- /*   @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
 
     @Override
     public void onDetach() {
@@ -150,16 +144,39 @@ public class Tutor_list extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+        tvClassName = (TextView) view.findViewById(R.id.tv_Class_Name);
+        tvTutorName = (TextView) view.findViewById(R.id.tv_TutorName);
+
+        String classname=tvClassName.getText().toString();
+        String tutorname=tvTutorName.getText().toString();
+
+        String [] classAbbrName=classname.split("(?<=\\D)(?=\\d)");
+        String Abbr=classAbbrName[0];
+        String ClassName=classAbbrName[1];
+
+
+        String [] FirstLastName=tutorname.split(" ");
+        String FirstName=FirstLastName[0];
+        String LastName=FirstLastName[1];
+        //String studentPermission="Student";
+
+
+        try {
+            new SaveHistoryTask().execute(Abbr,ClassName,FirstName,LastName,"Student").get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -175,12 +192,62 @@ public class Tutor_list extends Fragment {
         }
     }
 
+    private class SaveHistoryTask extends  AsyncTask<String,String,String>{
+
+
+        public SaveHistoryTask() {
+            super();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String Abbr=params[0];
+            String ClassName=params[1];
+            String tutorFirstName=params[2];
+            String tutorLastName=params[3];
+            //String role=mUser.getPermission().toString();
+            String role=params[4];
+            String studnetFirstName;
+            String studentLastName;
+
+            String Email="";
+            String [] ACFLFL={Abbr,ClassName,tutorFirstName,tutorLastName};
+
+            HttpHandler2 sh=new HttpHandler2();
+
+            String getEmail = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getEmailAddress.php";
+             Email=sh.makeServiceCallPost(getEmail,ACFLFL,null);
+            String toID=Email.split("\\@")[0];
+            String fromID=mUser.getEmail().split("\\@")[0];
+
+
+
+
+            String [] saveInfo={role,toID,Email,tutorFirstName+" "+tutorLastName,Abbr+ClassName,fromID};
+            String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo);//saves to Student
+
+            System.out.println("");
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
+
     private class TutorListTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
-                  HttpHandler sh = new HttpHandler();
-            
+            HttpHandler sh = new HttpHandler();
+
             String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
 
             //Making a request to url and getting response
@@ -197,11 +264,11 @@ public class Tutor_list extends Fragment {
                     JSONArray TutorList = new JSONArray(jsonStr);
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
                     for(int i=0;i<TutorList.length();i++){
-                        JSONObject T=TutorList.getJSONObject(i);
+                        JSONObject T = TutorList.getJSONObject(i);
                         String Class=T.getString("ClassTutor");
                         String FName=T.getString("firstName");
                         String LName=T.getString("lastName");
-                        TutorsAndClasses.add(new TutorList(Class,FName,LName));
+                        TutorsAndClasses.add(new ListItemHolder(Class,FName,LName));
 
                         String Test="Test";
                     }
@@ -213,86 +280,22 @@ public class Tutor_list extends Fragment {
             return null;
         }
 
+
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(getActivity(),"Generating Tutors",Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), "Generating Tutors", Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onPostExecute(String s) {
 
 
-            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1,TutorsAndClasses);
+            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
             lv.setAdapter(adapter);
         }
     }
-    //--------------------------------------------------------------------------------------------------------------
-    public static class TutorListAdapter extends ArrayAdapter<Tutor_list>{
 
 
-        ArrayList<TutorList> values;
-
-        public TutorListAdapter(Context context, int resource, ArrayList<TutorList> values) {
-            super(context,resource);
-            this.values=values;
-        }
-
-        public TutorListAdapter(Context context, int resource) {
-            super(context, resource);
-        }
-
-        @Override
-        public void add(Tutor_list object) {
-            super.add(object);
-        }
-
-        @Override
-        public void addAll(Collection<? extends Tutor_list> collection) {
-            super.addAll(collection);
-        }
-
-        @Override
-        public int getCount() {
-            return values.size();
-        }
-
-
-
-        @Override
-        public int getPosition(Tutor_list item) {
-            return super.getPosition(item);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return super.getItemId(position);
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v=convertView;
-            TextView tvClassName;
-            TextView tvTutorName;
-
-
-            if(v==null){
-                LayoutInflater vi;
-                vi = LayoutInflater.from(getContext());
-                v = vi.inflate(R.layout.txt_txt_template, null);
-            }else{
-                v=(View) convertView;
-            }
-
-            tvClassName=(TextView) v.findViewById(R.id.tv_Class_Name);
-            tvTutorName=(TextView) v.findViewById(R.id.tv_TutorName);
-
-            tvClassName.setText(values.get(position).ClassTutored);
-            tvTutorName.setText(values.get(position).getfName()+" "+values.get(position).getlName());
-
-
-            return v;
-        }
-    }
 }

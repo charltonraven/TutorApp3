@@ -9,7 +9,7 @@
                 android:id="@+id/FindClass"
                 android:title="Find Class"/>
             <item
-                android:id="@+id/ListOfSavedTutors"
+                android:id="@+id/TutorSessions"
                 android:title="My Tutor Sessions"/>
             <item
                 android:id="@+id/BulletinBoard"

@@ -23,6 +23,11 @@ public class HttpHandler {
 
     }
 
+ /*   Handles the following.
+    1. Genertates Tutors.
+    2. Login the users
+    3. register new users*/
+
     public String makeServiceCallPost(String reqUrl,String ClassName, String Username, String Password,String [] registerInfo) {
         String response = null;
 
@@ -143,7 +148,7 @@ public class HttpHandler {
     else if(Username!=null && Password!=null &&department==null){
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(Password, "UTF-8");;
+                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(Username, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(Password, "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

@@ -1,10 +1,14 @@
 package movingforward.tutorapp3.Fragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +18,12 @@ import movingforward.tutorapp3.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TimeDateFragment.OnFragmentInteractionListener} interface
+ * {@link SubjectMessageFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TimeDateFragment#newInstance} factory method to
+ * Use the {@link SubjectMessageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TimeDateFragment extends DialogFragment {
+public class SubjectMessageFragment extends DialogFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +35,7 @@ public class TimeDateFragment extends DialogFragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public TimeDateFragment() {
+    public SubjectMessageFragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +45,11 @@ public class TimeDateFragment extends DialogFragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TimeDateFragment.
+     * @return A new instance of fragment SubjectMessageFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TimeDateFragment newInstance(String param1, String param2) {
-        TimeDateFragment fragment = new TimeDateFragment();
+    public static SubjectMessageFragment newInstance(String param1, String param2) {
+        SubjectMessageFragment fragment = new SubjectMessageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -55,6 +59,8 @@ public class TimeDateFragment extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -62,11 +68,34 @@ public class TimeDateFragment extends DialogFragment {
         }
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+
+        return new AlertDialog.Builder(getActivity())
+
+                .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Log.d("Clicked", " Clicked");
+                            }
+                        }
+                )
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Log.d("Clicked", "Cancel ");
+                            }
+                        }
+                )
+                .show();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_time_date, container, false);
+
+        return inflater.inflate(R.layout.fragment_subject_message, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -76,7 +105,7 @@ public class TimeDateFragment extends DialogFragment {
         }
     }
 
-    @Override
+    /*@Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -85,7 +114,7 @@ public class TimeDateFragment extends DialogFragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
+    }*/
 
     @Override
     public void onDetach() {

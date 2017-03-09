@@ -10,6 +10,8 @@ public class User implements Serializable {
 
     String email;
     String password;
+    String firstName;
+    String lastName;
     Role permission;
 
     String firebaseToken = "";
