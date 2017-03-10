@@ -29,6 +29,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     String FirstName="";
     String LastName="";
+    User mUser=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -367,10 +372,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected String doInBackground(String... params)
         {
             // TODO: attempt authentication against a network service.
-            String response = "";
+            String responseJson = "";
             if (params[1].equals("") && params[2].equals(""))
             {
-                response = "";
+                responseJson = "";
 
             }
             else
@@ -379,14 +384,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 username = params[1];
                 password = params[2];
 
-                String login_url = "http://" + StaticHelper.getDeviceIP() + "/android/Inserts/login.php";
+                String login_url = "http://" + StaticHelper.getDeviceIP() + "/android/Inserts/login2.php";
 
                 HttpHandler LoginHandler = new HttpHandler();
-                response = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
+                responseJson = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
+
+
 
 
             }
-            return response;
+
+
+
+
+
+
+            return responseJson;
         }
 
         @Override
@@ -397,30 +410,67 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected void onPostExecute(String result)
+        protected void onPostExecute(String responseJson)
         {
-            RegorTry = new AlertDialog.Builder(context);
-            alertDialog.setMessage(result);
+            User mUser=null;
 
-            if (result == null)
+
+            if(responseJson!=null){
+
+                try {
+                    JSONArray LoggedUser=new JSONArray(responseJson);
+                    for(int i=0;i<LoggedUser.length();i++){
+                        JSONObject UserObj = LoggedUser.getJSONObject(i);
+                        String StudentID=UserObj.getString("studentID");
+                        String email=UserObj.getString("email");
+                        String firstName=UserObj.getString("firstName");
+                        String lastName=UserObj.getString("lastName");
+                        String major=UserObj.getString("major");
+                        String courses=UserObj.getString("courses");
+                        int registered=UserObj.getInt("registered");
+                        int tutor=UserObj.getInt("tutor");
+                        String password=UserObj.getString("password");
+
+
+                        mUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,password,null);
+
+                        String Test="Test";
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+           // RegorTry = new AlertDialog.Builder(context);
+            alertDialog.setMessage("Logged IN");
+
+           /* if (result == null)
             {
                 result = "";
             }
 
-            result=result.trim();
+            result=result.trim();*/
 
 
-            String Type;
+            String Type="";
             String Email;
-            if(!result.contains("Login Not Successful")){
+            //if(!result.contains("Login Not Successful")){
 
-                if (!result.equals(""))
+            if(responseJson!=null){
+                if (!responseJson.equals(""))
                 {
-                    String[] TypeEmail = result.split(" ");
-                    Type = TypeEmail[0];
-                    Email = TypeEmail[1];
 
-                    User mUser = new User(Email, password);
+                    if(mUser.getTutor()==1){
+                        Type="Tutor";
+                    }else if(mUser.getTutor()==0){
+                        Type="Student";
+
+                    }else {
+                        Type="Teacher";
+                    }
+
 
                     if (Type.contains("Student"))
                     {
@@ -470,8 +520,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             }
 
-            RegorTry.create();
-            RegorTry.show();
+           // RegorTry.create();
+           // RegorTry.show();
         }
     }
 
