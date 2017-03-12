@@ -183,7 +183,7 @@ public class Nav_MainActivity extends AppCompatActivity
             startActivity(chatIntent);*/
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Sessions TutorSessions = Sessions.newInstance(mUser,"tutor");
+            Sessions TutorSessions = Sessions.newInstance(mUser,"student");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
 
@@ -196,7 +196,7 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.StudentSessions)
         {
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Sessions StudentSessions = Sessions.newInstance(mUser,"student");
+            Sessions StudentSessions = Sessions.newInstance(mUser,"tutor");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
 

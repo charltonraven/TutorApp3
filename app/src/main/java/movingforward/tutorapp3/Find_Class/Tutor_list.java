@@ -211,12 +211,12 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             String studentLastName;
 
             String Email="";
-            String [] ACFLFL={Abbr,ClassName,tutorFirstName,tutorLastName};
+            String [] ACFLFL={Abbr,ClassName,tutorFirstName,tutorLastName,"student"};
 
             HttpHandler2 sh=new HttpHandler2();
 
             String getEmail = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getEmailAddress.php";
-             Email=sh.makeServiceCallPost(getEmail,ACFLFL,null);
+             Email=sh.makeServiceCallPost(getEmail,ACFLFL,null,null);
             String toID=Email.split("\\@")[0];
             String fromID=mUser.getEmail().split("\\@")[0];
 
@@ -225,7 +225,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
             String [] saveInfo={role,toID,Email,tutorFirstName+" "+tutorLastName,Abbr+ClassName,fromID};
             String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo);//saves to Student
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo,null);//saves to Student
 
             System.out.println("");
             return null;
@@ -296,6 +296,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             lv.setAdapter(adapter);
         }
     }
+
 
 
 }

@@ -1,6 +1,7 @@
 package movingforward.tutorapp3.Sessions;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,10 +22,12 @@ import java.util.concurrent.ExecutionException;
 
 import movingforward.tutorapp3.Entities.ListItemHolder;
 import movingforward.tutorapp3.Entities.User;
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
 import movingforward.tutorapp3.Entities.class_Helper.SessionListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.TutChat.ChatActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +44,9 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
     ListView lv;
     SessionListAdapter adapter;
     ArrayList<ListItemHolder> TutorsAndClasses=new ArrayList<>();
-    User mUser;
+    User mUser;//Logged In user
+    User nUser;
+
     String who="";
 
     // TODO: Rename parameter arguments, choose names that match
@@ -80,10 +86,13 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         final View rootview = inflater.inflate(R.layout.fragment_sessions, container, false);
         Bundle bundle=getArguments();
 
         mUser= (User) bundle.getSerializable("mUser");
+        who=bundle.getString("who");
 
         lv = (ListView) rootview.findViewById(R.id.lvSessionList);
 
@@ -129,6 +138,29 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        tvClassName = (TextView) view.findViewById(R.id.tv_Class_Name);
+        tvTutorName = (TextView) view.findViewById(R.id.tv_TutorName);
+
+        String classname=tvClassName.getText().toString();
+        String tutorname=tvTutorName.getText().toString();
+
+        String [] FirstLastName=tutorname.split(" ");
+        String FirstName=FirstLastName[0];
+        String LastName=FirstLastName[1];
+
+        try {
+            new getInformation().execute(FirstName,LastName,mUser.getPermission().toString()).get();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+
+
 
     }
 
@@ -216,4 +248,73 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
             lv.setAdapter(adapter);
         }
     }
+    private class getInformation extends  AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            String who=params[2];
+            String firstName=params[0];
+            String lastName = params[1];
+            String [] info= {who,firstName,lastName};
+            String jsonStr="";
+            HttpHandler2 sh=new HttpHandler2();
+
+            if(mUser.getPermission().toString() =="Student") {//If i am a student i need the info of the tutor.
+                String getInfo_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/getInfo.php";
+
+                //Making a request to url and getting response
+                jsonStr  = sh.makeServiceCallPost(getInfo_URL, null,null,info);
+            }
+
+
+
+            return jsonStr;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String responseJson) {
+            nUser=null;
+
+
+            if(responseJson!=null){
+
+                try {
+                    JSONArray LoggedUser=new JSONArray(responseJson);
+                    for(int i=0;i<LoggedUser.length();i++){
+                        JSONObject UserObj = LoggedUser.getJSONObject(i);
+                        String StudentID=UserObj.getString("studentID");
+                        String email=UserObj.getString("email");
+                        String firstName=UserObj.getString("firstName");
+                        String lastName=UserObj.getString("lastName");
+                        String major=UserObj.getString("major");
+                        String courses=UserObj.getString("courses");
+                        int registered=UserObj.getInt("registered");
+                        int tutor=UserObj.getInt("tutor");
+                        String password=UserObj.getString("password");
+
+
+                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,password,null);
+
+                        String Test="Test";
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+            chatIntent.putExtra("mUser", mUser);
+            chatIntent.putExtra("nUser",nUser);
+            startActivity(chatIntent);
+
+        }
+    }
+
 }

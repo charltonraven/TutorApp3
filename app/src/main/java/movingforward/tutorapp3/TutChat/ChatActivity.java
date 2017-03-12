@@ -96,6 +96,7 @@ public class ChatActivity extends AppCompatActivity implements
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
     public User mUser;
+    public User nUser;
 
 
     @Override
@@ -107,6 +108,7 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
+        nUser= (User) i.getSerializableExtra("nUser");
 
         mUsername = mUser.getEmail();
 
