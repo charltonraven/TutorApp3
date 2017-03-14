@@ -35,6 +35,7 @@ public class Nav_MainActivity extends AppCompatActivity
     int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
     NavigationView navigationView;
     User mUser;
+    User nUser;
     String mEmail;
     String mPassword;
 

@@ -133,6 +133,16 @@ public class User implements Serializable {
     {
         return permission;
     }
+
+    public String getFirebaseToken()
+    {
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken)
+    {
+        this.firebaseToken = firebaseToken;
+    }
 }
 
 
