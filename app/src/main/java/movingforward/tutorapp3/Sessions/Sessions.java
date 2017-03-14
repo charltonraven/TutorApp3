@@ -261,12 +261,12 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
             String jsonStr="";
             HttpHandler2 sh=new HttpHandler2();
 
-            if(mUser.getPermission().toString() =="Student") {//If i am a student i need the info of the tutor.
+
                 String getInfo_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/getInfo.php";
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(getInfo_URL, null,null,info);
-            }
+
 
 
 
@@ -297,10 +297,10 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                         String courses=UserObj.getString("courses");
                         int registered=UserObj.getInt("registered");
                         int tutor=UserObj.getInt("tutor");
-                        String password=UserObj.getString("password");
+                      //  String password=UserObj.getString("password");
 
 
-                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,password,null);
+                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
 
                         String Test="Test";
                     }
