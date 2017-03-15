@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity implements
     private static final String TAG = "MainActivity";
     public static String MESSAGES_CHILD;
     private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 100;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
@@ -113,14 +113,12 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
-        mUsername = mUser.getEmail();
-        String[] parts = mUsername.split("@");
-        mUsername = parts[0];
+        mUsername = mUser.getStudentID();
+
 
         nUser = (User) i.getSerializableExtra("nUser");
-        nUsername = nUser.getEmail();
-        parts = nUsername.split("@");
-        nUsername = parts[0];
+        nUsername = nUser.getStudentID();
+
 
         MESSAGES_CHILD = mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername);
 
@@ -138,7 +136,7 @@ public class ChatActivity extends AppCompatActivity implements
                 if (mFirebaseUser != null)
                 {
                     mUsername = mFirebaseUser.getDisplayName();
-                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+                    mPhotoUrl = mFirebaseUser.getPhotoUrl().toString() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
                     // User is signed in
                     Log.d("TAG", "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
 
@@ -158,9 +156,6 @@ public class ChatActivity extends AppCompatActivity implements
         };
 
         signIn(mUser.getEmail(), mUser.getPassword());
-
-        mUsername = mFirebaseUser.getDisplayName();
-        mPhotoUrl = mFirebaseUser.getPhotoUrl() == null ? "n/a" : mFirebaseUser.getPhotoUrl().toString();
 
         // Initialize ProgressBar and RecyclerView.
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -198,7 +193,7 @@ public class ChatActivity extends AppCompatActivity implements
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 viewHolder.messageTextView.setText(friendlyMessage.getText());
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
-                if (friendlyMessage.getPhotoUrl() == null)
+                if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
                 {
                     viewHolder.messengerImageView
                             .setImageDrawable(ContextCompat

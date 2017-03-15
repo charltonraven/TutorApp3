@@ -1,9 +1,5 @@
 package movingforward.tutorapp3.Activities;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,29 +11,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Calendar;
-
-import movingforward.tutorapp3.Entities.Appointment;
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
@@ -49,7 +28,7 @@ import static movingforward.tutorapp3.R.id.TutorSessions;
 //import static movingforward.tutorapp3.Sessions.Sessions.newInstance;
 
 public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,Sessions.OnFragmentInteractionListener
+        implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener
 {
 
     int day, month, year, hour, minute;
@@ -207,7 +186,7 @@ public class Nav_MainActivity extends AppCompatActivity
             startActivity(chatIntent);*/
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Sessions TutorSessions = Sessions.newInstance(mUser,"tutor");
+            Sessions TutorSessions = Sessions.newInstance(mUser,"student");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
 
@@ -220,7 +199,7 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.StudentSessions)
         {
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Sessions StudentSessions = Sessions.newInstance(mUser,"student");
+            Sessions StudentSessions = Sessions.newInstance(mUser,"tutor");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
 
@@ -261,116 +240,28 @@ public class Nav_MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
-    {
-        this.yearFinal = year;
-        this.monthFinal = month + 1;
-        this.dayFinal = day;
-
-        Calendar c = Calendar.getInstance();
-        hour = c.get(Calendar.HOUR_OF_DAY);
-        minute = c.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(Nav_MainActivity.this, AlertDialog.THEME_HOLO_DARK, Nav_MainActivity.this, hour, minute, DateFormat.is24HourFormat(this));
-        timePickerDialog.show();
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute)
-    {
-
-        this.hourFinal = hour;
-        this.minuteFinal = minute;
-        String readthis = "year: " + yearFinal + "\n" +
-                "month: " + monthFinal + "\n" +
-                "day: " + dayFinal + "\n" +
-                "hour: " + hourFinal + "\n" +
-                "minute: " + minuteFinal;
-
-        Appointment appointment = new Appointment("TestEmail@g.fmarion.edu", "Help with classes", monthFinal, dayFinal, yearFinal, hourFinal, minuteFinal);
-        AppointmentTask appointmentTask = new AppointmentTask(this, appointment);
-        appointmentTask.execute();
 
 
-    }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
 
-    public static class AppointmentTask extends AsyncTask<String, Void, String>
+    public static class InserUserTask extends AsyncTask<String, Void, String>
     {
-        Appointment appointment;
-        AlertDialog.Builder RegorTry;
-        AlertDialog alertDialog;
-        Context context;
 
-        AppointmentTask(Context context, Appointment appointment)
-        {
-            this.context = context;
-            this.appointment = appointment;
-        }
 
         @Override
         protected String doInBackground(String... params)
         {
-            String login_url = "http://10.10.103.185/insertAppointment.php";
-            String month = Integer.toString(appointment.month);
-            String day = Integer.toString(appointment.day);
-            String year = Integer.toString(appointment.year);
-            String hour = Integer.toString(appointment.hour);
-            String minute = Integer.toString(appointment.minute);
-
-            try
-            {
-                URL url = new URL(login_url);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                String post_data = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(appointment.EmailAddress, "UTF-8") + "&" + URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(appointment.Subject, "UTF-8")
-                        + "&" + URLEncoder.encode("month", "UTF-8") + "=" + URLEncoder.encode(month, "UTF-8")
-                        + "&" + URLEncoder.encode("day", "UTF-8") + "=" + URLEncoder.encode(day, "UTF-8")
-                        + "&" + URLEncoder.encode("year", "UTF-8") + "=" + URLEncoder.encode(year, "UTF-8")
-                        + "&" + URLEncoder.encode("hour", "UTF-8") + "=" + URLEncoder.encode(hour, "UTF-8")
-                        + "&" + URLEncoder.encode("minute", "UTF-8") + "=" + URLEncoder.encode(minute, "UTF-8");
-
-                bufferedWriter.write(post_data);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-
-                String result = "";
-                String line;
-
-                while ((line = bufferedReader.readLine()) != null)
-                {
-                    result += line;
-                }
-
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
 
 
-                return result;
+                return null;
 
 
-            } catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
 
-            return null;
         }
 
         @Override

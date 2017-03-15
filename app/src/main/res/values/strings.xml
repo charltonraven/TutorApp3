@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TutorApp3</string>
+    <string name="app_name">Tut It Up!</string>
 
     <!-- Strings related to login -->
     <string name="ip_address">192.168.1.16</string>
