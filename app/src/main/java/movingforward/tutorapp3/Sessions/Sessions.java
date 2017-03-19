@@ -150,7 +150,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
         String LastName=FirstLastName[1];
 
         try {
-            new getInformation().execute(FirstName,LastName,mUser.getPermission().toString()).get();
+            new getInformation().execute(FirstName,LastName,who).get();
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -312,6 +312,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
             Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
             chatIntent.putExtra("nUser",nUser);
+            chatIntent.putExtra("className",tvClassName.getText());
             startActivity(chatIntent);
 
         }
