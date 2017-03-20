@@ -17,6 +17,7 @@ if(mysqli_connect_error($conn)){
 }
 if ($who=="Student"){
 	$query= mysqli_query($conn,"SELECT classname, name, date FROM student_chathistory where fromID='$userID'" );
+	
 }
 
 if ($who=="Tutor"){

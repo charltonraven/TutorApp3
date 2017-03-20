@@ -179,9 +179,6 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == TutorSessions)
         {
 
-           /* Intent chatIntent = new Intent(Nav_MainActivity.this, ChatActivity.class);
-            chatIntent.putExtra("mUser", mUser);
-            startActivity(chatIntent);*/
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
             Sessions TutorSessions = Sessions.newInstance(mUser,"student");

@@ -6,7 +6,6 @@ package movingforward.tutorapp3.TutChat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
@@ -114,14 +113,16 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
-        mUsername = mUser.getStudentID();
+        mUsername = mUser.getStudentID().toLowerCase();
 
 
         nUser = (User) i.getSerializableExtra("nUser");
-        nUsername = nUser.getStudentID();
+        nUsername = nUser.getStudentID().toLowerCase();
+
+        String className = i.getStringExtra("className").toLowerCase();
 
 
-        MESSAGES_CHILD = mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername);
+        MESSAGES_CHILD = (mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername)) + "_" + className;
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();

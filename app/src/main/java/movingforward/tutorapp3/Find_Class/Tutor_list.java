@@ -1,5 +1,6 @@
 package movingforward.tutorapp3.Find_Class;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.TutChat.ChatActivity;
 
 
 /**
@@ -37,6 +40,7 @@ import movingforward.tutorapp3.R;
  */
 public class Tutor_list extends Fragment implements AdapterView.OnItemClickListener{
     User mUser;
+    User nUser;
     TextView tvClassName;
    TextView tvTutorName;
     ListView lv;
@@ -210,22 +214,54 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             String studnetFirstName;
             String studentLastName;
 
-            String Email="";
-            String [] ACFLFL={Abbr,ClassName,tutorFirstName,tutorLastName,"student"};
+            String result="";
+            String [] FLW={tutorFirstName,tutorLastName,"student"};
 
             HttpHandler2 sh=new HttpHandler2();
 
-            String getEmail = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getEmailAddress.php";
-             Email=sh.makeServiceCallPost(getEmail,ACFLFL,null,null);
-            String toID=Email.split("\\@")[0];
-            String fromID=mUser.getEmail().split("\\@")[0];
+            String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
+             result=sh.makeServiceCallPost(getInformation,FLW,null,null);
+            String toID="";
+            String Email="";
+
+            if(result!=null){
+
+                try {
+                    JSONArray LoggedUser=new JSONArray(result);
+                    for(int i=0;i<LoggedUser.length();i++){
+                        JSONObject UserObj = LoggedUser.getJSONObject(i);
+                        String StudentID=UserObj.getString("studentID");
+                        String email=UserObj.getString("email");
+                        String firstName=UserObj.getString("firstName");
+                        String lastName=UserObj.getString("lastName");
+                        String major=UserObj.getString("major");
+                        String courses=UserObj.getString("courses");
+                        int registered=UserObj.getInt("registered");
+                        int tutor=UserObj.getInt("tutor");
+                        //  String password=UserObj.getString("password");
+
+
+                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
+
+                        String Test="Test";
+                    }
+                    toID=nUser.getStudentID();
+                    Email=nUser.getEmail();
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
 
 
 
-            String [] saveInfo={role,toID,Email,tutorFirstName+" "+tutorLastName,Abbr+ClassName,fromID};
+            String fromID=mUser.getStudentID();
+            String [] saveInfo={role,nUser.getStudentID(),Email,nUser.getFirstName()+" "+nUser.getLastName(),Abbr+ClassName,mUser.getStudentID(),mUser.getFirstName()+" "+mUser.getLastName()};
             String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo,null);//saves to Student
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo,null);//saves to Student and Tutor
 
             System.out.println("");
             return null;
@@ -238,7 +274,11 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+            Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+            chatIntent.putExtra("mUser", mUser);
+            chatIntent.putExtra("nUser",nUser);
+            chatIntent.putExtra("className",tvClassName.getText());
+            startActivity(chatIntent);
         }
     }
 
