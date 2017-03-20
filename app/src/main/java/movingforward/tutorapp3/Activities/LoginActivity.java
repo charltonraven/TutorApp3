@@ -104,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         Button debugStudentButton = (Button) findViewById(R.id.debugStudent_Button);
         Button debugTutorButton = (Button) findViewById(R.id.debugTutor_button);
+        Button debugTeacherButton = (Button) findViewById(R.id.debugteacher_button);
 
         mEmailSignInButton.setOnClickListener(new View.OnClickListener()
         {
@@ -129,6 +130,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View v)
             {
                 attemptLogin("CWilliams2638@g.fmarion.edu", "password");
+            }
+        });
+
+        debugTeacherButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                attemptLogin("FinalTest@g.fmarion.edu", "password");
             }
         });
 
