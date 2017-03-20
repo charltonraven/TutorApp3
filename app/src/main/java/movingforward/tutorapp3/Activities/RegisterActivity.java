@@ -13,7 +13,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
+import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
@@ -25,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Spinner mMajorView;
     private CheckBox mTeacherCheckBox;
     private Button mRegisterButton;
+    public String who="";
 
 
     ArrayAdapter<CharSequence> adapter;
@@ -64,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void Register() {
 
-        String who = "Student";
+        who = "Student";
         String email = mEmailView.getText().toString();
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
@@ -116,10 +123,18 @@ public class RegisterActivity extends AppCompatActivity {
             String response =Register.makeServiceCallPost(register_url,null,null,null,UserInfo);
 
 
+            String result="";
+
+            String [] FLW={firstname,lastname,who};
+            HttpHandler2 sh=new HttpHandler2();
+            String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
+            result=sh.makeServiceCallPost(getInformation,FLW,null,null);
 
 
 
-            return response;
+
+
+            return result;
         }
 
         @Override
@@ -130,17 +145,32 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            String response=result.trim();
-            if (response.equals("Complete")) {
-                alertDialog.setMessage("You are now Registered");
-                alertDialog.show();
+            User mUser;
+            if(result!=null){
 
-                Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                startNav_Activity.putExtra("Email", Email);
-                startNav_Activity.putExtra("User_Type", who);
+                try {
+                    JSONArray LoggedUser=new JSONArray(result);
+                    for(int i=0;i<LoggedUser.length();i++){
+                        JSONObject UserObj = LoggedUser.getJSONObject(i);
+                        String StudentID=UserObj.getString("studentID");
+                        String email=UserObj.getString("email");
+                        String firstName=UserObj.getString("firstName");
+                        String lastName=UserObj.getString("lastName");
+                        String major=UserObj.getString("major");
+                        String courses=UserObj.getString("courses");
+                        int registered=UserObj.getInt("registered");
+                        int tutor=UserObj.getInt("tutor");
+                        mUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
 
+                        alertDialog.setMessage("You are now Registered");
+                        alertDialog.show();
 
-                context.startActivity(startNav_Activity);
+                        Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
+                        startNav_Activity.putExtra("mUser", mUser);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             } else {
                 alertDialog.setMessage("Something went wrong");
                 alertDialog.show();

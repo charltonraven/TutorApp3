@@ -220,7 +220,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             HttpHandler2 sh=new HttpHandler2();
 
             String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
-             result=sh.makeServiceCallPost(getInformation,FLW,null,null);
+            result=sh.makeServiceCallPost(getInformation,FLW,null,null);
             String toID="";
             String Email="";
 

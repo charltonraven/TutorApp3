@@ -413,90 +413,102 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(String responseJson)
         {
             User mUser=null;
+            String id="";
+            String TeacherStudent="student";
+            String major_department="";
+            String courses="";
+            int tutor;
 
 
-            if(responseJson!=null){
+            if(!responseJson.isEmpty()){
+
 
                 try {
                     JSONArray LoggedUser=new JSONArray(responseJson);
                     for(int i=0;i<LoggedUser.length();i++){
                         JSONObject UserObj = LoggedUser.getJSONObject(i);
-                        String StudentID=UserObj.getString("studentID");
+
+                        if(UserObj.isNull("studentID")){
+                            id=UserObj.getString("teacherID");
+                            major_department=UserObj.getString("department");
+                            courses=null;
+                            //TeacherStudent="teacher";
+                            tutor=3;
+                        }else {
+                            id = UserObj.getString("studentID");
+                            major_department=UserObj.getString("major");
+                            courses=UserObj.getString("courses");
+                            tutor=UserObj.getInt("tutor");
+                        }
                         String email=UserObj.getString("email");
                         String firstName=UserObj.getString("firstName");
                         String lastName=UserObj.getString("lastName");
-                        String major=UserObj.getString("major");
-                        String courses=UserObj.getString("courses");
                         int registered=UserObj.getInt("registered");
-                        int tutor=UserObj.getInt("tutor");
                         String password=UserObj.getString("password");
 
+                        mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
+/*
+                        if(TeacherStudent.equals("teacher")){
+                            mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
+                        }else {
+                            mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
+                        }*/
 
-                        mUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,password,null);
-
-                        String Test="Test";
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+
+                alertDialog.setMessage("Logged IN");
 
 
-           // RegorTry = new AlertDialog.Builder(context);
-            alertDialog.setMessage("Logged IN");
 
-           /* if (result == null)
-            {
-                result = "";
-            }
-
-            result=result.trim();*/
+                String Type="";
+                String Email;
 
 
-            String Type="";
-            String Email;
-            //if(!result.contains("Login Not Successful")){
-
-            if(responseJson!=null){
-                if (!responseJson.equals(""))
-                {
-
-                    if(mUser.getTutor()==1){
-                        Type="Tutor";
-                    }else if(mUser.getTutor()==0){
-                        Type="Student";
-
-                    }else {
-                        Type="Teacher";
-                    }
-
-
-                    if (Type.contains("Student"))
+                if(responseJson!=null){
+                    if (!responseJson.equals(""))
                     {
-                        mUser.setPermission(Role.Student);
+
+                        if(mUser.getTutor()==1){
+                            Type="Tutor";
+                        }else if(mUser.getTutor()==0){
+                            Type="Student";
+
+                        }else {
+                            Type="Teacher";
+                        }
+
+
+                        if (Type.contains("Student"))
+                        {
+                            mUser.setPermission(Role.Student);
+                        }
+                        else if (Type.contains("Teacher"))
+                        {
+                            mUser.setPermission(Role.Teacher);
+
+                        }
+                        else if (Type.contains("Tutor"))
+                        {
+                            mUser.setPermission(Role.Tutor);
+                        }
+
+                        Intent navIntent = new Intent(context, Nav_MainActivity.class);
+                        navIntent.putExtra("mUser", mUser);
+
+                        alertDialog.setMessage("Login Successful");
+                        alertDialog.show();
+
+                        context.startActivity(navIntent);
                     }
-                    else if (Type.contains("Teacher"))
-                    {
-                        mUser.setPermission(Role.Teacher);
-
-                    }
-                    else if (Type.contains("Tutor"))
-                    {
-                        mUser.setPermission(Role.Tutor);
-                    }
-
-                    Intent navIntent = new Intent(context, Nav_MainActivity.class);
-                    navIntent.putExtra("mUser", mUser);
-
-                    alertDialog.setMessage("Login Successful");
-                    alertDialog.show();
-
-                    context.startActivity(navIntent);
-
                 }
-            } else
-            {
+
+
+
+            }else{
                 RegorTry = new AlertDialog.Builder(context);
                 RegorTry.setTitle("Incorrect! Would you like to register");
 
@@ -517,11 +529,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                 });
 
+                RegorTry.create();
+                RegorTry.show();
+
 
             }
 
-           // RegorTry.create();
-           // RegorTry.show();
+
+
+
+
+
         }
     }
 
