@@ -22,8 +22,10 @@ import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.Sessions.Sessions;
+import movingforward.tutorapp3.Teacher_list;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
+import static movingforward.tutorapp3.R.id.StudentSessions;
 import static movingforward.tutorapp3.R.id.TutorSessions;
 //import static movingforward.tutorapp3.Sessions.Sessions.newInstance;
 
@@ -78,16 +80,19 @@ public class Nav_MainActivity extends AppCompatActivity
         {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+               // navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 mUser.setPermission(Role.Tutor);
                 break;
             case "Student":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+                //navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
-                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                navigationView.getMenu().findItem(StudentSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
+                navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 mUser.setPermission(Role.Student);
 
                 break;
@@ -95,8 +100,9 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
                 navigationView.getMenu().findItem(TutorSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
-                navigationView.getMenu().findItem(R.id.StudentSessions).setVisible(false);
+                navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
+                navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 mUser.setPermission(Role.Teacher);
 
                 break;
@@ -191,7 +197,7 @@ public class Nav_MainActivity extends AppCompatActivity
         {
 
         }
-        else if (id == R.id.StudentSessions)
+        else if (id == StudentSessions)
         {
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
             Sessions StudentSessions = Sessions.newInstance(mUser,"tutor");
@@ -209,11 +215,6 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
         }
-      else if (id == R.id.MySessions)
-        {
-
-
-        }
         else if (id == R.id.MyClasses)
         {
 
@@ -227,6 +228,22 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.AppointTutor)
         {
 
+
+        }
+        else if(id==R.id.TeacherList){
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Teacher_list teacher_list = new Teacher_list();
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+
+
+        }
+        else if (id==R.id.Find_ClassesT){
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
 
         }
 

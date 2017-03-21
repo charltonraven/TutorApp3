@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.Find_Class;
+package movingforward.tutorapp3;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -20,33 +20,30 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import movingforward.tutorapp3.Entities.ListItemHolder;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
-import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
-import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.ChatActivity;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Tutor_list.OnFragmentInteractionListener} interface
+ * {@link Teacher_list.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Tutor_list#newInstance} factory method to
+ * Use the {@link Teacher_list#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Tutor_list extends Fragment implements AdapterView.OnItemClickListener{
+public class Teacher_list extends Fragment implements AdapterView.OnItemClickListener{
     User mUser;
     User nUser;
     TextView tvClassName;
    TextView tvTutorName;
     ListView lv;
     InputStream content;
-    TutorListAdapter adapter;
-    ArrayList<ListItemHolder> TutorsAndClasses = new ArrayList<>();
+    nameListAdapter adapter;
+    ArrayList<firstLastName> firstLastNames = new ArrayList<>();
     private SaveHistoryTask saveHistoryTask=null;
 
     String line = null;
@@ -68,7 +65,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
     private OnFragmentInteractionListener mListener;
 
-    public Tutor_list() {
+    public Teacher_list() {
         // Required empty public constructor
     }
 
@@ -86,8 +83,8 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
      * @return A new instance of fragment Tutor_list.
      */
     // TODO: Rename and change types and number of parameters
-    public static Tutor_list newInstance(String param1, String param2) {
-        Tutor_list fragment = new Tutor_list();
+    public static Teacher_list newInstance(String param1, String param2) {
+        Teacher_list fragment = new Teacher_list();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -108,15 +105,13 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
-        Bundle bundle=getArguments();
-        mUser= (User) bundle.getSerializable("mUser");
 
         lv = (ListView) rootview.findViewById(R.id.lvTutorList);
 
         //get ClassName from BySubject
         lv.setAdapter(adapter);
 
-        lv.setOnItemClickListener(Tutor_list.this);
+        lv.setOnItemClickListener(Teacher_list.this);
 
 
         try {
@@ -288,10 +283,10 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
 
-            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
+            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateTeacherlist.php";
 
             //Making a request to url and getting response
-            String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName,null,null,null);
+            String jsonStr = sh.makeServiceCallGet(TutorList_url);
 
 
 
@@ -305,10 +300,9 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
                     for(int i=0;i<TutorList.length();i++){
                         JSONObject T = TutorList.getJSONObject(i);
-                        String Class=T.getString("ClassTutor");
                         String FName=T.getString("firstName");
                         String LName=T.getString("lastName");
-                        TutorsAndClasses.add(new ListItemHolder(Class,FName,LName));
+                        firstLastNames.add(new firstLastName(FName,LName));
 
                         String Test="Test";
                     }
@@ -332,7 +326,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         protected void onPostExecute(String s) {
 
 
-            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
+            adapter = new nameListAdapter(getActivity(), android.R.layout.simple_list_item_1, firstLastNames);
             lv.setAdapter(adapter);
         }
     }

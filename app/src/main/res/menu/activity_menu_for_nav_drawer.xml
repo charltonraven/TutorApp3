@@ -27,6 +27,9 @@
             <item
                 android:id="@+id/TeacherSessions"
                 android:title="My Teacher Sessions" />
+            <item
+                android:id="@+id/TeacherList"
+                android:title="Contact Teacher" />
         </menu>
     </item>
 
@@ -34,8 +37,8 @@
         android:id="@+id/mTeacherSessions">
         <menu>
             <item
-                android:id="@+id/MySessions"
-                android:title="My Class"/>
+                android:id="@+id/Find_ClassesT"
+                android:title="Find Classes"/>
             <item
                 android:id="@+id/MyClasses"
                 android:title="My Tutor Sessions"/>
@@ -45,6 +48,9 @@
             <Item
                 android:id="@+id/AppointTutor"
                 android:title="Bulletin Board"/>
+            <!--<Item
+                android:id="@+id/Find_ClassesT"
+                android:title="FindClasses"/>-->
         </menu>
 
     </item>

@@ -399,15 +399,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 HttpHandler LoginHandler = new HttpHandler();
                 responseJson = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
 
-
-
-
             }
-
-
-
-
-
 
             return responseJson;
         }
