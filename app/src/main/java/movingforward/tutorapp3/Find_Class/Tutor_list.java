@@ -277,7 +277,12 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
             chatIntent.putExtra("nUser",nUser);
-            chatIntent.putExtra("className",tvClassName.getText());
+            if(mUser.getTutor()==3 || nUser.getTutor()==3){
+                chatIntent.putExtra("className","teacher");
+            }else {
+                chatIntent.putExtra("className", tvClassName.getText());
+
+            }
             startActivity(chatIntent);
         }
     }

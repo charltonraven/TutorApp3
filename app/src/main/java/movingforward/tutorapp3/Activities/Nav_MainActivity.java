@@ -80,14 +80,13 @@ public class Nav_MainActivity extends AppCompatActivity
         {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-               // navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
+
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 mUser.setPermission(Role.Tutor);
                 break;
             case "Student":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                //navigationView.getMenu().findItem(R.id.MySessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
