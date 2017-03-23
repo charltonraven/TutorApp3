@@ -119,17 +119,19 @@ public class BySubjectFragmentOne extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String ClassName=((TextView)view.findViewById(R.id.grid_Text_label)).getText().toString();
-                Tutor_list tutor_list=new Tutor_list();
-                tutor_list.setClassName(ClassName);
+                String role1=mUser.getPermission().name();
+                    String ClassName = ((TextView) view.findViewById(R.id.grid_Text_label)).getText().toString();
+                    Tutor_list tutor_list = new Tutor_list();
+                    tutor_list.setClassName(ClassName);
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();//cw
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN); //cw
+                    Bundle bundle = new Bundle();//cw
+                    bundle.putSerializable("mUser", mUser);//cw
+                    tutor_list.setArguments(bundle);//cw
+                    FragmentManager manager = getFragmentManager();
+                    manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, tutor_list, tutor_list.getTag()).commit();
 
-                FragmentTransaction ft=getActivity().getSupportFragmentManager().beginTransaction();//cw
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN); //cw
-                Bundle bundle=new Bundle();//cw
-                bundle.putSerializable("mUser",mUser);//cw
-                tutor_list.setArguments(bundle);//cw
-                FragmentManager manager=getFragmentManager();
-                manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes,tutor_list,tutor_list.getTag()).commit();
+
 
 
 

@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.Find_Class;
+package movingforward.tutorapp3;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -20,33 +20,30 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import movingforward.tutorapp3.Entities.ListItemHolder;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
-import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
-import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.ChatActivity;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Tutor_list.OnFragmentInteractionListener} interface
+ * {@link Teacher_list.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Tutor_list#newInstance} factory method to
+ * Use the {@link Teacher_list#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Tutor_list extends Fragment implements AdapterView.OnItemClickListener{
+public class Teacher_list extends Fragment implements AdapterView.OnItemClickListener{
     User mUser;
     User nUser;
     TextView tvClassName;
    TextView tvTutorName;
     ListView lv;
     InputStream content;
-    TutorListAdapter adapter;
-    ArrayList<ListItemHolder> TutorsAndClasses = new ArrayList<>();
+    nameListAdapter adapter;
+    ArrayList<firstLastName> firstLastNames = new ArrayList<>();
     private SaveHistoryTask saveHistoryTask=null;
 
     String line = null;
@@ -68,7 +65,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
     private OnFragmentInteractionListener mListener;
 
-    public Tutor_list() {
+    public Teacher_list() {
         // Required empty public constructor
     }
 
@@ -86,8 +83,8 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
      * @return A new instance of fragment Tutor_list.
      */
     // TODO: Rename and change types and number of parameters
-    public static Tutor_list newInstance(String param1, String param2) {
-        Tutor_list fragment = new Tutor_list();
+    public static Teacher_list newInstance(String param1, String param2) {
+        Teacher_list fragment = new Teacher_list();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -108,19 +105,19 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootview = inflater.inflate(R.layout.fragment_tutor_list, container, false);
-        Bundle bundle=getArguments();
-        mUser= (User) bundle.getSerializable("mUser");
 
         lv = (ListView) rootview.findViewById(R.id.lvTutorList);
 
         //get ClassName from BySubject
         lv.setAdapter(adapter);
 
-        lv.setOnItemClickListener(Tutor_list.this);
+        lv.setOnItemClickListener(Teacher_list.this);
+        Bundle bundle=getArguments();
+        mUser=(User) bundle.getSerializable("mUser");
 
 
         try {
-            String blah = new TutorListTask().execute().get();
+            String blah = new ListTask().execute().get();
             String test=blah;
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -156,22 +153,14 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         tvClassName = (TextView) view.findViewById(R.id.tv_Class_Name);
         tvTutorName = (TextView) view.findViewById(R.id.tv_TutorName);
 
-        String classname=tvClassName.getText().toString();
-        String tutorname=tvTutorName.getText().toString();
 
-        String [] classAbbrName=classname.split("(?<=\\D)(?=\\d)");
-        String Abbr=classAbbrName[0];
-        String ClassName=classAbbrName[1];
+        String FirstName=tvClassName.getText().toString();
+        String LastName=tvTutorName.getText().toString();
 
-
-        String [] FirstLastName=tutorname.split(" ");
-        String FirstName=FirstLastName[0];
-        String LastName=FirstLastName[1];
-        //String studentPermission="Student";
 
 
         try {
-            new SaveHistoryTask().execute(Abbr,ClassName,FirstName,LastName,"Student").get();
+            new SaveHistoryTask().execute(FirstName,LastName).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -188,7 +177,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
     public void StartTask() {
         try {
-            new TutorListTask().execute().get();
+            new ListTask().execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -205,26 +194,19 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
         @Override
         protected String doInBackground(String... params) {
-            String Abbr=params[0];
-            String ClassName=params[1];
-            String tutorFirstName=params[2];
-            String tutorLastName=params[3];
-            //String role=mUser.getPermission().toString();
-            String role=params[4];
-            String studnetFirstName;
-            String studentLastName;
+            String tutorFirstName=params[0];
+            String tutorLastName=params[1];
+
+
+
 
             String result="";
-            String [] FLW={tutorFirstName,tutorLastName,"student"};
+            String [] FLW={tutorFirstName,tutorLastName,"teacher"};
 
             HttpHandler2 sh=new HttpHandler2();
 
             String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
-<<<<<<< Updated upstream
-             result=sh.makeServiceCallPost(getInformation,FLW,null,null);
-=======
             result=sh.makeServiceCallPost(getInformation,FLW,null,null,null);
->>>>>>> Stashed changes
             String toID="";
             String Email="";
 
@@ -234,18 +216,16 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
                     JSONArray LoggedUser=new JSONArray(result);
                     for(int i=0;i<LoggedUser.length();i++){
                         JSONObject UserObj = LoggedUser.getJSONObject(i);
-                        String StudentID=UserObj.getString("studentID");
+                        String StudentID=UserObj.getString("teacherID");
                         String email=UserObj.getString("email");
                         String firstName=UserObj.getString("firstName");
                         String lastName=UserObj.getString("lastName");
-                        String major=UserObj.getString("major");
-                        String courses=UserObj.getString("courses");
+                        String major=UserObj.getString("department");
                         int registered=UserObj.getInt("registered");
-                        int tutor=UserObj.getInt("tutor");
                         //  String password=UserObj.getString("password");
 
 
-                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
+                        nUser=new User(StudentID,email,firstName,lastName,major,null,registered,3,null,null);
 
                         String Test="Test";
                     }
@@ -260,24 +240,14 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             }
 
 
-            if(mUser.getPermission().name().equals("Student") ||mUser.getPermission().name().equals("Tutor") ) {
 
 
-                String fromID = mUser.getID();
-                String[] saveInfo = {"Student2Tutor", nUser.getID(), Email, nUser.getFirstName() + " " + nUser.getLastName(), Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
-                String SaveHistory_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-                String results = sh.makeServiceCallPost(SaveHistory_URL, null, saveInfo, null,null);//saves to Student and Tutor
-            }else{
-                String fromID = mUser.getID();
-                String[] saveInfo = {"Teacher2Tutor", nUser.getID(), Email, nUser.getFirstName() + " " + nUser.getLastName(),Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
-                String SaveHistory_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-                String results = sh.makeServiceCallPost(SaveHistory_URL, null, saveInfo, null,null);//saves to Student and Tutor
+            String fromID=mUser.getID();
+            String [] saveInfo={"Tutor2Teacher",nUser.getID(),Email,nUser.getFirstName()+" "+nUser.getLastName(),mUser.getID(),mUser.getFirstName()+" "+mUser.getLastName()};
+            String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,null,null,saveInfo);
 
-            }
-
-
-
-
+            System.out.println("");
             return null;
         }
 
@@ -291,30 +261,21 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
             chatIntent.putExtra("mUser", mUser);
             chatIntent.putExtra("nUser",nUser);
-<<<<<<< Updated upstream
             chatIntent.putExtra("className",tvClassName.getText());
-=======
-            if(mUser.getTutor()==3 || nUser.getTutor()==3){
-                chatIntent.putExtra("className","Teacher");
-            }else {
-                chatIntent.putExtra("className", tvClassName.getText());
-
-            }
->>>>>>> Stashed changes
             startActivity(chatIntent);
         }
     }
 
-    private class TutorListTask extends AsyncTask<String, String, String> {
+    private class ListTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
 
-            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/TutorList.php";
+            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateTeacherlist.php";
 
             //Making a request to url and getting response
-            String jsonStr = sh.makeServiceCallPost(TutorList_url,ClassName,null,null,null);
+            String jsonStr = sh.makeServiceCallGet(TutorList_url);
 
 
 
@@ -328,10 +289,9 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
                     for(int i=0;i<TutorList.length();i++){
                         JSONObject T = TutorList.getJSONObject(i);
-                        String Class=T.getString("ClassTutor");
                         String FName=T.getString("firstName");
                         String LName=T.getString("lastName");
-                        TutorsAndClasses.add(new ListItemHolder(Class,FName,LName));
+                        firstLastNames.add(new firstLastName(FName,LName));
 
                         String Test="Test";
                     }
@@ -355,7 +315,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
         protected void onPostExecute(String s) {
 
 
-            adapter = new TutorListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
+            adapter = new nameListAdapter(getActivity(), android.R.layout.simple_list_item_1, firstLastNames);
             lv.setAdapter(adapter);
         }
     }
