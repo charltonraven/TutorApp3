@@ -265,7 +265,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                 String getInfo_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/getInfo.php";
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(getInfo_URL, null,null,info);
+                jsonStr  = sh.makeServiceCallPost(getInfo_URL, null,null,info,null);
 
 
 

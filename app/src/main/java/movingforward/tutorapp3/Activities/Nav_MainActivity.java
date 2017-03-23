@@ -224,8 +224,19 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
         }
+<<<<<<< Updated upstream
         else if (id == R.id.AppointTutor)
         {
+=======
+        else if(id==R.id.TeacherList){
+
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Teacher_list teacher_list = new Teacher_list();
+            teacher_list.setArguments(bundle);
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+
+>>>>>>> Stashed changes
 
 
         }

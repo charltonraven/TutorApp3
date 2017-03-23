@@ -43,5 +43,7 @@ if ($who=="Teacher"){
 	
 }
 
+mysqli_close($conn);
+
 
 ?>

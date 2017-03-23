@@ -21,21 +21,20 @@ if(mysqli_num_rows($result)==1){
 	}
 	
 		print (json_encode($flag));
-}
+	}
 
 else{
 	$result=mysqli_query($conn,$mysql_qryTeacher);
 	if(mysqli_num_rows($result)==1){
-	echo "Teacher $user_name";
-	
-	}else{
-		echo "Login Not Successful";
-		
-		}
-	
+	while($row=mysqli_fetch_array($result)){
+		$flag[]=$row;
 	}
 	
+		print (json_encode($flag));
 	
+	}
+}
 
+mysqli_close($conn)
 
 ?>

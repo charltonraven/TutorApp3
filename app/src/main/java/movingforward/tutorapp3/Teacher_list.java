@@ -112,6 +112,8 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(Teacher_list.this);
+        Bundle bundle=getArguments();
+        mUser=(User) bundle.getSerializable("mUser");
 
 
         try {
@@ -151,22 +153,14 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
         tvClassName = (TextView) view.findViewById(R.id.tv_Class_Name);
         tvTutorName = (TextView) view.findViewById(R.id.tv_TutorName);
 
-        String classname=tvClassName.getText().toString();
-        String tutorname=tvTutorName.getText().toString();
 
-        String [] classAbbrName=classname.split("(?<=\\D)(?=\\d)");
-        String Abbr=classAbbrName[0];
-        String ClassName=classAbbrName[1];
+        String FirstName=tvClassName.getText().toString();
+        String LastName=tvTutorName.getText().toString();
 
-
-        String [] FirstLastName=tutorname.split(" ");
-        String FirstName=FirstLastName[0];
-        String LastName=FirstLastName[1];
-        //String studentPermission="Student";
 
 
         try {
-            new SaveHistoryTask().execute(Abbr,ClassName,FirstName,LastName,"Student").get();
+            new SaveHistoryTask().execute(FirstName,LastName).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -200,22 +194,19 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
 
         @Override
         protected String doInBackground(String... params) {
-            String Abbr=params[0];
-            String ClassName=params[1];
-            String tutorFirstName=params[2];
-            String tutorLastName=params[3];
-            //String role=mUser.getPermission().toString();
-            String role=params[4];
-            String studnetFirstName;
-            String studentLastName;
+            String tutorFirstName=params[0];
+            String tutorLastName=params[1];
+
+
+
 
             String result="";
-            String [] FLW={tutorFirstName,tutorLastName,"student"};
+            String [] FLW={tutorFirstName,tutorLastName,"teacher"};
 
             HttpHandler2 sh=new HttpHandler2();
 
             String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
-            result=sh.makeServiceCallPost(getInformation,FLW,null,null);
+            result=sh.makeServiceCallPost(getInformation,FLW,null,null,null);
             String toID="";
             String Email="";
 
@@ -225,22 +216,20 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
                     JSONArray LoggedUser=new JSONArray(result);
                     for(int i=0;i<LoggedUser.length();i++){
                         JSONObject UserObj = LoggedUser.getJSONObject(i);
-                        String StudentID=UserObj.getString("studentID");
+                        String StudentID=UserObj.getString("teacherID");
                         String email=UserObj.getString("email");
                         String firstName=UserObj.getString("firstName");
                         String lastName=UserObj.getString("lastName");
-                        String major=UserObj.getString("major");
-                        String courses=UserObj.getString("courses");
+                        String major=UserObj.getString("department");
                         int registered=UserObj.getInt("registered");
-                        int tutor=UserObj.getInt("tutor");
                         //  String password=UserObj.getString("password");
 
 
-                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
+                        nUser=new User(StudentID,email,firstName,lastName,major,null,registered,3,null,null);
 
                         String Test="Test";
                     }
-                    toID=nUser.getStudentID();
+                    toID=nUser.getID();
                     Email=nUser.getEmail();
 
 
@@ -253,10 +242,10 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
 
 
 
-            String fromID=mUser.getStudentID();
-            String [] saveInfo={role,nUser.getStudentID(),Email,nUser.getFirstName()+" "+nUser.getLastName(),Abbr+ClassName,mUser.getStudentID(),mUser.getFirstName()+" "+mUser.getLastName()};
+            String fromID=mUser.getID();
+            String [] saveInfo={"Tutor2Teacher",nUser.getID(),Email,nUser.getFirstName()+" "+nUser.getLastName(),mUser.getID(),mUser.getFirstName()+" "+mUser.getLastName()};
             String SaveHistory_URL="http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
-           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,saveInfo,null);//saves to Student and Tutor
+           String results =  sh.makeServiceCallPost(SaveHistory_URL,null,null,null,saveInfo);
 
             System.out.println("");
             return null;

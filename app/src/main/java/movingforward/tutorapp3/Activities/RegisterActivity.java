@@ -123,18 +123,23 @@ public class RegisterActivity extends AppCompatActivity {
             String response =Register.makeServiceCallPost(register_url,null,null,null,UserInfo);
 
 
-            String result="";
+<<<<<<< Updated upstream
 
             String [] FLW={firstname,lastname,who};
             HttpHandler2 sh=new HttpHandler2();
             String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
             result=sh.makeServiceCallPost(getInformation,FLW,null,null);
 
+=======
+            String result="";
 
+            String [] FLW={firstname,lastname,who};
+            HttpHandler2 sh=new HttpHandler2();
+            String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
+            result=sh.makeServiceCallPost(getInformation,FLW,null,null,null);
+>>>>>>> Stashed changes
 
-
-
-            return result;
+            return response;
         }
 
         @Override

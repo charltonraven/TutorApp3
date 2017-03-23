@@ -12,7 +12,7 @@ public class User implements Serializable {
     String password;
     String firstName;
     String lastName;
-    String StudentID;
+    String ID;
     String major;
     String courses;
     int Registered;
@@ -36,12 +36,12 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getStudentID() {
-        return StudentID;
+    public String getID() {
+        return ID;
     }
 
-    public void setStudentID(String studentID) {
-        StudentID = studentID;
+    public void setID(String ID) {
+        ID = ID;
     }
 
     public String getMajor() {
@@ -91,8 +91,8 @@ public class User implements Serializable {
         this.password = password;
         this.firebaseToken = firebaseToken;
     }
-    public User(String StudentID, String email, String firstName, String lastName, String major, String courses, int registered, int tutor, String password,Role permission){
-        this.StudentID=StudentID;
+    public User(String ID, String email, String firstName, String lastName, String major, String courses, int registered, int tutor, String password,Role permission){
+        this.ID=ID;
         this.email=email;
         this.firstName=firstName;
         this.lastName=lastName;

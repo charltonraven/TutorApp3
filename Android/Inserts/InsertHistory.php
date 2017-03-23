@@ -30,7 +30,7 @@ if(mysqli_connect_error($conn)){
 	echo "Failed to Connect to Database ".mysqli_connect_error();
 }
 
-if($who=="Student" || $who=="Tutor"){
+if($who=="Student2Tutor"){
 	$mysql_qryS="INSERT INTO student_chathistory VALUES('$toID','$email','$tutorName','$classtutorName','$fromID','$date');";
 	$result1=mysqli_query($conn,$mysql_qryS);
 	
@@ -39,19 +39,27 @@ if($who=="Student" || $who=="Tutor"){
 	echo "Complete";
 }
 
-/* if($who=="tutor"){
-	$studentName=$_POST["studentName"];
-	$mysql_qryT= "INSERT INTO tutor_chathistory VALUES('$toID','$email','$studentName','$classtutorName','$fromID','$date');";
-	$result= mysqli_query($conn,$mysql_qryT);
-	echo "saved Tutor";
-} */
-
-
-if($who=="Teacher"){
-	$mysql_qry= "INSERT INTO teacher_chathistory VALUES('$toID','$email','$tutorName','$classtutorName','$fromID','$date');";
-	$result= mysqli_query($conn,$mysql_qry);
-	echo "Complete";
+if($who=="Teacher2Tutor"){
+	$mysql_qryS="INSERT INTO teacher_chathistory VALUES('$toID','$email','$tutorName','$fromID','$date');"; #From Teacher
+	$result1=mysqli_query($conn,$mysql_qryS);
+	
+	$mysql_qryT= "INSERT INTO tutor_chathistory VALUES('$toID','$email','$studentName','Teacher','$fromID','$date');"; #From Tutor  StudentName is teacherName
+	$result2= mysqli_query($conn,$mysql_qryT);
 }
+
+if($who=="Tutor2Teacher"){
+	
+	$mysql_qryT= "INSERT INTO tutor_chathistory VALUES('$toID','$email','$studentName','Teacher','$fromID','$date');"; #From Tutor  StudentName is teacherName
+	$result2= mysqli_query($conn,$mysql_qryT);
+	
+	
+	$mysql_qryS="INSERT INTO teacher_chathistory VALUES('$toID','$email','$tutorName','$fromID','$date');"; #From Teacher
+	$result1=mysqli_query($conn,$mysql_qryS);
+	
+	
+}
+
+
 
 mysqli_close($conn);
 ?>
