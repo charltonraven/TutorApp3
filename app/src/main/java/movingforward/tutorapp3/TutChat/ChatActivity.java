@@ -4,12 +4,15 @@ package movingforward.tutorapp3.TutChat;
  * Created by Jeebus Prime on 2/9/2017.
  */
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,9 +25,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -49,6 +54,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Activities.LoginActivity;
 import movingforward.tutorapp3.Activities.Nav_MainActivity;
+import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 
@@ -108,8 +114,6 @@ public class ChatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
         mUsername = mUser.getStudentID().toLowerCase();
@@ -119,7 +123,6 @@ public class ChatActivity extends AppCompatActivity implements
         nUsername = nUser.getStudentID().toLowerCase();
 
         String className = i.getStringExtra("className").toLowerCase();
-
 
         MESSAGES_CHILD = (mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername)) + "_" + className;
 
@@ -296,8 +299,7 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
     }
 
@@ -330,8 +332,35 @@ public class ChatActivity extends AppCompatActivity implements
                 mUsername = ANONYMOUS;
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
+            case R.id.invite_menu:
+            {
+                if (mUser.getPermission() != Role.Student)
+                {
+                    sendEmail("date");
+                }
+                else
+                {
+                    Toast.makeText(ChatActivity.this, "Ask your tutor to email an Appointment.", Toast.LENGTH_SHORT).show();
+                }
+            }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void sendEmail(String date)
+    {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:" + nUser.getEmail()));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "My email's subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, date);
+
+        try
+        {
+            startActivity(Intent.createChooser(emailIntent, "Send email using..."));
+        } catch (android.content.ActivityNotFoundException ex)
+        {
+            Toast.makeText(ChatActivity.this, "No email clients installed.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -381,7 +410,6 @@ public class ChatActivity extends AppCompatActivity implements
 
     private void createAccount(String Email, String Password)
     {
-
         mFirebaseAuth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>()
         {
             @Override
@@ -398,7 +426,6 @@ public class ChatActivity extends AppCompatActivity implements
                 }
             }
         });
-
     }
 
     private void signIn(final String Email, final String Password)
@@ -419,7 +446,6 @@ public class ChatActivity extends AppCompatActivity implements
                 }
             }
         });
-
     }
 
     private void signOut()
