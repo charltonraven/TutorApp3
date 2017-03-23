@@ -28,6 +28,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,9 +52,6 @@ import movingforward.tutorapp3.R;
 import static android.Manifest.permission.READ_CONTACTS;
 import static movingforward.tutorapp3.R.id.email;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>
 {
 
@@ -76,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     String FirstName="";
     String LastName="";
     User mUser=null;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -218,9 +224,60 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String email = mEmailView.getText().toString();
             String password = mPasswordView.getText().toString();
             String who = "login";
+            boolean verified = false;
 
-            mAuthTask = new UserLoginTask(this);
-            mAuthTask.execute(who, email, password);
+            mFirebaseAuth = FirebaseAuth.getInstance();
+            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+            mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>()
+            {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task)
+                {
+                    if (!task.isSuccessful())
+                    {
+                        final Context context = LoginActivity.this;
+
+                        AlertDialog.Builder RegorTry = new AlertDialog.Builder(context);
+                        RegorTry.setTitle("Incorrect! Would you like to register");
+
+                        RegorTry.setPositiveButton(R.string.register, new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                context.startActivity(new Intent(context, RegisterActivity.class));
+                            }
+                        });
+                        RegorTry.setNeutralButton(R.string.try_again, new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        RegorTry.create();
+                        RegorTry.show();
+                    }
+                    else
+                    {
+                        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+                        if(!mFirebaseUser.isEmailVerified())
+                        {
+                            Toast.makeText(LoginActivity.this, "Must verify first! Resending email...", Toast.LENGTH_SHORT).show();
+                            mFirebaseUser.sendEmailVerification();
+                        }
+                    }
+                }
+            });
+
+            if(mFirebaseUser.isEmailVerified())
+            {
+                mAuthTask = new UserLoginTask(this);
+                mAuthTask.execute(who, email, password);
+            }
 
         } catch (Exception e)
         {
@@ -386,7 +443,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (params[1].equals("") && params[2].equals(""))
             {
                 responseJson = "";
-
             }
             else
             {
@@ -421,10 +477,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String courses="";
             int tutor;
 
-
             if(!responseJson.isEmpty()){
-
-
                 try {
                     JSONArray LoggedUser=new JSONArray(responseJson);
                     for(int i=0;i<LoggedUser.length();i++){
@@ -449,26 +502,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         String password=UserObj.getString("password");
 
                         mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
-/*
-                        if(TeacherStudent.equals("teacher")){
-                            mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
-                        }else {
-                            mUser = new User(id, email, firstName, lastName, major_department, courses, registered, tutor, password, null);
-                        }*/
-
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 alertDialog.setMessage("Logged IN");
-
-
-
                 String Type="";
                 String Email;
-
 
                 if(responseJson!=null){
                     if (!responseJson.equals(""))
@@ -482,7 +523,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }else {
                             Type="Teacher";
                         }
-
 
                         if (Type.contains("Student"))
                         {
