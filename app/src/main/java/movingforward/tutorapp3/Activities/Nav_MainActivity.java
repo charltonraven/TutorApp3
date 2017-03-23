@@ -224,10 +224,9 @@ public class Nav_MainActivity extends AppCompatActivity
 
 
         }
-<<<<<<< Updated upstream
         else if (id == R.id.AppointTutor)
         {
-=======
+        }
         else if(id==R.id.TeacherList){
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
@@ -236,9 +235,6 @@ public class Nav_MainActivity extends AppCompatActivity
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
 
->>>>>>> Stashed changes
-
-
         }
         else if(id==R.id.TeacherList){
 
@@ -246,8 +242,6 @@ public class Nav_MainActivity extends AppCompatActivity
             Teacher_list teacher_list = new Teacher_list();
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
-
-
         }
         else if (id==R.id.Find_ClassesT){
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();

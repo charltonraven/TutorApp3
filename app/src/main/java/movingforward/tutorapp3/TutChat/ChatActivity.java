@@ -112,19 +112,15 @@ public class ChatActivity extends AppCompatActivity implements
 
         Intent i = getIntent();
         mUser = (User) i.getSerializableExtra("mUser");
-<<<<<<< Updated upstream
-        mUsername = mUser.getStudentID();
+        mUsername = mUser.getID().toLowerCase();
 
 
         nUser = (User) i.getSerializableExtra("nUser");
-        nUsername = nUser.getStudentID();
-=======
         mUsername = mUser.getID().toLowerCase();
 
 
         nUser = (User) i.getSerializableExtra("nUser");
         nUsername = nUser.getID().toLowerCase();
->>>>>>> Stashed changes
 
         String className = i.getStringExtra("className").toLowerCase();
 
