@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\slide_date_time_picker.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\slide_date_time_picker.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\slide_date_time_picker.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\slide_date_time_picker.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\custom_tab.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\custom_tab.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\fragment_date.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\fragment_date.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\fragment_time.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\fragment_time.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\custom_tab.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\custom_tab.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\fragment_time.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\TutorApp3\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\fragment_time.xml"
+    },
+    {
+        "merged": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\fragment_date.xml",
+        "source": "C:\\Users\\idont\\gitkraken\\SlideDateTimePicker\\slideDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\layout\\fragment_date.xml"
+    }
+]

@@ -20,6 +20,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,11 +54,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Activities.LoginActivity;
 import movingforward.tutorapp3.Activities.Nav_MainActivity;
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
+import movingforward.tutorapp3.ProjectHelpers.DateTimeHelper;
 import movingforward.tutorapp3.R;
 
 //import com.google.android.gms.auth.api.Auth;
@@ -95,6 +103,25 @@ public class ChatActivity extends AppCompatActivity implements
 
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
+
+    private SimpleDateFormat mFormatter = new SimpleDateFormat("MMMM dd yyyy hh:mm aa");
+
+    private SlideDateTimeListener listener = new SlideDateTimeListener() {
+
+        @Override
+        public void onDateTimeSet(Date date)
+        {
+            sendEmail(mFormatter.format(date));
+        }
+
+        // Optional cancel listener
+        @Override
+        public void onDateTimeCancel()
+        {
+            Toast.makeText(ChatActivity.this,
+                    "Canceled", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
@@ -340,7 +367,31 @@ public class ChatActivity extends AppCompatActivity implements
             {
                 if (mUser.getPermission() != Role.Student)
                 {
-                    sendEmail("date");
+                    Calendar c = Calendar .getInstance();
+                    Date today = new Date();
+                    Date inOneYear = new Date();
+                    TypedValue typedValue = new TypedValue();
+                    getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+                    int color = typedValue.data;
+                    try
+                    {
+                        today = mFormatter.parse(mFormatter.format(c.getTime()));
+                        c.add(Calendar.YEAR, 1);
+                        inOneYear = mFormatter.parse(mFormatter.format(c.getTime()));
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
+                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                            .setListener(listener)
+                            .setInitialDate(new Date())
+                            .setMinDate(today)
+                            .setMaxDate(inOneYear)
+                            //.setTheme(SlideDateTimePicker.HOLO_DARK)
+                            .setIndicatorColor(color)
+                            .build()
+                            .show();
                 }
                 else
                 {
@@ -356,8 +407,9 @@ public class ChatActivity extends AppCompatActivity implements
     {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
         emailIntent.setData(Uri.parse("mailto:" + nUser.getEmail()));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "My email's subject");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, date);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Tut It Up! Reminder");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Your tutor '" + nUsername + "' has scheduled a " +
+                "tutoring appointment for you on " + date + "!");
 
         try
         {
