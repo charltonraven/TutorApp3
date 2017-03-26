@@ -53,6 +53,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -141,14 +143,31 @@ public class ChatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        if (getIntent().getExtras() != null)
+        {
+            for (String key : getIntent().getExtras().keySet())
+            {
+                String value = getIntent().getExtras().getString(key);
+
+                if (key.equals("Nav_MainActivity") && value.equals("True"))
+                {
+                    Intent intent = new Intent(this, Nav_MainActivity.class);
+                    intent.putExtra("value", value);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }
+
+        subscribeToPushService();
+
         Intent i = getIntent();
+
         mUser = (User) i.getSerializableExtra("mUser");
         mUsername = mUser.getID().toLowerCase();
 
-
         nUser = (User) i.getSerializableExtra("nUser");
         mUsername = mUser.getID().toLowerCase();
-
 
         nUser = (User) i.getSerializableExtra("nUser");
         nUsername = nUser.getID().toLowerCase();
@@ -321,6 +340,20 @@ public class ChatActivity extends AppCompatActivity implements
         });
     }
 
+    private void subscribeToPushService()
+    {
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+
+        Log.d("AndroidBash", "Subscribed");
+        Toast.makeText(ChatActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        Log.d("AndroidBash", token);
+        Toast.makeText(ChatActivity.this, token, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onStart()
     {
@@ -330,7 +363,8 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPause() {
+    public void onPause()
+    {
         super.onPause();
     }
 
@@ -357,7 +391,8 @@ public class ChatActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId()) {
+        switch (item.getItemId())
+        {
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 mUsername = ANONYMOUS;

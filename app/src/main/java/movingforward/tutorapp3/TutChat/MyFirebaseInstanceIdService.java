@@ -21,8 +21,12 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         String fcmToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "FCM Device Token:" + fcmToken);
         //Save or send FCM registration token
-
+        sendRegistrationToServer(fcmToken);
         // Once a token is generated, we subscribe to topic.
         FirebaseMessaging.getInstance().subscribeToTopic(FRIENDLY_ENGAGE_TOPIC);
+    }
+
+    private void sendRegistrationToServer(String token) {
+        // TODO: Implement this method to send token to your app server.
     }
 }
