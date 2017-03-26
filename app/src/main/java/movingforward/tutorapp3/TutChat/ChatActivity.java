@@ -126,6 +126,7 @@ public class ChatActivity extends AppCompatActivity implements
     };*/
 
     private Button mSendButton;
+    private Button mImageButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
@@ -142,24 +143,6 @@ public class ChatActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (getIntent().getExtras() != null)
-        {
-            for (String key : getIntent().getExtras().keySet())
-            {
-                String value = getIntent().getExtras().getString(key);
-
-                if (key.equals("Nav_MainActivity") && value.equals("True"))
-                {
-                    Intent intent = new Intent(this, Nav_MainActivity.class);
-                    intent.putExtra("value", value);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        }
-
-        subscribeToPushService();
 
         Intent i = getIntent();
 
@@ -310,10 +293,12 @@ public class ChatActivity extends AppCompatActivity implements
                 if (charSequence.toString().trim().length() > 0)
                 {
                     mSendButton.setEnabled(true);
+                    mImageButton.setEnabled(true);
                 }
                 else
                 {
                     mSendButton.setEnabled(false);
+                    mImageButton.setEnabled(false);
                 }
             }
 
@@ -338,20 +323,15 @@ public class ChatActivity extends AppCompatActivity implements
                 mMessageEditText.setText("");
             }
         });
-    }
 
-    private void subscribeToPushService()
-    {
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-
-        Log.d("AndroidBash", "Subscribed");
-        Toast.makeText(ChatActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
-
-        String token = FirebaseInstanceId.getInstance().getToken();
-
-        // Log and toast
-        Log.d("AndroidBash", token);
-        Toast.makeText(ChatActivity.this, token, Toast.LENGTH_SHORT).show();
+        mImageButton = (Button) findViewById(R.id.sendButton);
+        mImageButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+            }
+        });
     }
 
     @Override

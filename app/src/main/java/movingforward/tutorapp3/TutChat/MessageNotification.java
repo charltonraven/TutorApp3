@@ -48,7 +48,7 @@ public class MessageNotification extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.cone)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("FCM Message")
                 .setContentText(messageBody)
                 .setAutoCancel(true)

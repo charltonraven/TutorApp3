@@ -76,18 +76,28 @@ public class RegisterActivity extends AppCompatActivity
             {
                 String email = mEmailView.getText().toString();
                 String domain = email.split("@")[1];
+                boolean isFirstName = mFirstNameView.getText().toString().equals("") ? false : true;
+                boolean isLastName = mLastNameView.getText().toString().equals("") ? false : true;
 
-                if (mTeacherCheckBox.isChecked() && domain.equals("fmarion.edu"))
+                if(!isFirstName)
+                {
+                    Toast.makeText(RegisterActivity.this, "Fill in your First Name.", Toast.LENGTH_SHORT).show();
+                }
+                else if(!isLastName)
+                {
+                    Toast.makeText(RegisterActivity.this, "Fill in your Last Name.", Toast.LENGTH_SHORT).show();
+                }
+                else if (mTeacherCheckBox.isChecked() && domain.equals("fmarion.edu"))
                 {
                     Register();
                 }
-                else if (domain.equals("g.fmarion.edu"))
+                else if (!mTeacherCheckBox.isChecked() && domain.equals("g.fmarion.edu"))
                 {
                     Register();
                 }
                 else
                 {
-                    Toast.makeText(RegisterActivity.this, "Use valid school email!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Use your valid FMU email!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -111,26 +121,12 @@ public class RegisterActivity extends AppCompatActivity
             mMajorView = null;
         }
 
-        RegisterUser registerUser = new RegisterUser(this);
-        registerUser.execute(who, firstName, lastName, email, major);
-
         signIn(email, "password");
 
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        AlertDialog.Builder RegorTry = new AlertDialog.Builder(RegisterActivity.this);
-        RegorTry.setTitle("You are now Registered. Verify your email before logging in!");
-
-        RegorTry.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog, int id)
-            {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-            }
-        });
-
-        RegorTry.create();
-        RegorTry.show();
+        RegisterUser registerUser = new RegisterUser(this, mFirebaseUser);
+        registerUser.execute(who, firstName, lastName, email, major);
     }
 
     private void signIn(final String Email, final String Password)
@@ -178,11 +174,12 @@ public class RegisterActivity extends AppCompatActivity
         public String lastname = "";
         public String Email = "";
         public String major = "";
+        public FirebaseUser mFirebaseUser;
 
-        RegisterUser(Context context)
+        RegisterUser(Context context, FirebaseUser mFirebaseUser)
         {
             this.context = context;
-
+            this.mFirebaseUser = mFirebaseUser;
         }
 
         @Override
@@ -219,8 +216,45 @@ public class RegisterActivity extends AppCompatActivity
             if (result != null) {
 
                 if (result.equals("Email Already Exist")) {
-                    alertDialog.setMessage(result);
-                    alertDialog.show();
+                    AlertDialog.Builder RegorTry = new AlertDialog.Builder(context);
+                    RegorTry.setTitle("Email is already registered! Resend verification email?");
+
+                    RegorTry.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            mFirebaseUser.sendEmailVerification();
+                            Toast.makeText(context, "Check your emails to verify your account!", Toast.LENGTH_SHORT).show();
+                            context.startActivity(new Intent(context, LoginActivity.class));
+                        }
+                    });
+                    RegorTry.setNegativeButton("No", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            context.startActivity(new Intent(context, LoginActivity.class));
+                            dialog.dismiss();
+                        }
+                    });
+
+                    RegorTry.create();
+                    RegorTry.show();
+                }
+                else
+                {
+                    AlertDialog.Builder RegorTry = new AlertDialog.Builder(context);
+                    RegorTry.setTitle("You are now Registered. Verify your email before logging in!");
+
+                    RegorTry.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            context.startActivity(new Intent(context, LoginActivity.class));
+                        }
+                    });
+
+                    RegorTry.create();
+                    RegorTry.show();
                 }
             }
             else

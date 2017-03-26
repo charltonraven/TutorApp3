@@ -13,11 +13,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
@@ -25,6 +30,7 @@ import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.Sessions.Sessions;
 import movingforward.tutorapp3.Teacher_list;
+import movingforward.tutorapp3.TutChat.ChatActivity;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
 import static movingforward.tutorapp3.R.id.StudentSessions;
@@ -47,7 +53,6 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav__main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,6 +61,24 @@ public class Nav_MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        if (getIntent().getExtras() != null)
+        {
+            for (String key : getIntent().getExtras().keySet())
+            {
+                String value = getIntent().getExtras().getString(key);
+
+                if (key.equals("Nav_MainActivity") && value.equals("True"))
+                {
+                    Intent intent = new Intent(this, ChatActivity.class);
+                    intent.putExtra("value", value);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }
+
+        subscribeToPushService();
 
         Intent navIntent = getIntent();
         mUser = (User) navIntent.getSerializableExtra("mUser");
@@ -111,6 +134,20 @@ public class Nav_MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
         drawer.openDrawer(Gravity.LEFT);
+    }
+
+    private void subscribeToPushService()
+    {
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+
+        Log.d("AndroidBash", "Subscribed");
+        Toast.makeText(Nav_MainActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        Log.d("AndroidBash", token);
+        Toast.makeText(Nav_MainActivity.this, token, Toast.LENGTH_SHORT).show();
     }
 
     @Override
