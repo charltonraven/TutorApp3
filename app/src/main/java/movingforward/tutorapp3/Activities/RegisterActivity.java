@@ -2,6 +2,7 @@ package movingforward.tutorapp3.Activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -122,6 +123,20 @@ public class RegisterActivity extends AppCompatActivity
         signIn(email, "password");
 
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        AlertDialog.Builder RegorTry = new AlertDialog.Builder(RegisterActivity.this);
+        RegorTry.setTitle("You are now Registered. Verify your email before logging in!");
+
+        RegorTry.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            }
+        });
+
+        RegorTry.create();
+        RegorTry.show();
     }
 
     private void signIn(final String Email, final String Password)
@@ -236,9 +251,6 @@ public class RegisterActivity extends AppCompatActivity
 
                         alertDialog.setMessage("You are now Registered");
                         alertDialog.show();
-
-                        Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                        startNav_Activity.putExtra("mUser", mUser);
                     }
                 } catch (JSONException e)
                 {

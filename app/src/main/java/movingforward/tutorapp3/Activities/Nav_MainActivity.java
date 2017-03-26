@@ -1,5 +1,7 @@
 package movingforward.tutorapp3.Activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -121,7 +123,27 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else
         {
-            super.onBackPressed();
+            AlertDialog.Builder RegorTry = new AlertDialog.Builder(Nav_MainActivity.this);
+            RegorTry.setTitle("Are you sure you want to sign out?");
+
+            RegorTry.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    startActivity(new Intent(Nav_MainActivity.this, LoginActivity.class));
+                }
+            });
+            RegorTry.setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    dialog.dismiss();
+
+                }
+            });
+
+            RegorTry.create();
+            RegorTry.show();
         }
     }
 

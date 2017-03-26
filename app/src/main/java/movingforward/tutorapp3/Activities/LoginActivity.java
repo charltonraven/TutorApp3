@@ -459,7 +459,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 HttpHandler LoginHandler = new HttpHandler();
                 responseJson = LoginHandler.makeServiceCallPost(login_url, null, username, password, null);
-
             }
 
             return responseJson;
@@ -552,9 +551,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         context.startActivity(navIntent);
                     }
                 }
-
-
-
             }else{
                 RegorTry = new AlertDialog.Builder(context);
                 RegorTry.setTitle("Incorrect! Would you like to register");
@@ -567,12 +563,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     }
                 });
+
                 RegorTry.setNeutralButton(R.string.try_again, new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int id)
                     {
                         dialog.dismiss();
-
                     }
                 });
 
@@ -581,16 +577,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
             }
-
-
-
-
-
-
         }
     }
-
-
 }
 
 
