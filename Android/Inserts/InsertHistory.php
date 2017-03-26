@@ -40,10 +40,10 @@ if($who=="Student2Tutor"){
 }
 
 if($who=="Teacher2Tutor"){
-	$mysql_qryS="INSERT INTO teacher_chathistory VALUES('$toID','$email','$tutorName','$fromID','$date');"; #From Teacher
+	$mysql_qryS="INSERT INTO teacher_chathistory VALUES('$toID','$email','$studentName','$fromID','$date');"; #From Teacher
 	$result1=mysqli_query($conn,$mysql_qryS);
 	
-	$mysql_qryT= "INSERT INTO tutor_chathistory VALUES('$toID','$email','$studentName','Teacher','$fromID','$date');"; #From Tutor  StudentName is teacherName
+	$mysql_qryT= "INSERT INTO tutor_chathistory VALUES('$toID','$email','$tutorName','Teacher','$fromID','$date');"; #From Tutor  StudentName is teacherName
 	$result2= mysqli_query($conn,$mysql_qryT);
 }
 

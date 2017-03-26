@@ -2,11 +2,11 @@
 require "conn.php";
 
 //$who=$_POST["who"];
-$user_name = $_POST["username"];
-$user_pass = $_POST["password"];
+/* $user_name = $_POST["username"];
+$user_pass = $_POST["password"]; */
 
-/* $user_name = "DLeon4743@gmail.com";
-$user_pass = "password"; */
+$user_name = "DLeon4743@gmail.com";
+$user_pass = "password";
 
 $mysql_qryStudent= "select * from student where email = '$user_name' and password = '$user_pass';";
 $mysql_qryTutor= "select * from student where email = '$user_name' and password = '$user_pass' and tutor=1;";

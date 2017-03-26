@@ -2,7 +2,6 @@ package movingforward.tutorapp3.Activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,13 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
-import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
@@ -194,14 +187,7 @@ public class RegisterActivity extends AppCompatActivity
             HttpHandler Register = new HttpHandler();
             String response = Register.makeServiceCallPost(register_url, null, null, null, UserInfo);
 
-            String result="";
-
-            String[] FLW = {firstname, lastname, who};
-            HttpHandler2 sh = new HttpHandler2();
-            String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
-            result=sh.makeServiceCallPost(getInformation,FLW,null,null,null);
-
-            return response;
+            return response.trim();
         }
 
         @Override
@@ -212,37 +198,13 @@ public class RegisterActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(String result)
-        {
-            User mUser;
-            if (result != null)
-            {
+        protected void onPostExecute(String result) {
+            //super.onPostExecute(s);
+            if (result != null) {
 
-                try
-                {
-                    JSONArray LoggedUser = new JSONArray(result);
-                    for (int i = 0; i < LoggedUser.length(); i++)
-                    {
-                        JSONObject UserObj = LoggedUser.getJSONObject(i);
-                        String StudentID = UserObj.getString("studentID");
-                        String email = UserObj.getString("email");
-                        String firstName = UserObj.getString("firstName");
-                        String lastName = UserObj.getString("lastName");
-                        String major = UserObj.getString("major");
-                        String courses = UserObj.getString("courses");
-                        int registered = UserObj.getInt("registered");
-                        int tutor = UserObj.getInt("tutor");
-                        mUser = new User(StudentID, email, firstName, lastName, major, courses, registered, tutor, null, null);
-
-                        alertDialog.setMessage("You are now Registered");
-                        alertDialog.show();
-
-                        Intent startNav_Activity = new Intent(context, Nav_MainActivity.class);
-                        startNav_Activity.putExtra("mUser", mUser);
-                    }
-                } catch (JSONException e)
-                {
-                    e.printStackTrace();
+                if (result.equals("Email Already Exist")) {
+                    alertDialog.setMessage(result);
+                    alertDialog.show();
                 }
             }
             else
