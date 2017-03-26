@@ -8,15 +8,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+//import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+//import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @SuppressLint("SimpleDateFormat")
 public class DateTimeHelper extends FragmentActivity
-{
+{/*
     private SimpleDateFormat mFormatter = new SimpleDateFormat("MMMM dd yyyy hh:mm aa");
     private Button mButton;
 
@@ -60,5 +60,5 @@ public class DateTimeHelper extends FragmentActivity
                         .show();
             }
         });
-    }
+    }*/
 }

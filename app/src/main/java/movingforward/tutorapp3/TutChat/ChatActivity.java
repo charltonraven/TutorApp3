@@ -35,8 +35,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+/*import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;*/
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -104,7 +104,7 @@ public class ChatActivity extends AppCompatActivity implements
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
 
-    private SimpleDateFormat mFormatter = new SimpleDateFormat("MMMM dd yyyy hh:mm aa");
+    /*private SimpleDateFormat mFormatter = new SimpleDateFormat("MMMM dd yyyy hh:mm aa");
 
     private SlideDateTimeListener listener = new SlideDateTimeListener() {
 
@@ -121,7 +121,7 @@ public class ChatActivity extends AppCompatActivity implements
             Toast.makeText(ChatActivity.this,
                     "Canceled", Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
     private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
@@ -367,7 +367,7 @@ public class ChatActivity extends AppCompatActivity implements
             {
                 if (mUser.getPermission() != Role.Student)
                 {
-                    Calendar c = Calendar .getInstance();
+                    /*Calendar c = Calendar .getInstance();
                     Date today = new Date();
                     Date inOneYear = new Date();
                     TypedValue typedValue = new TypedValue();
@@ -391,7 +391,7 @@ public class ChatActivity extends AppCompatActivity implements
                             //.setTheme(SlideDateTimePicker.HOLO_DARK)
                             .setIndicatorColor(color)
                             .build()
-                            .show();
+                            .show();*/
                 }
                 else
                 {
