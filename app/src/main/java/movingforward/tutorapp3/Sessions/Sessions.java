@@ -46,6 +46,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
     ArrayList<ListItemHolder> TutorsAndClasses=new ArrayList<>();
     User mUser;//Logged In user
     User nUser;
+    ArrayList<ListItemHolder> firstLastNames = new ArrayList<>();
 
     String who="";
 
@@ -192,26 +193,31 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                 String userID = mUser.getEmail().split("\\@")[0];
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
             if(who=="tutor") {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
                 String userID = mUser.getEmail().split("\\@")[0];
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
-            if(who=="teacher") {
+            if(who=="TeacherTutors") {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
                 String userID = mUser.getEmail().split("\\@")[0];
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, userID, who);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
 
             if (jsonStr != null) {
                 try {
                     //JSONObject jsonObject = new JSONObject(jsonStr);
+
+                    String Name="";
+                    String Class="";
+                    String first="";
+                    String last="";
 
 
                     //getting JSON Array node
@@ -219,10 +225,22 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                     //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
                     for (int i = 0; i < TutorList.length(); i++) {
                         JSONObject T = TutorList.getJSONObject(i);
-                        String Class = T.getString("classname");
-                        String Name = T.getString("name");
 
-                        TutorsAndClasses.add(new ListItemHolder(Class, Name));
+                        if(T.isNull("classname")){
+
+
+                            first=T.getString("name").split(" ")[0];
+                            last=T.getString("name").split(" ")[1];
+                            firstLastNames.add(new ListItemHolder(first,last));
+
+                        }else {
+                             Class = T.getString("classname");
+                             Name = T.getString("name");
+                            TutorsAndClasses.add(new ListItemHolder(Class, Name));
+                        }
+
+
+                     //   TutorsAndClasses.add(new ListItemHolder(Class, Name));
 
                         String Test = "Test";
                     }
@@ -244,8 +262,13 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
         protected void onPostExecute(String s) {
 
 
-            adapter = new SessionListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
-            lv.setAdapter(adapter);
+            if(!TutorsAndClasses.isEmpty()) {
+                adapter = new SessionListAdapter(getActivity(), android.R.layout.simple_list_item_1, TutorsAndClasses);
+                lv.setAdapter(adapter);
+            }else {
+                adapter = new SessionListAdapter(getActivity(), android.R.layout.simple_list_item_1, firstLastNames);
+                lv.setAdapter(adapter);
+            }
         }
     }
     private class getInformation extends  AsyncTask<String, String, String>{

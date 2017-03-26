@@ -48,9 +48,7 @@
             <Item
                 android:id="@+id/AppointTutor"
                 android:title="Bulletin Board"/>
-            <!--<Item
-                android:id="@+id/Find_ClassesT"
-                android:title="FindClasses"/>-->
+
         </menu>
 
     </item>

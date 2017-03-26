@@ -238,7 +238,10 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.MyClasses)
         {
-
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            Sessions TeacherTutorSessions = Sessions.newInstance(mUser,"TeacherTutors");
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
 
         }
         else if (id == R.id.PostBulletin)

@@ -89,7 +89,7 @@ public class HttpListHandler {
         if(userID!=null) {
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                String post_data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8") + "&" + URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode("Student", "UTF-8");
+                String post_data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8") + "&" + URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(who, "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

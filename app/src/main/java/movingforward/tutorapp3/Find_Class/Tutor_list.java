@@ -211,8 +211,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             String tutorLastName=params[3];
             //String role=mUser.getPermission().toString();
             String role=params[4];
-            String studnetFirstName;
-            String studentLastName;
+
 
             String result="";
             String [] FLW={tutorFirstName,tutorLastName,"student"};

@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v)
             {
-                attemptLogin("FinalTest@g.fmarion.edu", "password");
+                attemptLogin("TeacherTest3215@g.fmarion.edu", "password");
             }
         });
 
