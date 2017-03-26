@@ -21,18 +21,25 @@
 
         <EditText
             android:id="@+id/messageEditText"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"/>
+            android:layout_weight="0.73"/>
 
         <Button
             android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:enabled="false"
-            android:text="SEND"/>
+            android:text="SEND"
+            />
+
+        <Button
+            android:id="@+id/imagebutton"
+            android:layout_width="44dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_menu_gallery"/>
 
     </LinearLayout>
 
