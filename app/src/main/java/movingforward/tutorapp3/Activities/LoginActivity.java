@@ -225,6 +225,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String password = mPasswordView.getText().toString();
             String who = "login";
             boolean verified = false;
+            if(email.equals("") && password.equals("")){
+
+
+                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
+            }
 
             mFirebaseAuth = FirebaseAuth.getInstance();
             mFirebaseUser = mFirebaseAuth.getCurrentUser();
