@@ -11,9 +11,6 @@
             <item
                 android:id="@+id/TutorSessions"
                 android:title="My Tutor Sessions"/>
-            <item
-                android:id="@+id/BulletinBoard"
-                android:title="Bulletin Board"/>
         </menu>
 
     </item>

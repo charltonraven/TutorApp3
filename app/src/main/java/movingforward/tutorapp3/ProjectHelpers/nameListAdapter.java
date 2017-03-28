@@ -1,4 +1,4 @@
-package movingforward.tutorapp3;
+package movingforward.tutorapp3.ProjectHelpers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import movingforward.tutorapp3.Fragments.Teacher_list;
+import movingforward.tutorapp3.R;
 
 /**
  * Created by raven on 3/2/2017.

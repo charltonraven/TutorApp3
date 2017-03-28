@@ -1,4 +1,4 @@
-package movingforward.tutorapp3;
+package movingforward.tutorapp3.Fragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -24,7 +24,10 @@ import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.Activities.ChatActivity;
+import movingforward.tutorapp3.ProjectHelpers.firstLastName;
+import movingforward.tutorapp3.ProjectHelpers.nameListAdapter;
 
 
 /**

@@ -27,7 +27,7 @@ import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.Entities.class_Helper.TutorListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.Activities.ChatActivity;
 
 
 /**

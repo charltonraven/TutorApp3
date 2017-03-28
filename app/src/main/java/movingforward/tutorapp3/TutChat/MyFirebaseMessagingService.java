@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -23,6 +22,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import movingforward.tutorapp3.Activities.ChatActivity;
 import movingforward.tutorapp3.R;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {

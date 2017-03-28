@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.Sessions;
+package movingforward.tutorapp3.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,7 @@ import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
 import movingforward.tutorapp3.Entities.class_Helper.SessionListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.Activities.ChatActivity;
 
 /**
  * A simple {@link Fragment} subclass.
