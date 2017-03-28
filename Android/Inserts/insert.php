@@ -10,7 +10,7 @@ $major=$_POST["major"];
 $courses="";
 $registered=1;
 $tutor=0;
-$password="password";
+$password=$_POST["password"];
 $department=$major;
 
 

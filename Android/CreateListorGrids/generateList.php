@@ -3,10 +3,10 @@ $db_name = "tutor3test";
 $mysql_username = "root";
 $mysql_password = "";
 $server_name = "localhost";
-/* $who=$_POST["who"];
-$userID=$_POST["user"]; */
-$who="teacher"; 
-$userID="cwilliams2638";
+$who=$_POST["who"];
+$userID=$_POST["user"];
+/* $who="tutor"; 
+$userID="cwilliams2638"; */ 
 $query="";
 $conn=mysqli_connect($server_name,$mysql_username,$mysql_password,$db_name) or die('Unable to Connect');
 
@@ -17,15 +17,20 @@ if(mysqli_connect_error($conn)){
 }
 if ($who=="student"){
 	$query= mysqli_query($conn,"SELECT classname, name, date FROM student_chathistory where fromID='$userID'" );
-	
 }
 
 if ($who=="tutor"){
-	$query= mysqli_query($conn,"SELECT classname, name, date FROM tutor_chathistory where studentID='$userID'" );
+	$query= mysqli_query($conn,"SELECT classname, name, date FROM tutor_chathistory where studentID='$userID' AND classname!='Teacher'" );
 }
 if ($who=="teacher"){
 	$query= mysqli_query($conn,"SELECT name, date FROM teacher_chathistory where toID='$userID'" );
 }
+
+if ($who=="TeacherTutors"){
+	$query= mysqli_query($conn,"SELECT name, date FROM tutor_chathistory where FromID='$userID' AND classname='Teacher' ");
+}
+
+
 
 if($query){
 	while($row=mysqli_fetch_array($query)){
