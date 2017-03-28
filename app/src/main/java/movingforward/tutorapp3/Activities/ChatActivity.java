@@ -1,10 +1,10 @@
-package movingforward.tutorapp3.TutChat;
+package movingforward.tutorapp3.Activities;
 
 /**
  * Created by Jeebus Prime on 2/9/2017.
  */
 
-import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,17 +19,14 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -53,20 +49,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import movingforward.tutorapp3.Activities.LoginActivity;
-import movingforward.tutorapp3.Activities.Nav_MainActivity;
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
-import movingforward.tutorapp3.ProjectHelpers.DateTimeHelper;
 import movingforward.tutorapp3.R;
+import movingforward.tutorapp3.TutChat.CodelabPreferences;
+import movingforward.tutorapp3.TutChat.FriendlyMessage;
+import movingforward.tutorapp3.TutChat.MyUploadService;
 
 //import com.google.android.gms.auth.api.Auth;
 
@@ -94,6 +84,10 @@ public class ChatActivity extends AppCompatActivity implements
     public static String MESSAGES_CHILD;
     private static final int REQUEST_INVITE = 1;
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
+    private static final int RC_TAKE_PICTURE = 101;
+    private Uri mFileUri = null;
+    private Uri mDownloadUrl = null;
+    private ProgressDialog mProgressDialog;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
@@ -293,12 +287,10 @@ public class ChatActivity extends AppCompatActivity implements
                 if (charSequence.toString().trim().length() > 0)
                 {
                     mSendButton.setEnabled(true);
-                    mImageButton.setEnabled(true);
                 }
                 else
                 {
                     mSendButton.setEnabled(false);
-                    mImageButton.setEnabled(false);
                 }
             }
 
@@ -324,12 +316,13 @@ public class ChatActivity extends AppCompatActivity implements
             }
         });
 
-        mImageButton = (Button) findViewById(R.id.sendButton);
+        mImageButton = (Button) findViewById(R.id.imagebutton);
         mImageButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
+                launchCamera();
             }
         });
     }
@@ -358,6 +351,79 @@ public class ChatActivity extends AppCompatActivity implements
     public void onDestroy()
     {
         super.onDestroy();
+    }
+
+    private void launchCamera() {
+        Log.d(TAG, "launchCamera");
+
+        // Pick an image from storage
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, RC_TAKE_PICTURE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+        if (requestCode == RC_TAKE_PICTURE) {
+            if (resultCode == RESULT_OK) {
+                mFileUri = data.getData();
+
+                if (mFileUri != null) {
+                    uploadFromUri(mFileUri);
+                } else {
+                    Log.w(TAG, "File URI is null");
+                }
+            } else {
+                Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // Check if this Activity was launched by clicking on an upload notification
+        if (intent.hasExtra(MyUploadService.EXTRA_DOWNLOAD_URL)) {
+            onUploadResultIntent(intent);
+        }
+    }
+
+    private void uploadFromUri(Uri fileUri) {
+        Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
+
+        // Save the File URI
+        mFileUri = fileUri;
+
+        // Clear the last download, if any
+        mDownloadUrl = null;
+
+        // Start MyUploadService to upload the file, so that the file is uploaded
+        // even if this Activity is killed or put in the background
+        startService(new Intent(this, MyUploadService.class)
+                .putExtra(MyUploadService.EXTRA_FILE_URI, fileUri)
+                .putExtra("chatroom", MESSAGES_CHILD)
+                .setAction(MyUploadService.ACTION_UPLOAD));
+
+        // Show loading spinner
+        showProgressDialog("Uploading...");
+    }
+
+    private void showProgressDialog(String caption) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.setMessage(caption);
+        mProgressDialog.show();
+    }
+
+    private void onUploadResultIntent(Intent intent) {
+        // Got a new intent from MyUploadService with a success or failure
+        mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
+        mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
     }
 
     @Override
@@ -489,11 +555,10 @@ public class ChatActivity extends AppCompatActivity implements
                 Log.d(TAG, "Create" + task.isSuccessful());
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "IT WORKED !", Toast.LENGTH_SHORT).show();
                 }
                 if (!task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "it failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -507,12 +572,9 @@ public class ChatActivity extends AppCompatActivity implements
             @Override
             public void onComplete(@NonNull Task<AuthResult> task)
             {
-                Toast.makeText(ChatActivity.this, "Sign in Successful", Toast.LENGTH_SHORT).show();
 
                 if (!task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "Sign in NOT Successful", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(ChatActivity.this, "Attempting to create user", Toast.LENGTH_SHORT).show();
                     createAccount(Email, Password);
                 }
             }

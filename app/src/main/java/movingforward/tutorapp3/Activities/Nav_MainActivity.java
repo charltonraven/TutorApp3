@@ -28,14 +28,13 @@ import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.Sessions.Sessions;
-import movingforward.tutorapp3.Teacher_list;
-import movingforward.tutorapp3.TutChat.ChatActivity;
+import movingforward.tutorapp3.Fragments.Sessions;
+import movingforward.tutorapp3.Fragments.Teacher_list;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
 import static movingforward.tutorapp3.R.id.StudentSessions;
 import static movingforward.tutorapp3.R.id.TutorSessions;
-//import static movingforward.tutorapp3.Sessions.Sessions.newInstance;
+//import static movingforward.tutorapp3.Fragments.Sessions.newInstance;
 
 public class Nav_MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener
@@ -62,24 +61,6 @@ public class Nav_MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-        if (getIntent().getExtras() != null)
-        {
-            for (String key : getIntent().getExtras().keySet())
-            {
-                String value = getIntent().getExtras().getString(key);
-
-                if (key.equals("Nav_MainActivity") && value.equals("True"))
-                {
-                    Intent intent = new Intent(this, ChatActivity.class);
-                    intent.putExtra("value", value);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        }
-
-        subscribeToPushService();
-
         Intent navIntent = getIntent();
         mUser = (User) navIntent.getSerializableExtra("mUser");
         mUser.setEmail(mUser.getEmail().trim());
@@ -98,8 +79,8 @@ public class Nav_MainActivity extends AppCompatActivity
         View hView = navigationView.getHeaderView(0);
         tvType = (TextView) hView.findViewById(R.id.tvType);
         tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
-        tvEmail.setText(mEmail);
-        tvType.setText("Logged in as " + UserType.toUpperCase());
+        tvEmail.setText(mUser.getID());
+        tvType.setText("Logged in as a " + UserType.toUpperCase());
 
         switch (mUser.getPermission().toString())
         {
@@ -123,7 +104,6 @@ public class Nav_MainActivity extends AppCompatActivity
             case "Teacher":
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
                 navigationView.getMenu().findItem(TutorSessions).setVisible(false);
-                navigationView.getMenu().findItem(R.id.BulletinBoard).setVisible(false);
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
@@ -141,13 +121,11 @@ public class Nav_MainActivity extends AppCompatActivity
         FirebaseMessaging.getInstance().subscribeToTopic("news");
 
         Log.d("AndroidBash", "Subscribed");
-        Toast.makeText(Nav_MainActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
         String token = FirebaseInstanceId.getInstance().getToken();
 
         // Log and toast
         Log.d("AndroidBash", token);
-        Toast.makeText(Nav_MainActivity.this, token, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -198,22 +176,22 @@ public class Nav_MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
-
         switch (item.getItemId())
         {
             case R.id.sign_out_menu:
+            {
                 //mFirebaseAuth.signOut();
                 //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 //mUsername = ANONYMOUS;
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
+            }
+            case R.id.action_settings:
+            {
+                Intent mIntent = new Intent(Nav_MainActivity.this, EditAccountActivity.class);
+                mIntent.putExtra("mUser", mUser);
+                startActivity(mIntent);
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -223,8 +201,6 @@ public class Nav_MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        //User nUser = new User(mEmail, mPassword);
-        //mUser = nUser;
         Bundle bundle=new Bundle();
         bundle.putSerializable("mUser",mUser);
 
@@ -249,10 +225,6 @@ public class Nav_MainActivity extends AppCompatActivity
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
 
-
-        }
-        else if (id == R.id.BulletinBoard)
-        {
 
         }
         else if (id == StudentSessions)
