@@ -1,18 +1,21 @@
 package movingforward.tutorapp3.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import movingforward.tutorapp3.Entities.User;
+import movingforward.tutorapp3.Entities.class_Helper.HttpChangeHandler;
+import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
 
 /**
@@ -68,21 +71,16 @@ public class EditAccountActivity extends AppCompatActivity
 
         sp_major.setAdapter(adapter);
 
-        bt_accept.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
 
-            }
-        });
 
         bt_cancel.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                startActivity(new Intent(EditAccountActivity.this, Nav_MainActivity.class));
+                Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
             }
         });
 
@@ -150,11 +148,97 @@ public class EditAccountActivity extends AppCompatActivity
                 }
             }
         });
+
+        bt_accept.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+                int count=0;
+              //  UpdateTask updateInfo=new UpdateTask();
+                try {
+                    if (cb_first.isEnabled()) {
+
+                        ++count;
+
+                      //  updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"firstName",et_first.getText().toString()).get();
+                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"firstName",et_first.getText().toString()).get();
+
+
+                    }
+                    if (cb_last.isEnabled()) {
+                        ++count;
+
+                      //  updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"lastName",et_first.getText().toString()).get();
+                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"lastName",et_last.getText().toString()).get();
+                    }
+                    if (cb_major.isEnabled()) {
+                        ++count;
+                        //updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"major",et_first.getText().toString()).get();
+                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"major",sp_major.getSelectedItem().toString()).get();
+
+                    }
+                    if (cb_pass.isEnabled()) {
+                        ++count;
+                       // updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"password",et_first.getText().toString()).get();
+                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"password",et_pass.getText().toString()).get();
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                if(count >0){
+                    Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
+                    navIntent.putExtra("mUser", mUser);
+                    startActivity(navIntent);
+
+                }else{
+                    Toast.makeText(EditAccountActivity.this,"MAKE A CHANGE",Toast.LENGTH_LONG).show();
+                }
+
+
+
+            }
+        });
     }
 
-    private void updateDatabase(String firstName, String lastName, String password, String major)
-    {
 
+public static class UpdateTask extends AsyncTask<String, Void, String>{
+    Context context;
+
+
+   /* public UpdateTask(Context context) {
+        this.context=context;
+    }*/
+
+    @Override
+    protected String doInBackground(String... params) {
+        String who= params[0];
+        String UserID= params[1];
+        String what= params[2];
+        String changeTo= params[3];
+        String responseJson="";
+
+
+        String updateInfoURL = "http://" + StaticHelper.getDeviceIP() + "/android/Change/changeInformation.php";
+        HttpChangeHandler UpdateInfo=new HttpChangeHandler();
+        responseJson=UpdateInfo.makeServiceCallPost(updateInfoURL,who,UserID,what,changeTo);
+
+
+
+        return responseJson;
     }
 
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+    }
+}
 }

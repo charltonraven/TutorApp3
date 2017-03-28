@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -27,9 +26,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
-import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.Fragments.Teacher_list;
+import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
 import static movingforward.tutorapp3.R.id.StudentSessions;
@@ -80,7 +79,7 @@ public class Nav_MainActivity extends AppCompatActivity
         tvType = (TextView) hView.findViewById(R.id.tvType);
         tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
         tvEmail.setText(mUser.getID());
-        tvType.setText("Logged in as a " + UserType.toUpperCase());
+        tvType.setText("Logged in as a " + mUser.getPermission().name().toUpperCase());
 
         switch (mUser.getPermission().toString())
         {
