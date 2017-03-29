@@ -221,7 +221,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
             String getInformation = "http://" + StaticHelper.getDeviceIP() + "/android/getInfo/getinformation.php";
             result=sh.makeServiceCallPost(getInformation,FLW,null,null,null);
             String toID="";
-            String Email="";
+            String toEmail="";
 
             if(result!=null){
 
@@ -245,7 +245,7 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
                         String Test="Test";
                     }
                     toID=nUser.getID();
-                    Email=nUser.getEmail();
+                    toEmail=nUser.getEmail();
 
 
 
@@ -259,12 +259,12 @@ public class Tutor_list extends Fragment implements AdapterView.OnItemClickListe
 
 
                 String fromID = mUser.getID();
-                String[] saveInfo = {"Student2Tutor", nUser.getID(), Email, nUser.getFirstName() + " " + nUser.getLastName(), Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
+                String[] saveInfo = {"Student2Tutor", nUser.getID(), toEmail, nUser.getFirstName() + " " + nUser.getLastName(), Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
                 String SaveHistory_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
                 String results = sh.makeServiceCallPost(SaveHistory_URL, null, saveInfo, null,null);//saves to Student and Tutor
             }else{
                 String fromID = mUser.getID();
-                String[] saveInfo = {"Teacher2Tutor", nUser.getID(), Email, nUser.getFirstName() + " " + nUser.getLastName(),Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
+                String[] saveInfo = {"Teacher2Tutor", nUser.getID(), toEmail, nUser.getFirstName() + " " + nUser.getLastName(),Abbr + ClassName, mUser.getID(), mUser.getFirstName() + " " + mUser.getLastName()};
                 String SaveHistory_URL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertHistory.php";
                 String results = sh.makeServiceCallPost(SaveHistory_URL, null, saveInfo, null,null);//saves to Student and Tutor
 

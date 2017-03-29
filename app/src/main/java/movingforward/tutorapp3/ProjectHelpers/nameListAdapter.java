@@ -11,14 +11,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import movingforward.tutorapp3.Fragments.Teacher_list;
+import movingforward.tutorapp3.Fragments.User_list;
 import movingforward.tutorapp3.R;
 
 /**
  * Created by raven on 3/2/2017.
  */
 
-public class nameListAdapter extends ArrayAdapter<Teacher_list> implements AdapterView.OnItemClickListener {
+public class nameListAdapter extends ArrayAdapter<User_list> implements AdapterView.OnItemClickListener {
 
 
     ArrayList<firstLastName> values;
@@ -33,12 +33,12 @@ public class nameListAdapter extends ArrayAdapter<Teacher_list> implements Adapt
     }
 
     @Override
-    public void add(Teacher_list object) {
+    public void add(User_list object) {
         super.add(object);
     }
 
     @Override
-    public void addAll(Collection<? extends Teacher_list> collection) {
+    public void addAll(Collection<? extends User_list> collection) {
         super.addAll(collection);
     }
 
@@ -49,7 +49,7 @@ public class nameListAdapter extends ArrayAdapter<Teacher_list> implements Adapt
 
 
     @Override
-    public int getPosition(Teacher_list item) {
+    public int getPosition(User_list item) {
         return super.getPosition(item);
     }
 

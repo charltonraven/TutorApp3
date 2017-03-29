@@ -11,6 +11,8 @@ public class firstLastName {
     public String fName;
     public String lName;
 
+    public boolean tutor;
+
 
     public firstLastName(String classTutored, String fName, String lName) {
 
@@ -21,6 +23,11 @@ public class firstLastName {
     public firstLastName(String firstName, String lastName) {
         this.fName = firstName;
         this.lName = lastName;
+    }
+    public firstLastName(String firstName, String lastName,boolean tutor) {
+        this.fName = firstName;
+        this.lName = lastName;
+        this.tutor =tutor;
     }
 
     public String getfName() {
@@ -38,5 +45,15 @@ public class firstLastName {
     public void setlName(String lName) {
         this.lName = lName;
     }
+
+
+    public boolean isTutor() {
+        return tutor;
+    }
+
+    public void setTutor(boolean tutor) {
+        this.tutor = tutor;
+    }
+
 }
 

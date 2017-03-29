@@ -27,7 +27,8 @@ import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
-import movingforward.tutorapp3.Fragments.Teacher_list;
+import movingforward.tutorapp3.Fragments.User_list;
+import movingforward.tutorapp3.Fragments.User_list_Button;
 import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
@@ -264,18 +265,18 @@ public class Nav_MainActivity extends AppCompatActivity
         else if(id==R.id.TeacherList){
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Teacher_list teacher_list = new Teacher_list();
-            teacher_list.setArguments(bundle);
+            User_list user_list = new User_list().newInstance(mUser);
+            user_list.setArguments(bundle);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();
 
         }
-        else if(id==R.id.TeacherList){
+        else if(id==R.id.StudentList){
 
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            Teacher_list teacher_list = new Teacher_list();
+            User_list_Button user_list = new User_list_Button().newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();
         }
         else if (id==R.id.Find_ClassesT){
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
