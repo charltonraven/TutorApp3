@@ -33,12 +33,12 @@ import movingforward.tutorapp3.ProjectHelpers.nameListAdapter;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Teacher_list.OnFragmentInteractionListener} interface
+ * {@link User_list.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Teacher_list#newInstance} factory method to
+ * Use the {@link User_list#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Teacher_list extends Fragment implements AdapterView.OnItemClickListener{
+public class User_list extends Fragment implements AdapterView.OnItemClickListener{
     User mUser;
     User nUser;
     TextView tvClassName;
@@ -68,7 +68,7 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
 
     private OnFragmentInteractionListener mListener;
 
-    public Teacher_list() {
+    public User_list() {
         // Required empty public constructor
     }
 
@@ -77,20 +77,12 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
     }
 
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Tutor_list.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static Teacher_list newInstance(String param1, String param2) {
-        Teacher_list fragment = new Teacher_list();
+    public static User_list newInstance(User mUser) {
+        User_list fragment = new User_list();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("mUser", mUser);
         fragment.setArguments(args);
         return fragment;
     }
@@ -114,9 +106,8 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
         //get ClassName from BySubject
         lv.setAdapter(adapter);
 
-        lv.setOnItemClickListener(Teacher_list.this);
-        Bundle bundle=getArguments();
-        mUser=(User) bundle.getSerializable("mUser");
+        lv.setOnItemClickListener(User_list.this);
+        mUser=(User) getArguments().getSerializable("mUser");
 
 
         try {
@@ -275,36 +266,69 @@ public class Teacher_list extends Fragment implements AdapterView.OnItemClickLis
         protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
 
-            String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateTeacherlist.php";
+            if (mUser.getPermission().name().equals("Tutor")) {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateTeacherlist.php";
 
-            //Making a request to url and getting response
-            String jsonStr = sh.makeServiceCallGet(TutorList_url);
-
-
-
-            if (jsonStr != null) {
-                try {
-                    //JSONObject jsonObject = new JSONObject(jsonStr);
+                //Making a request to url and getting response
+                String jsonStr = sh.makeServiceCallGet(TutorList_url);
 
 
-                    //getting JSON Array node
-                    JSONArray TutorList = new JSONArray(jsonStr);
-                    //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
-                    for(int i=0;i<TutorList.length();i++){
-                        JSONObject T = TutorList.getJSONObject(i);
-                        String FName=T.getString("firstName");
-                        String LName=T.getString("lastName");
-                        firstLastNames.add(new firstLastName(FName,LName));
+                if (jsonStr != null) {
+                    try {
+                        //JSONObject jsonObject = new JSONObject(jsonStr);
 
-                        String Test="Test";
+
+                        //getting JSON Array node
+                        JSONArray TutorList = new JSONArray(jsonStr);
+                        //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
+                        for (int i = 0; i < TutorList.length(); i++) {
+                            JSONObject T = TutorList.getJSONObject(i);
+                            String FName = T.getString("firstName");
+                            String LName = T.getString("lastName");
+                            firstLastNames.add(new firstLastName(FName, LName));
+
+                            String Test = "Test";
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                return null;
+            }
+            if (mUser.getPermission().name().equals("Teacher")) {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateStudentList.php";
+
+                //Making a request to url and getting response
+                String jsonStr = sh.makeServiceCallGet(TutorList_url);
+
+
+                if (jsonStr != null) {
+                    try {
+                        //JSONObject jsonObject = new JSONObject(jsonStr);
+
+
+                        //getting JSON Array node
+                        JSONArray TutorList = new JSONArray(jsonStr);
+                        //JSONArray TutorList2 = new JSONArray(new JSONObject(jsonStr));
+                        for (int i = 0; i < TutorList.length(); i++) {
+                            JSONObject T = TutorList.getJSONObject(i);
+                            String FName = T.getString("firstName");
+                            String LName = T.getString("lastName");
+                            firstLastNames.add(new firstLastName(FName, LName));
+
+                            String Test = "Test";
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
             }
             return null;
         }
+
 
 
 

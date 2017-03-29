@@ -45,6 +45,9 @@
             <Item
                 android:id="@+id/AppointTutor"
                 android:title="Bulletin Board"/>
+            <item
+                android:id="@+id/StudentList"
+                android:title="Find Student" />
 
         </menu>
 
