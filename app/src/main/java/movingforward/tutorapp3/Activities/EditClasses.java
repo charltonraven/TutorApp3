@@ -1,10 +1,7 @@
 package movingforward.tutorapp3.Activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -13,37 +10,43 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
-import movingforward.tutorapp3.Fragments.User_list;
-import movingforward.tutorapp3.Fragments.User_list_Button;
+import movingforward.tutorapp3.Fragments.Teacher_list;
 import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
 import static movingforward.tutorapp3.R.id.StudentSessions;
 import static movingforward.tutorapp3.R.id.TutorSessions;
 
-public class Nav_MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Sessions.OnFragmentInteractionListener
+/**
+ * Created by Jeebus on 3/28/2017.
+ */
+
+public class EditClasses extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener
 {
-    User mUser;
-    String mEmail;
-    String mPassword;
+    public User mUser;
+    private ScrollView sv_depart;
+    private ScrollView sv_course;
+    private Button bt_accept;
+    private Button bt_cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nav__main);
+        setContentView(R.layout.edit_tutor_classes);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,18 +54,30 @@ public class Nav_MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-        Intent navIntent = getIntent();
-        mUser = (User) navIntent.getSerializableExtra("mUser");
-        mUser.setEmail(mUser.getEmail().trim());
+        Intent mIntent = getIntent();
+        mUser = (User) mIntent.getSerializableExtra("mUser");
 
-        toggle.syncState();
+        sv_depart = (ScrollView) findViewById(R.id.sv_depart);
+        sv_course = (ScrollView) findViewById(R.id.sv_course);
+        bt_accept = (Button) findViewById(R.id.bt_accept);
+        bt_cancel = (Button) findViewById(R.id.bt_cancel);
 
-        String UserType = mUser.getPermission().toString();
-        mEmail = mUser.getEmail();
-        mPassword = mUser.getPassword();
+        bt_cancel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent navIntent = new Intent(EditClasses.this, Nav_MainActivity.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
+            }
+        });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
+
+        toggle.syncState();
+
         TextView tvType = (TextView) hView.findViewById(R.id.tvType);
         TextView tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
         tvEmail.setText(mUser.getID());
@@ -74,6 +89,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 mUser.setPermission(Role.Tutor);
 
                 break;
@@ -102,10 +118,8 @@ public class Nav_MainActivity extends AppCompatActivity
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-        drawer.openDrawer(Gravity.LEFT);
     }
 
-    @Override
     public void onBackPressed()
     {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,27 +129,7 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else
         {
-            AlertDialog.Builder RegorTry = new AlertDialog.Builder(Nav_MainActivity.this);
-            RegorTry.setTitle("Are you sure you want to sign out?");
-
-            RegorTry.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    startActivity(new Intent(Nav_MainActivity.this, LoginActivity.class));
-                }
-            });
-            RegorTry.setNeutralButton("Cancel", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    dialog.dismiss();
-
-                }
-            });
-
-            RegorTry.create();
-            RegorTry.show();
+            super.onBackPressed();
         }
     }
 
@@ -157,15 +151,12 @@ public class Nav_MainActivity extends AppCompatActivity
         {
             case R.id.sign_out_menu:
             {
-                //mFirebaseAuth.signOut();
-                //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                //mUsername = ANONYMOUS;
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
             }
             case R.id.action_settings:
             {
-                Intent mIntent = new Intent(Nav_MainActivity.this, EditAccountActivity.class);
+                Intent mIntent = new Intent(EditClasses.this, EditAccountActivity.class);
                 mIntent.putExtra("mUser", mUser);
                 startActivity(mIntent);
             }
@@ -186,6 +177,7 @@ public class Nav_MainActivity extends AppCompatActivity
 
         if (id == R.id.FindClass)
         {
+
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
@@ -194,10 +186,14 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == TutorSessions)
         {
+
+
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Sessions TutorSessions = Sessions.newInstance(mUser, "student");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
+
+
         }
         else if (id == StudentSessions)
         {
@@ -205,13 +201,17 @@ public class Nav_MainActivity extends AppCompatActivity
             Sessions StudentSessions = Sessions.newInstance(mUser, "tutor");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
+
         }
+
         else if (id == R.id.TeacherSessions)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Sessions TeacherSession = Sessions.newInstance(mUser, "teacher");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
+
+
         }
         else if (id == R.id.MyClasses)
         {
@@ -219,12 +219,12 @@ public class Nav_MainActivity extends AppCompatActivity
             Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
+
         }
-        else if (id == R.id.EditClasses)
+        else if (id == R.id.PostBulletin)
         {
-            Intent mIntent = new Intent(Nav_MainActivity.this, EditClasses.class);
-            mIntent.putExtra("mUser", mUser);
-            startActivity(mIntent);
+
+
         }
         else if (id == R.id.AppointTutor)
         {
@@ -232,19 +232,20 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.TeacherList)
         {
 
-            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            User_list user_list = new User_list().newInstance(mUser);
-            user_list.setArguments(bundle);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Teacher_list teacher_list = new Teacher_list();
+            teacher_list.setArguments(bundle);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
 
         }
-        else if(id==R.id.StudentList){
+        else if (id == R.id.TeacherList)
+        {
 
-            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-            User_list_Button user_list = new User_list_Button().newInstance(mUser);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Teacher_list teacher_list = new Teacher_list();
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
         }
         else if (id == R.id.Find_ClassesT)
         {
@@ -259,6 +260,7 @@ public class Nav_MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri)

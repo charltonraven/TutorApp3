@@ -22,10 +22,10 @@ public class Student
     private ArrayList<String> classes;
 
 
-    public Student(String email, String password){
-        this.email=email;
-        this.password=password;
-        this.permission=Role.Student;
+    public Student(String firstName, String lastName, boolean tutor){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.tutor = tutor;
     }
 
 

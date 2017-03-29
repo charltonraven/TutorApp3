@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpChangeHandler;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
@@ -45,6 +48,7 @@ public class EditAccountActivity extends AppCompatActivity
         Intent mIntent = getIntent();
 
         mUser = (User) mIntent.getSerializableExtra("mUser");
+
         bt_accept = (Button) findViewById(R.id.bt_accept);
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
         et_pass = (EditText) findViewById(R.id.et_pass);
@@ -56,6 +60,11 @@ public class EditAccountActivity extends AppCompatActivity
         cb_major = (CheckBox) findViewById(R.id.cb_majors);
         sp_major = (Spinner) findViewById(R.id.spinner_majors);
 
+        adapter = ArrayAdapter.createFromResource(this,
+                R.array.majors_array, android.R.layout.simple_spinner_item);
+
+        sp_major.setAdapter(adapter);
+
         et_pass.setEnabled(false);
         et_pass.setText(mUser.getPassword());
         et_first.setEnabled(false);
@@ -63,34 +72,18 @@ public class EditAccountActivity extends AppCompatActivity
         et_last.setEnabled(false);
         et_last.setText(mUser.getLastName());
         sp_major.setEnabled(false);
-        sp_major.clearFocus();
-
-        adapter = ArrayAdapter.createFromResource(this,
-                R.array.majors_array, android.R.layout.simple_spinner_item);
-
-        sp_major.setAdapter(adapter);
-
-
-
-        bt_cancel.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
-                navIntent.putExtra("mUser", mUser);
-                startActivity(navIntent);
-            }
-        });
+        sp_major.setSelection(getMajorInt(mUser.getMajor()));
+        bt_accept.setEnabled(false);
 
         cb_pass.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                if(cb_pass.isChecked())
+                if (cb_pass.isChecked())
                 {
                     et_pass.setEnabled(true);
+                    bt_accept.setEnabled(true);
                 }
                 else
                 {
@@ -104,9 +97,10 @@ public class EditAccountActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(cb_first.isChecked())
+                if (cb_first.isChecked())
                 {
                     et_first.setEnabled(true);
+                    bt_accept.setEnabled(true);
                 }
                 else
                 {
@@ -120,9 +114,10 @@ public class EditAccountActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(cb_last.isChecked())
+                if (cb_last.isChecked())
                 {
                     et_last.setEnabled(true);
+                    bt_accept.setEnabled(true);
                 }
                 else
                 {
@@ -136,9 +131,10 @@ public class EditAccountActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(cb_major.isChecked())
+                if (cb_major.isChecked())
                 {
                     sp_major.setEnabled(true);
+                    bt_accept.setEnabled(true);
                 }
                 else
                 {
@@ -153,90 +149,102 @@ public class EditAccountActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
-                int count=0;
-
-                try {
-                    if (cb_first.isEnabled()) {
-
-                        ++count;
-
-
-                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"firstName",et_first.getText().toString()).get();
+                try
+                {
+                    if (cb_first.isEnabled())
+                    {
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "firstName", et_first.getText().toString()).get();
                         mUser.setFirstName(et_first.getText().toString());
-
-
                     }
-                    if (cb_last.isEnabled()) {
-                        ++count;
-
-
-                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"lastName",et_last.getText().toString()).get();
+                    if (cb_last.isEnabled())
+                    {
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "lastName", et_last.getText().toString()).get();
                         mUser.setLastName(et_last.getText().toString());
                     }
-                    if (cb_major.isEnabled()) {
-                        ++count;
-
-                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"major",sp_major.getSelectedItem().toString()).get();
+                    if (cb_major.isEnabled())
+                    {
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "major", sp_major.getSelectedItem().toString()).get();
                         mUser.setMajor(sp_major.getSelectedItem().toString());
-
                     }
-                    if (cb_pass.isEnabled()) {
-                        ++count;
-
-                        new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"password",et_pass.getText().toString()).get();
+                    if (cb_pass.isEnabled())
+                    {
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "password", et_pass.getText().toString()).get();
                         mUser.setPassword(et_pass.getText().toString());
-
                     }
-                }catch (Exception e){
+                } catch (Exception e)
+                {
                     e.printStackTrace();
                 }
 
-                if(count >0){
-                    Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
-                    navIntent.putExtra("mUser", mUser);
-                    startActivity(navIntent);
+                Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
+            }
+        });
 
-                }else{
-                    Toast.makeText(EditAccountActivity.this,"MAKE A CHANGE",Toast.LENGTH_LONG).show();
-                }
-
-
-
+        bt_cancel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent navIntent = new Intent(EditAccountActivity.this, Nav_MainActivity.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
             }
         });
     }
 
+    private int getMajorInt(String major)
+    {
+        String[] majorArray =
+                {
+                        "Biology", "Business", "Chemistry", "Computer Science",
+                        "Education", "English", "General Studies", "History",
+                        "Mass Comm.", "Math", "Modern Lang.", "Music Industry",
+                        "Nursing", "Physics", "Political Science"
+                };
 
-public static class UpdateTask extends AsyncTask<String, Void, String>{
+        ArrayList<String> majorAL = new ArrayList<>(Arrays.asList(majorArray));
 
+        if (majorAL.contains(major))
+        {
+            return majorAL.indexOf(major);
+        }
 
-    @Override
-    protected String doInBackground(String... params) {
-        String who= params[0];
-        String UserID= params[1];
-        String what= params[2];
-        String changeTo= params[3];
-        String responseJson="";
-
-
-        String updateInfoURL = "http://" + StaticHelper.getDeviceIP() + "/android/Change/changeInformation.php";
-        HttpChangeHandler UpdateInfo=new HttpChangeHandler();
-        responseJson=UpdateInfo.makeServiceCallPost(updateInfoURL,who,UserID,what,changeTo);
-
-
-
-        return responseJson;
+        return 0;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
+    public static class UpdateTask extends AsyncTask<String, Void, String>
+    {
 
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+        @Override
+        protected String doInBackground(String... params)
+        {
+            String who = params[0];
+            String UserID = params[1];
+            String what = params[2];
+            String changeTo = params[3];
+            String responseJson = "";
+
+
+            String updateInfoURL = "http://" + StaticHelper.getDeviceIP() + "/android/Change/changeInformation.php";
+            HttpChangeHandler UpdateInfo = new HttpChangeHandler();
+            responseJson = UpdateInfo.makeServiceCallPost(updateInfoURL, who, UserID, what, changeTo);
+
+
+            return responseJson;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s)
+        {
+            super.onPostExecute(s);
+        }
     }
-}
 }
