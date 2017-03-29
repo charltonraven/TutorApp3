@@ -1,6 +1,5 @@
 package movingforward.tutorapp3.Activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -156,33 +155,37 @@ public class EditAccountActivity extends AppCompatActivity
             {
 
                 int count=0;
-              //  UpdateTask updateInfo=new UpdateTask();
+
                 try {
                     if (cb_first.isEnabled()) {
 
                         ++count;
 
-                      //  updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"firstName",et_first.getText().toString()).get();
+
                         new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"firstName",et_first.getText().toString()).get();
+                        mUser.setFirstName(et_first.getText().toString());
 
 
                     }
                     if (cb_last.isEnabled()) {
                         ++count;
 
-                      //  updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"lastName",et_first.getText().toString()).get();
+
                         new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"lastName",et_last.getText().toString()).get();
+                        mUser.setLastName(et_last.getText().toString());
                     }
                     if (cb_major.isEnabled()) {
                         ++count;
-                        //updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"major",et_first.getText().toString()).get();
+
                         new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"major",sp_major.getSelectedItem().toString()).get();
+                        mUser.setMajor(sp_major.getSelectedItem().toString());
 
                     }
                     if (cb_pass.isEnabled()) {
                         ++count;
-                       // updateInfo.execute(mUser.getPermission().name(),mUser.getID(),"password",et_first.getText().toString()).get();
+
                         new UpdateTask().execute(mUser.getPermission().name(),mUser.getID(),"password",et_pass.getText().toString()).get();
+                        mUser.setPassword(et_pass.getText().toString());
 
                     }
                 }catch (Exception e){
@@ -206,12 +209,7 @@ public class EditAccountActivity extends AppCompatActivity
 
 
 public static class UpdateTask extends AsyncTask<String, Void, String>{
-    Context context;
 
-
-   /* public UpdateTask(Context context) {
-        this.context=context;
-    }*/
 
     @Override
     protected String doInBackground(String... params) {
