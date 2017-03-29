@@ -21,7 +21,7 @@ import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
-import movingforward.tutorapp3.Fragments.Teacher_list;
+import movingforward.tutorapp3.Fragments.User_list;
 import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
@@ -231,21 +231,20 @@ public class EditClasses extends AppCompatActivity
         }
         else if (id == R.id.TeacherList)
         {
-
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Teacher_list teacher_list = new Teacher_list();
-            teacher_list.setArguments(bundle);
+            User_list User_list = new User_list();
+            User_list.setArguments(bundle);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, User_list, User_list.getTag()).commit();
 
         }
         else if (id == R.id.TeacherList)
         {
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Teacher_list teacher_list = new Teacher_list();
+            User_list User_list = new User_list();
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, teacher_list, teacher_list.getTag()).commit();
+            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, User_list, User_list.getTag()).commit();
         }
         else if (id == R.id.Find_ClassesT)
         {
