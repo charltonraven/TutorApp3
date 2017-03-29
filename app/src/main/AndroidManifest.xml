@@ -46,6 +46,31 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="tutitup-71061.firebaseio.com"
+                    android:pathPattern="*"
+                    android:scheme="http"
+                    />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Activities.EditClasses"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="tutitup-71061.firebaseio.com"
+                    android:pathPattern="*"
+                    android:scheme="http"
+                    />
+
             </intent-filter>
         </activity>
 
