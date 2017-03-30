@@ -7,6 +7,8 @@ package movingforward.tutorapp3.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,6 +53,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Entities.Role;
@@ -403,19 +410,34 @@ public class ChatActivity extends AppCompatActivity implements
 
                 if (mFileUri != null)
                 {
-                    String encoded = Base64.encodeToString(mFileUri, Base64.DEFAULT);
+                    try
+                    {
+                        InputStream inputStream = new FileInputStream(mFileUri.getPath());//You can get an inputStream using any IO API
+                        byte[] bytes;
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-                    FriendlyMessage friendlyMessage = new
-                            FriendlyMessage(mMessageEditText.getText().toString(),
-                            mUsername,
-                            mPhotoUrl,
-                            mUser.getPermission() == Role.Tutor ? 1 : 0);
-                    mFirebaseDatabaseReference.child(MESSAGES_CHILD)
-                            .push().setValue(friendlyMessage);
-                    mMessageEditText.setText("");
+                        while ((bytesRead = inputStream.read(buffer)) != -1)
+                        {
+                            output.write(buffer, 0, bytesRead);
+                        }
+                        bytes = output.toByteArray();
+                        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
 
+                        FriendlyMessage friendlyMessage = new
+                                FriendlyMessage(encodedString,
+                                mUsername,
+                                mPhotoUrl,
+                                mUser.getPermission() == Role.Tutor ? 1 : 0);
+                        mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                                .push().setValue(friendlyMessage);
+                        mMessageEditText.setText("");
 
-
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
 
                     uploadFromUri(mFileUri);
                 }
