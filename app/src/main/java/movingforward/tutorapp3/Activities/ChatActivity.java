@@ -163,7 +163,7 @@ public class ChatActivity extends AppCompatActivity implements
 
         String className = i.getStringExtra("className").toLowerCase();
 
-        User tUser = (nUser.getPermission() == Role.Tutor ? nUser : mUser);
+        User tUser = (nUser.getTutor() == 1 ? nUser : mUser);
 
         classReminder.setText("Tutor: " + tUser.getFirstName() + " " + tUser.getLastName() + ", " + className);
 
