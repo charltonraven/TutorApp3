@@ -168,7 +168,8 @@ public class HttpHandler {
                         + URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[2], "UTF-8") + "&"
                         + URLEncoder.encode("firstname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[3], "UTF-8") + "&"
                         + URLEncoder.encode("lastname", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[4], "UTF-8") + "&"
-                        + URLEncoder.encode("major", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[5], "UTF-8");
+                        + URLEncoder.encode("major", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[5], "UTF-8") + "&"
+                        + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(RegisterInfo[6], "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

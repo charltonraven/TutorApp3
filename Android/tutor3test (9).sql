@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 29, 2017 at 01:27 AM
+-- Generation Time: Mar 30, 2017 at 06:27 PM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 7.0.9
 
@@ -106,12 +106,15 @@ CREATE TABLE `student` (
 --
 
 INSERT INTO `student` (`studentID`, `email`, `firstName`, `lastName`, `major`, `courses`, `registered`, `tutor`, `password`) VALUES
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton', 'Williams', 'Biology', NULL, 1, 1, 'password'),
+('BHart3445', 'BHart3445@g.fmarion.edu', 'Brion', 'THart', 'Spanish', NULL, 1, 1, 'password'),
+('CPasty1220', 'CPastey1220@g.fmarion.edu', 'Chris', 'Pastey', 'Computer Science', NULL, 1, 1, 'password'),
+('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton', 'Williams', 'Computer Science', NULL, 1, 1, 'Raven47946'),
 ('dleon6779', 'dleon6779@g.fmarion.edu', 'Dylan', 'Leon', 'Computer Science', NULL, 1, 0, 'password'),
-('mattwhit', 'mattwhit@g.fmarion.edu', 'Matt', 'Whitley', 'English', '', 1, 0, 'password'),
-('StudentTest234', 'StudentTest234@g.fmarion.edu', 'Student', 'Test', 'Computer Science', NULL, 1, 0, 'password'),
-('TestTutor4525', 'TestTutor4525@g.fmarion.edu', 'Test', 'Tutor', 'Physics', NULL, 1, 1, 'password'),
-('TutorTest1235', 'TutorTest1235@g.fmarion.edu', 'Tutor', 'Test', 'Computer Science', NULL, 1, 1, 'password');
+('jcole1874', 'jcole1874@g.fmarion.edu', 'Jay', 'Cole', 'Art', NULL, 1, 1, 'password'),
+('mspears3444', 'mspears3444@g.fmarion.edu', 'Michy', 'Spears', 'Biology', NULL, 1, 1, 'password'),
+('MWhitley2345', 'MWhitley2345@g.fmarion.edu', 'Matthew', 'Whitley', 'English', '', 1, 0, 'password'),
+('RRoss4443', 'RRoss4443@g.fmarion.edu', 'Rick', 'Ross', 'Chemistry', NULL, 1, 1, 'password'),
+('SWholly4144', 'SWholly4144@g.fmarion.edu', 'Samantha', 'Smokin', 'Economics', NULL, 1, 1, 'password');
 
 -- --------------------------------------------------------
 
@@ -133,7 +136,7 @@ CREATE TABLE `student_chathistory` (
 --
 
 INSERT INTO `student_chathistory` (`studentID`, `email`, `name`, `classname`, `FromID`, `date`) VALUES
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton Williams', 'MATH132', 'dleon6779', '2017-03-26');
+('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton Williams', 'CS401', 'cwilliams2638', '2017-03-30');
 
 -- --------------------------------------------------------
 
@@ -200,12 +203,20 @@ CREATE TABLE `tutor` (
 --
 
 INSERT INTO `tutor` (`studentID`, `courseNumber`, `departID`) VALUES
-('dleon6779', '207', 1001),
-('cwilliams2638', '190', 1004),
+('RRoss4443', '201', 1000),
+('jcole1874', '101', 1001),
+('mspears3444', '104', 1002),
+('mspears3444', '305', 1002),
+('RRoss4443', '104', 1002),
+('RRoss4443', '102', 1003),
+('CPasty1220', '401', 1004),
 ('cwilliams2638', '401', 1004),
-('cwilliams2638', '132', 1008),
-('cwilliams2638', '201', 1008),
-('TestTutor4525', '201', 1009);
+('SWholly4144', '320', 1005),
+('cwilliams2638', '200', 1008),
+('jcole1874', '200', 1008),
+('SWholly4144', '108', 1008),
+('cwilliams2638', '207', 1009),
+('BHart3445', '314', 1010);
 
 -- --------------------------------------------------------
 
@@ -227,10 +238,7 @@ CREATE TABLE `tutor_chathistory` (
 --
 
 INSERT INTO `tutor_chathistory` (`studentID`, `email`, `name`, `classname`, `FromID`, `date`) VALUES
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Dylan Leon', 'MATH132', 'DLeon4743', '2017-03-26'),
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Dylan Leon', 'MATH132', 'dleon6779', '2017-03-26'),
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton Williams', 'Teacher', 'TeacherTest3215', '2017-03-23'),
-('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton Williams', 'Teacher', 'TeacherTest3215', '2017-03-26');
+('cwilliams2638', 'cwilliams2638@g.fmarion.edu', 'Charlton Williams', 'CS401', 'cwilliams2638', '2017-03-30');
 
 -- --------------------------------------------------------
 
