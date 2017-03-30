@@ -7,6 +7,9 @@ package movingforward.tutorapp3.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,6 +53,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Entities.Role;
@@ -119,6 +128,7 @@ public class ChatActivity extends AppCompatActivity implements
         }
     };*/
 
+    private TextView classReminder;
     private Button mSendButton;
     private Button mImageButton;
     private RecyclerView mMessageRecyclerView;
@@ -138,6 +148,8 @@ public class ChatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_chat);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        classReminder = (TextView) findViewById(R.id.ClassReminder);
+
         Intent i = getIntent();
 
         mUser = (User) i.getSerializableExtra("mUser");
@@ -150,6 +162,10 @@ public class ChatActivity extends AppCompatActivity implements
         nUsername = nUser.getID().toLowerCase();
 
         String className = i.getStringExtra("className").toLowerCase();
+
+        User tUser = (nUser.getPermission() == Role.Tutor ? nUser : mUser);
+
+        classReminder.setText("Tutor: " + tUser.getFirstName() + " " + tUser.getLastName() + ", " + className);
 
         MESSAGES_CHILD = (mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername)) + "_" + className;
 
@@ -198,6 +214,7 @@ public class ChatActivity extends AppCompatActivity implements
 
         // New child entries
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
         mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage,
                 MessageViewHolder>(
                 FriendlyMessage.class,
@@ -222,14 +239,28 @@ public class ChatActivity extends AppCompatActivity implements
                                               FriendlyMessage friendlyMessage, int position)
             {
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                if (friendlyMessage.getTutor() == 1)
+                {
+                    viewHolder.messageTextView.setTextColor(Color.BLUE);
+                }
                 viewHolder.messageTextView.setText(friendlyMessage.getText());
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
                 if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
                 {
-                    viewHolder.messengerImageView
-                            .setImageDrawable(ContextCompat
-                                    .getDrawable(ChatActivity.this,
-                                            R.drawable.ic_account_circle_black_36dp));
+                    if (friendlyMessage.getTutor() == 1)
+                    {
+                        viewHolder.messengerImageView
+                                .setImageDrawable(ContextCompat
+                                        .getDrawable(ChatActivity.this,
+                                                R.drawable.ic_launcher));
+                    }
+                    else
+                    {
+                        viewHolder.messengerImageView
+                                .setImageDrawable(ContextCompat
+                                        .getDrawable(ChatActivity.this,
+                                                R.drawable.ic_account_circle_black_36dp));
+                    }
                 }
                 else
                 {
@@ -245,6 +276,7 @@ public class ChatActivity extends AppCompatActivity implements
                 FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
             }
         };
+
 
         mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver()
         {
@@ -309,7 +341,8 @@ public class ChatActivity extends AppCompatActivity implements
                 FriendlyMessage friendlyMessage = new
                         FriendlyMessage(mMessageEditText.getText().toString(),
                         mUsername,
-                        mPhotoUrl);
+                        mPhotoUrl,
+                        mUser.getPermission() == Role.Tutor ? 1 : 0);
                 mFirebaseDatabaseReference.child(MESSAGES_CHILD)
                         .push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
@@ -353,7 +386,8 @@ public class ChatActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-    private void launchCamera() {
+    private void launchCamera()
+    {
         Log.d(TAG, "launchCamera");
 
         // Pick an image from storage
@@ -363,34 +397,76 @@ public class ChatActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-        if (requestCode == RC_TAKE_PICTURE) {
-            if (resultCode == RESULT_OK) {
+        if (requestCode == RC_TAKE_PICTURE)
+        {
+            if (resultCode == RESULT_OK)
+            {
                 mFileUri = data.getData();
 
-                if (mFileUri != null) {
+                String uriTest = mFileUri.toString();
+
+                if (mFileUri != null)
+                {
+                    try
+                    {
+                        InputStream inputStream = new FileInputStream(mFileUri.getPath());//You can get an inputStream using any IO API
+                        byte[] bytes;
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+                        while ((bytesRead = inputStream.read(buffer)) != -1)
+                        {
+                            output.write(buffer, 0, bytesRead);
+                        }
+                        bytes = output.toByteArray();
+                        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+                        FriendlyMessage friendlyMessage = new
+                                FriendlyMessage(encodedString,
+                                mUsername,
+                                mPhotoUrl,
+                                mUser.getPermission() == Role.Tutor ? 1 : 0);
+                        mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                                .push().setValue(friendlyMessage);
+                        mMessageEditText.setText("");
+
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                     uploadFromUri(mFileUri);
-                } else {
+                }
+                else
+                {
                     Log.w(TAG, "File URI is null");
                 }
-            } else {
+            }
+            else
+            {
                 Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
+    public void onNewIntent(Intent intent)
+    {
         super.onNewIntent(intent);
 
         // Check if this Activity was launched by clicking on an upload notification
-        if (intent.hasExtra(MyUploadService.EXTRA_DOWNLOAD_URL)) {
+        if (intent.hasExtra(MyUploadService.EXTRA_DOWNLOAD_URL))
+        {
             onUploadResultIntent(intent);
         }
     }
 
-    private void uploadFromUri(Uri fileUri) {
+    private void uploadFromUri(Uri fileUri)
+    {
         Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
 
         // Save the File URI
@@ -410,8 +486,10 @@ public class ChatActivity extends AppCompatActivity implements
         showProgressDialog("Uploading...");
     }
 
-    private void showProgressDialog(String caption) {
-        if (mProgressDialog == null) {
+    private void showProgressDialog(String caption)
+    {
+        if (mProgressDialog == null)
+        {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setIndeterminate(true);
         }
@@ -420,10 +498,39 @@ public class ChatActivity extends AppCompatActivity implements
         mProgressDialog.show();
     }
 
-    private void onUploadResultIntent(Intent intent) {
+    private void hideProgressDialog()
+    {
+        if (mProgressDialog != null && mProgressDialog.isShowing())
+        {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    private void updateUI()
+    {
+
+        hideProgressDialog();
+
+        findViewById(R.id.layout_storage).setVisibility(View.VISIBLE);
+
+        // Download URL and Download button
+        if (mDownloadUrl != null)
+        {
+            findViewById(R.id.layout_storage).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            findViewById(R.id.layout_storage).setVisibility(View.GONE);
+        }
+    }
+
+    private void onUploadResultIntent(Intent intent)
+    {
         // Got a new intent from MyUploadService with a success or failure
         mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
         mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
+
+        updateUI();
     }
 
     @Override

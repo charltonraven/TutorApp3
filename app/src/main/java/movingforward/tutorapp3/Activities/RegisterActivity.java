@@ -77,29 +77,35 @@ public class RegisterActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 String email = mEmailView.getText().toString();
-                String domain = email.split("@")[1];
                 boolean isFirstName = mFirstNameView.getText().toString().equals("") ? false : true;
                 boolean isLastName = mLastNameView.getText().toString().equals("") ? false : true;
 
                 if(!isFirstName)
                 {
-                    Toast.makeText(RegisterActivity.this, "Fill in your First Name.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Fill in all fields.", Toast.LENGTH_SHORT).show();
                 }
                 else if(!isLastName)
                 {
-                    Toast.makeText(RegisterActivity.this, "Fill in your Last Name.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Fill in all fields.", Toast.LENGTH_SHORT).show();
                 }
-                else if (mTeacherCheckBox.isChecked() && domain.equals("fmarion.edu"))
+                else if (mTeacherCheckBox.isChecked() && email.length() > 1 && email.split("@")[1].equals("fmarion.edu"))
                 {
                     Register();
                 }
-                else if (!mTeacherCheckBox.isChecked() && domain.equals("g.fmarion.edu"))
+                else if (!mTeacherCheckBox.isChecked() && email.length() > 1 && email.split("@")[1].equals("g.fmarion.edu"))
                 {
-                    Register();
+                    try
+                    {
+                        Register();
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.makeText(RegisterActivity.this, "Use your valid FMU email.", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else
                 {
-                    Toast.makeText(RegisterActivity.this, "Use your valid FMU email!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Use your valid FMU email.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

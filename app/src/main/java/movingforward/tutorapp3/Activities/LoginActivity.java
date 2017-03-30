@@ -11,7 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -88,6 +90,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+      /*  int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+        if(titleId == 0)
+            titleId = com.actionbarsherlock.R.id.abs__action_bar_title;
+
+        mAppName = (TextView) findViewById(titleId);
+        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/handsean.ttf");
+        mAppName.setTypeface(face);
+*/
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(email);
         populateAutoComplete();
