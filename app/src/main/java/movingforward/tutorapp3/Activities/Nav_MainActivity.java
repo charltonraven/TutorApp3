@@ -74,6 +74,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Tutor);
 
                 break;
@@ -85,6 +86,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Student);
 
                 break;

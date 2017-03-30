@@ -239,10 +239,6 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                             TutorsAndClasses.add(new ListItemHolder(Class, Name));
                         }
 
-
-                     //   TutorsAndClasses.add(new ListItemHolder(Class, Name));
-
-                        String Test = "Test";
                     }
 
                 } catch (Exception e) {
@@ -324,8 +320,6 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
                         nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
-
-                        String Test="Test";
                     }
 
                 } catch (JSONException e) {

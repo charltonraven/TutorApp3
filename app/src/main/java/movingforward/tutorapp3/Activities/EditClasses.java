@@ -90,6 +90,7 @@ public class EditClasses extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Tutor);
 
                 break;
@@ -101,6 +102,7 @@ public class EditClasses extends AppCompatActivity
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Student);
 
                 break;
