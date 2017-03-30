@@ -116,27 +116,7 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else
         {
-            AlertDialog.Builder RegorTry = new AlertDialog.Builder(Nav_MainActivity.this);
-            RegorTry.setTitle("Are you sure you want to sign out?");
-
-            RegorTry.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    startActivity(new Intent(Nav_MainActivity.this, LoginActivity.class));
-                }
-            });
-            RegorTry.setNeutralButton("Cancel", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    dialog.dismiss();
-
-                }
-            });
-
-            RegorTry.create();
-            RegorTry.show();
+            drawer.openDrawer(GravityCompat.START);
         }
     }
 
@@ -158,10 +138,27 @@ public class Nav_MainActivity extends AppCompatActivity
         {
             case R.id.sign_out_menu:
             {
-                //mFirebaseAuth.signOut();
-                //Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                //mUsername = ANONYMOUS;
-                startActivity(new Intent(this, LoginActivity.class));
+                AlertDialog.Builder RegorTry = new AlertDialog.Builder(Nav_MainActivity.this);
+                RegorTry.setTitle("Are you sure you want to sign out?");
+
+                RegorTry.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        startActivity(new Intent(Nav_MainActivity.this, LoginActivity.class));
+                    }
+                });
+                RegorTry.setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        dialog.dismiss();
+
+                    }
+                });
+
+                RegorTry.create();
+                RegorTry.show();
                 return true;
             }
             case R.id.action_settings:

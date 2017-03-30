@@ -60,7 +60,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.CodelabPreferences;
@@ -104,6 +103,7 @@ public class ChatActivity extends AppCompatActivity implements
     private SharedPreferences mSharedPreferences;
     public FirebaseAuth.AuthStateListener mAuthListener;
     public FirebaseAuth mFirebaseAuth;
+    public boolean amITutor;
     private static String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/";
 
     private DatabaseReference mFirebaseDatabaseReference;
@@ -154,6 +154,8 @@ public class ChatActivity extends AppCompatActivity implements
 
         mUser = (User) i.getSerializableExtra("mUser");
         mUsername = mUser.getID().toLowerCase();
+
+        amITutor = mUser.getTutor() == 1 ? true : false;
 
         nUser = (User) i.getSerializableExtra("nUser");
         mUsername = mUser.getID().toLowerCase();
@@ -242,6 +244,10 @@ public class ChatActivity extends AppCompatActivity implements
                 if (friendlyMessage.getTutor() == 1)
                 {
                     viewHolder.messageTextView.setTextColor(Color.BLUE);
+                }
+                else
+                {
+                    viewHolder.messageTextView.setTextColor(Color.BLACK);
                 }
                 viewHolder.messageTextView.setText(friendlyMessage.getText());
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
@@ -342,7 +348,7 @@ public class ChatActivity extends AppCompatActivity implements
                         FriendlyMessage(mMessageEditText.getText().toString(),
                         mUsername,
                         mPhotoUrl,
-                        mUser.getPermission() == Role.Tutor ? 1 : 0);
+                        amITutor ? 1 : 0);
                 mFirebaseDatabaseReference.child(MESSAGES_CHILD)
                         .push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
@@ -429,7 +435,7 @@ public class ChatActivity extends AppCompatActivity implements
                                 FriendlyMessage(encodedString,
                                 mUsername,
                                 mPhotoUrl,
-                                mUser.getPermission() == Role.Tutor ? 1 : 0);
+                                amITutor ? 1 : 0);
                         mFirebaseDatabaseReference.child(MESSAGES_CHILD)
                                 .push().setValue(friendlyMessage);
                         mMessageEditText.setText("");
@@ -553,7 +559,7 @@ public class ChatActivity extends AppCompatActivity implements
                 return true;
             case R.id.invite_menu:
             {
-                if (mUser.getPermission() != Role.Student)
+                if (amITutor)
                 {
                     /*Calendar c = Calendar .getInstance();
                     Date today = new Date();
@@ -665,7 +671,7 @@ public class ChatActivity extends AppCompatActivity implements
                 }
                 if (!task.isSuccessful())
                 {
-                    Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
