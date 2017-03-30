@@ -33,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity
     private EditText mFirstNameView;
     private EditText mLastNameView;
     private EditText mEmailView;
+    private EditText mPasswordView;
     private Spinner mMajorView;
     private CheckBox mTeacherCheckBox;
     private Button mRegisterButton;
@@ -57,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity
         mMajorView = (Spinner) findViewById(R.id.spinner_majors);
         mTeacherCheckBox = (CheckBox) findViewById(R.id.cb_teacher);
         mRegisterButton = (Button) findViewById(R.id.btn_register);
+        mPasswordView= (EditText) findViewById(R.id.et_password);
 // Create an ArrayAdapter using the string array and a default spinner layout
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.majors_array, android.R.layout.simple_spinner_item);
@@ -112,6 +114,7 @@ public class RegisterActivity extends AppCompatActivity
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
         String major = mMajorView.getSelectedItem().toString();
+        String password=mPasswordView.getText().toString();
         if (mTeacherCheckBox.isChecked())
         {
             who = "Teacher";
@@ -126,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         RegisterUser registerUser = new RegisterUser(this, mFirebaseUser);
-        registerUser.execute(who, firstName, lastName, email, major);
+        registerUser.execute(who, firstName, lastName, email, major,password);
     }
 
     private void signIn(final String Email, final String Password)
@@ -174,6 +177,7 @@ public class RegisterActivity extends AppCompatActivity
         public String lastname = "";
         public String Email = "";
         public String major = "";
+        public String password="";
         public FirebaseUser mFirebaseUser;
 
         RegisterUser(Context context, FirebaseUser mFirebaseUser)
@@ -191,10 +195,12 @@ public class RegisterActivity extends AppCompatActivity
             lastname = params[2];
             Email = params[3];
             major = params[4];
+            password=params[5];
+
             String[] subID = Email.split("\\@");
             String id = subID[0];
 
-            String[] UserInfo = {who, id, Email, firstname, lastname, major};
+            String[] UserInfo = {who, id, Email, firstname, lastname, major,password};
 
             String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/Inserts/insert.php";
             HttpHandler Register = new HttpHandler();

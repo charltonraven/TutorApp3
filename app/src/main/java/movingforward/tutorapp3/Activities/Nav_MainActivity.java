@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,6 +72,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Tutor);
 
                 break;
@@ -85,7 +84,9 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
+                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Student);
+
 
                 break;
             case "Teacher":

@@ -190,21 +190,28 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
             if(who=="student") {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
-                String userID = mUser.getEmail().split("\\@")[0];
+
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
             if(who=="tutor") {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
-                String userID = mUser.getEmail().split("\\@")[0];
+
+
+                //Making a request to url and getting response
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
+            }
+            if(who=="teacher") {
+                String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
+
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
             if(who=="TeacherTutors") {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
-                String userID = mUser.getEmail().split("\\@")[0];
+
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
