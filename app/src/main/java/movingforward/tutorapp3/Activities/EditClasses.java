@@ -2,9 +2,9 @@ package movingforward.tutorapp3.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,20 +13,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
-import movingforward.tutorapp3.Entities.Role;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import movingforward.tutorapp3.Entities.User;
-import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
+import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
 import movingforward.tutorapp3.Fragments.Sessions;
-import movingforward.tutorapp3.Fragments.User_list;
+import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
-
-import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
-import static movingforward.tutorapp3.R.id.StudentSessions;
-import static movingforward.tutorapp3.R.id.TutorSessions;
 
 /**
  * Created by Jeebus on 3/28/2017.
@@ -40,6 +42,11 @@ public class EditClasses extends AppCompatActivity
     private ScrollView sv_course;
     private Button bt_accept;
     private Button bt_cancel;
+    public ArrayList<String> departments=new ArrayList<>();
+    LinearLayout linearLayout;
+
+
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,6 +68,20 @@ public class EditClasses extends AppCompatActivity
         sv_course = (ScrollView) findViewById(R.id.sv_course);
         bt_accept = (Button) findViewById(R.id.bt_accept);
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
+        linearLayout = (LinearLayout) findViewById(R.id.lv_departList);
+
+        try {
+           departments=new generateDepartmentTask().execute("department").get();
+             ArrayAdapter<String> DepartAdapter=new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,departments);
+            int adapterCount=departments.size();
+
+            for (int i = 0; i < adapterCount; i++) {
+                View item = DepartAdapter.getView(i, null, null);
+                linearLayout.addView(item);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         bt_cancel.setOnClickListener(new View.OnClickListener()
         {
@@ -78,46 +99,7 @@ public class EditClasses extends AppCompatActivity
 
         toggle.syncState();
 
-        TextView tvType = (TextView) hView.findViewById(R.id.tvType);
-        TextView tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
-        tvEmail.setText(mUser.getID());
-        tvType.setText("Logged in as a " + mUser.getPermission().name().toUpperCase());
 
-        switch (mUser.getPermission().toString())
-        {
-            case "Tutor":
-                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
-                navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
-                mUser.setPermission(Role.Tutor);
-
-                break;
-            case "Student":
-                navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
-                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
-                navigationView.getMenu().findItem(StudentSessions).setVisible(false);
-                navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
-                navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
-                navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
-                mUser.setPermission(Role.Student);
-
-                break;
-            case "Teacher":
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
-                navigationView.getMenu().findItem(TutorSessions).setVisible(false);
-                navigationView.getMenu().findItem(StudentSessions).setVisible(false);
-                navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
-                navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
-                mUser.setPermission(Role.Teacher);
-
-                break;
-        }
 
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -174,79 +156,6 @@ public class EditClasses extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putSerializable("mUser", mUser);
 
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.FindClass)
-        {
-
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
-
-        }
-        else if (id == TutorSessions)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TutorSessions = Sessions.newInstance(mUser, "student", "Past Sessions with Tutors");
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
-        }
-        else if (id == StudentSessions)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions StudentSessions = Sessions.newInstance(mUser, "tutor", "Past Sessions with Students");
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
-        }
-        else if (id == R.id.TeacherSessions)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherSession = Sessions.newInstance(mUser, "teacher", "Past Sessions with Teachers");
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
-        }
-        else if (id == R.id.MyClasses)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors", "??" );
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
-        }
-        else if (id == R.id.PostBulletin)
-        {
-
-
-        }
-        else if (id == R.id.AppointTutor)
-        {
-        }
-        else if (id == R.id.TeacherList)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            User_list User_list = new User_list();
-            User_list.setArguments(bundle);
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, User_list, User_list.getTag()).commit();
-
-        }
-        else if (id == R.id.TeacherList)
-        {
-
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            User_list User_list = new User_list();
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, User_list, User_list.getTag()).commit();
-        }
-        else if (id == R.id.Find_ClassesT)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
-
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -259,4 +168,42 @@ public class EditClasses extends AppCompatActivity
     {
 
     }
+
+    public static class generateDepartmentTask extends AsyncTask<String,String, ArrayList<String>>{
+        public ArrayAdapter<String> adapter;
+        ArrayList<String> departments=new ArrayList<>();
+
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+
+            String what=params[0];
+            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateDeparCourses.php";
+            HttpListHandler departmentList = new HttpListHandler();
+            String response = departmentList.makeServiceCallPost(register_url, null, null,what);
+
+
+
+            if(response!=null){
+
+                try {
+                    JSONArray departJSONarray = new JSONArray(response);
+                    for (int i = 0; i < departJSONarray.length(); i++) {
+                        JSONObject departObject = departJSONarray.getJSONObject(i);
+                        departments.add(departObject.getString("departName"));
+
+                        String Test = "Test";
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            return departments;
 }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> departments) {
+
+            super.onPostExecute(departments);
+        }
+    }}

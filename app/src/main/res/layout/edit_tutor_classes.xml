@@ -37,6 +37,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:id="@+id/lv_departList"
                 android:layout_height="match_parent"
                 android:orientation="vertical"/>
         </ScrollView>
@@ -45,13 +46,14 @@
             android:id="@+id/sv_course"
             android:layout_width="190dp"
             android:layout_height="300dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/sv_depart">
+            android:layout_alignTop="@+id/sv_depart"
+            android:layout_alignParentEnd="true">
 
             <LinearLayout
+                android:id="@+id/lv_courseList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
         </ScrollView>
 
         <Button
