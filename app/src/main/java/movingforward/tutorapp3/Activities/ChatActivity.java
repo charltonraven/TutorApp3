@@ -679,7 +679,6 @@ public class ChatActivity extends AppCompatActivity implements
 
     private void signIn(final String Email, final String Password)
     {
-
         mFirebaseAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(ChatActivity.this, new OnCompleteListener<AuthResult>()
         {
             @Override

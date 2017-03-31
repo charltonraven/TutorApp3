@@ -188,40 +188,31 @@ public class EditClasses extends AppCompatActivity
         }
         else if (id == TutorSessions)
         {
-
-
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TutorSessions = Sessions.newInstance(mUser, "student");
+            Sessions TutorSessions = Sessions.newInstance(mUser, "student", "Past Sessions with Tutors");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TutorSessions, TutorSessions.getTag()).commit();
-
-
         }
         else if (id == StudentSessions)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions StudentSessions = Sessions.newInstance(mUser, "tutor");
+            Sessions StudentSessions = Sessions.newInstance(mUser, "tutor", "Past Sessions with Students");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, StudentSessions, StudentSessions.getTag()).commit();
-
         }
-
         else if (id == R.id.TeacherSessions)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherSession = Sessions.newInstance(mUser, "teacher");
+            Sessions TeacherSession = Sessions.newInstance(mUser, "teacher", "Past Sessions with Teachers");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
-
-
         }
         else if (id == R.id.MyClasses)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors");
+            Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors", "??" );
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
-
         }
         else if (id == R.id.PostBulletin)
         {

@@ -153,13 +153,15 @@ public class EditAccountActivity extends AppCompatActivity
                 {
                     if (cb_first.isEnabled())
                     {
-                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "firstName", et_first.getText().toString()).get();
-                        mUser.setFirstName(et_first.getText().toString());
+                        String firstFixed = et_first.getText().toString().substring(0, 1).toUpperCase() + et_first.getText().toString().substring(1).toLowerCase();
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "firstName", firstFixed).get();
+                        mUser.setFirstName(firstFixed);
                     }
                     if (cb_last.isEnabled())
                     {
-                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "lastName", et_last.getText().toString()).get();
-                        mUser.setLastName(et_last.getText().toString());
+                        String lastFixed = et_last.getText().toString().substring(0, 1).toUpperCase() + et_last.getText().toString().substring(1).toLowerCase();
+                        new UpdateTask().execute(mUser.getPermission().name(), mUser.getID(), "lastName", lastFixed).get();
+                        mUser.setLastName(lastFixed);
                     }
                     if (cb_major.isEnabled())
                     {
