@@ -130,12 +130,15 @@ public class RegisterActivity extends AppCompatActivity
             mMajorView = null;
         }
 
+        String firstFixed = firstName.substring(0, 1).toUpperCase() + firstName.substring(1).toLowerCase();
+        String lastFixed = lastName.substring(0, 1).toUpperCase() + lastName.substring(1).toLowerCase();
+
         signIn(email, "password");
 
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         RegisterUser registerUser = new RegisterUser(this, mFirebaseUser);
-        registerUser.execute(who, firstName, lastName, email, major,password);
+        registerUser.execute(who, firstFixed, lastFixed, email, major,password);
     }
 
     private void signIn(final String Email, final String Password)

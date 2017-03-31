@@ -1,14 +1,48 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="movingforward.tutorapp3.Fragments.Sessions">
 
     <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/session_name"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_weight="1"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textSize="20dp"/>
+
     <ListView
         android:id="@+id/lvSessionList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="430dp"
+        android:layout_alignParentBottom="true"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="10dp"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_course"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lvSessionList"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/session_name"
+        android:text="Courses:"
+        android:textSize="18sp"
+        android:textStyle="italic"/>
+
+    <TextView
+        android:id="@+id/tv_tutor"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/lvSessionList"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/session_name"
+        android:text="Tutors:"
+        android:textSize="18sp"
+        android:textStyle="italic"/>
+</RelativeLayout>
