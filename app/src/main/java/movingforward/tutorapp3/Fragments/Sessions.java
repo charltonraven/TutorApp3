@@ -20,14 +20,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import movingforward.tutorapp3.Activities.ChatActivity;
 import movingforward.tutorapp3.Entities.ListItemHolder;
+import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
 import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
 import movingforward.tutorapp3.Entities.class_Helper.SessionListAdapter;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
 import movingforward.tutorapp3.R;
-import movingforward.tutorapp3.Activities.ChatActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -142,14 +143,24 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
         tvClassName = (TextView) view.findViewById(R.id.tv_Class_Name);
         tvTutorName = (TextView) view.findViewById(R.id.tv_TutorName);
+        String LastName="";
+        String FirstName="";
 
-        String classname=tvClassName.getText().toString();
-        String tutorname=tvTutorName.getText().toString();
+        if(who.equals("TutorTeachers") || who.equals("TeacherTutors")) {
 
-        String [] FirstLastName=tutorname.split(" ");
-        String FirstName=FirstLastName[0];
-        String LastName=FirstLastName[1];
+             FirstName = tvClassName.getText().toString();
+             LastName =tvTutorName.getText().toString() ;
 
+
+        }else{
+            String tutorname = tvTutorName.getText().toString();
+            String[] FirstLastName = tutorname.split(" ");
+            FirstName=FirstLastName[0];
+            LastName=FirstLastName[1];
+
+
+
+        }
         try {
             new getInformation().execute(FirstName,LastName,who).get();
 
@@ -163,18 +174,10 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
 
+
+
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -188,28 +191,28 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
             HttpListHandler sh = new HttpListHandler();
             String jsonStr="";
 
-            if(who=="student") {
+            if(who.equals("student")) {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
 
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
-            if(who=="tutor") {
+            if(who.equals("tutor")) {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
 
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
-            if(who=="teacher") {
+            if(who.equals("TutorTeachers")) {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
 
 
                 //Making a request to url and getting response
                 jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who);
             }
-            if(who=="TeacherTutors") {
+            if(who.equals("TeacherTutors")) {
                 String TutorList_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateList.php";
 
 
@@ -283,7 +286,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
             String who=params[2];
             String firstName=params[0];
             String lastName = params[1];
-            String [] info= {who,firstName,lastName};
+            String [] info= {firstName,lastName,who};
             String jsonStr="";
             HttpHandler2 sh=new HttpHandler2();
 
@@ -308,6 +311,18 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
         protected void onPostExecute(String responseJson) {
             nUser=null;
 
+            String ID="";
+
+            String major="";
+            String email="";
+            String firstName="";
+            String lastName="";
+            String courses="";
+            Role role=null;
+            int registered=0;
+            int tutor=0;
+
+
 
             if(responseJson!=null){
 
@@ -315,18 +330,28 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                     JSONArray LoggedUser=new JSONArray(responseJson);
                     for(int i=0;i<LoggedUser.length();i++){
                         JSONObject UserObj = LoggedUser.getJSONObject(i);
-                        String StudentID=UserObj.getString("studentID");
-                        String email=UserObj.getString("email");
-                        String firstName=UserObj.getString("firstName");
-                        String lastName=UserObj.getString("lastName");
-                        String major=UserObj.getString("major");
-                        String courses=UserObj.getString("courses");
-                        int registered=UserObj.getInt("registered");
-                        int tutor=UserObj.getInt("tutor");
-                      //  String password=UserObj.getString("password");
+
+                        if(UserObj.isNull("studentID")){
+                            ID =UserObj.getString("teacherID");
+                            major=UserObj.getString("department");
+                            role=Role.Teacher;
+
+                        }else{
+                            ID=UserObj.getString("studentID");
+                            major=UserObj.getString("major");
+                             courses=UserObj.getString("courses");
+                            role=Role.Student;
+                             tutor=UserObj.getInt("tutor");
+                        }
+                        email=UserObj.getString("email");
+                        firstName=UserObj.getString("firstName");
+                        lastName=UserObj.getString("lastName");
+                       // registered=UserObj.getInt("registered");
+                        String password=UserObj.getString("password");
 
 
-                        nUser=new User(StudentID,email,firstName,lastName,major,courses,registered,tutor,null,null);
+
+                        nUser=new User(ID,email,firstName,lastName,major,courses,registered,tutor,password,role);
                     }
 
                 } catch (JSONException e) {

@@ -210,7 +210,7 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.TeacherSessions)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherSession = Sessions.newInstance(mUser, "teacher");
+            Sessions TeacherSession = Sessions.newInstance(mUser, "TutorTeachers");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherSession, TeacherSession.getTag()).commit();
         }

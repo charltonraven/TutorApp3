@@ -188,7 +188,7 @@ public class HttpHandler2 {
         if(getinformation!=null){
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(getinformation[0], "UTF-8") + "&" +URLEncoder.encode("firstName", "UTF-8") + "=" + URLEncoder.encode(getinformation[1], "UTF-8") + "&" + URLEncoder.encode("lastName", "UTF-8") + "=" + URLEncoder.encode(getinformation[2].trim(), "UTF-8");
+                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(getinformation[2], "UTF-8") + "&" +URLEncoder.encode("firstName", "UTF-8") + "=" + URLEncoder.encode(getinformation[0], "UTF-8") + "&" + URLEncoder.encode("lastName", "UTF-8") + "=" + URLEncoder.encode(getinformation[1].trim(), "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
