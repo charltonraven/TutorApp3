@@ -1,5 +1,6 @@
 package movingforward.tutorapp3.Activities;
 
+import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,10 +13,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import movingforward.tutorapp3.Entities.Role;
@@ -24,6 +28,7 @@ import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.Fragments.User_list;
 import movingforward.tutorapp3.Fragments.User_list_Button;
+import movingforward.tutorapp3.ProjectHelpers.TypefaceSpan;
 import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
@@ -41,7 +46,18 @@ public class Nav_MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_nav__main);
+
+        SpannableString s = new SpannableString("My Title");
+        s.setSpan(new TypefaceSpan(this, "fonts/Packaging.otf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Update the action bar title with the TypefaceSpan instance
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(s);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
