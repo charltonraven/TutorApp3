@@ -13,10 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +28,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import movingforward.tutorapp3.Entities.User;
+import movingforward.tutorapp3.Entities.class_Helper.DepartCourseListAdapter;
 import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
@@ -35,7 +39,7 @@ import movingforward.tutorapp3.R;
  */
 
 public class EditClasses extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener
+        implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener, View.OnClickListener,AdapterView.OnItemClickListener
 {
     public User mUser;
     private ScrollView sv_depart;
@@ -43,7 +47,12 @@ public class EditClasses extends AppCompatActivity
     private Button bt_accept;
     private Button bt_cancel;
     public ArrayList<String> departments=new ArrayList<>();
-    LinearLayout linearLayout;
+    LinearLayout departLinear;
+    LinearLayout courseLinear;
+    TextView tv_departItem;
+    ListView lv_departList;
+    ListView lv_courseList;
+    View item;
 
 
     ArrayAdapter<String> adapter;
@@ -68,21 +77,47 @@ public class EditClasses extends AppCompatActivity
         sv_course = (ScrollView) findViewById(R.id.sv_course);
         bt_accept = (Button) findViewById(R.id.bt_accept);
         bt_cancel = (Button) findViewById(R.id.bt_cancel);
-        linearLayout = (LinearLayout) findViewById(R.id.lv_departList);
+        departLinear = (LinearLayout) findViewById(R.id.ll_departList);
+        courseLinear= (LinearLayout) findViewById(R.id.ll_courseList);
+
+        lv_departList= (ListView) findViewById(R.id.lv_department);
+
 
         try {
-           departments=new generateDepartmentTask().execute("department").get();
-             ArrayAdapter<String> DepartAdapter=new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,departments);
-            int adapterCount=departments.size();
+            departments=new generateDepartmentTask().execute("department").get();
+            DepartCourseListAdapter DepartAdapter=new DepartCourseListAdapter(this, android.R.layout.simple_list_item_1,departments);
+            lv_departList.setAdapter(DepartAdapter);
 
-            for (int i = 0; i < adapterCount; i++) {
-                View item = DepartAdapter.getView(i, null, null);
-                linearLayout.addView(item);
-            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
+        lv_departList.setOnItemClickListener(EditClasses.this);
 
+
+        /*tv_departItem.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction()== MotionEvent.ACTION_DOWN){
+                    v.setBackgroundColor(Color.BLUE);
+
+                }else if(event.getAction()==MotionEvent.ACTION_UP){
+                    v.setBackgroundColor(Color.WHITE);
+
+                }
+                return true;
+            }
+        });*/
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView = navigationView.getHeaderView(0);
+
+        toggle.syncState();
+
+
+
+        navigationView.setNavigationItemSelectedListener(this);
         bt_cancel.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -93,15 +128,6 @@ public class EditClasses extends AppCompatActivity
                 startActivity(navIntent);
             }
         });
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView = navigationView.getHeaderView(0);
-
-        toggle.syncState();
-
-
-
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     public void onBackPressed()
@@ -169,8 +195,35 @@ public class EditClasses extends AppCompatActivity
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+
+    }
+
+    //DepartmentList
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        tv_departItem= (TextView) findViewById(R.id.tv_departCourseItem);
+        lv_courseList=(ListView) findViewById(R.id.lv_course) ;
+
+        String course=departments.get(position);
+
+        try {
+            ArrayList<String> courses = new generateCourseTask().execute("course", course).get();
+            DepartCourseListAdapter DepartAdapter = new DepartCourseListAdapter(this, android.R.layout.simple_list_item_1, courses);
+            lv_courseList.setAdapter(DepartAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
     public static class generateDepartmentTask extends AsyncTask<String,String, ArrayList<String>>{
-        public ArrayAdapter<String> adapter;
+
         ArrayList<String> departments=new ArrayList<>();
 
 
@@ -178,9 +231,9 @@ public class EditClasses extends AppCompatActivity
         protected ArrayList<String> doInBackground(String... params) {
 
             String what=params[0];
-            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateDeparCourses.php";
+            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateDepartList.php";
             HttpListHandler departmentList = new HttpListHandler();
-            String response = departmentList.makeServiceCallPost(register_url, null, null,what);
+            String response = departmentList.makeServiceCallPost(register_url, null, null,what,null);
 
 
 
@@ -206,4 +259,43 @@ public class EditClasses extends AppCompatActivity
 
             super.onPostExecute(departments);
         }
-    }}
+    }
+    public static class generateCourseTask extends AsyncTask<String,String, ArrayList<String>>{
+
+        ArrayList<String> courses=new ArrayList<>();
+
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+
+            String what=params[0];
+            String  departmentName=params[1];
+            String [] CourseList={what,departmentName};
+            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateCourseList.php";
+            HttpListHandler departmentList = new HttpListHandler();
+            String response = departmentList.makeServiceCallPost(register_url, null, null,null,CourseList);
+
+            if(response!=null){
+
+                try {
+                    JSONArray CourseJSONarray = new JSONArray(response);
+                    for (int i = 0; i < CourseJSONarray.length(); i++) {
+                        JSONObject courseObject = CourseJSONarray.getJSONObject(i);
+                        courses.add(courseObject.getString("departAbbr")+" "+courseObject.getString("courseNumber"));
+
+                        String Test = "Test";
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            return courses;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> courses) {
+
+            super.onPostExecute(courses);
+        }
+    }
+}
