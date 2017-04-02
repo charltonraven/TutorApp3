@@ -186,7 +186,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
         if (who.equals("TutorTeachers") || who.equals("TeacherTutors"))
         {
-            String[] names = tv_names.toString().split(" ");
+            String[] names = tv_names.getText().toString().split(" ");
             FirstName = names[0];
             LastName = names[names.length - 1];
         }
