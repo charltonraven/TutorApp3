@@ -19,14 +19,13 @@
         app:srcCompat="@drawable/ic_launcher" />
 
     <TextView
-        android:layout_width="181dp"
+        android:id="@+id/tvType"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:id="@+id/tvType"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/imageView"/>
 
     <TextView
@@ -38,5 +37,16 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/imageView"/>
+
+    <TextView
+        android:id="@+id/tvType2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvEmail"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tvType"
+        android:layout_toEndOf="@+id/tvType"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"/>
 
 </RelativeLayout>
