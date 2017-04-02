@@ -1,5 +1,6 @@
 package movingforward.tutorapp3.Activities;
 
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,12 +16,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
@@ -49,17 +54,20 @@ public class Nav_MainActivity extends AppCompatActivity
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_nav__main);
 
-        SpannableString s = new SpannableString("My Title");
-        s.setSpan(new TypefaceSpan(this, "fonts/Packaging.otf"), 0, s.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        // Update the action bar title with the TypefaceSpan instance
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(s);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View customView = inflater.inflate(R.layout.custom_appbar, null);
+
+        TextView titleTV = (TextView) customView.findViewById(R.id.action_custom_title);
+        titleTV.setTypeface(Typeface.createFromAsset(Nav_MainActivity.this
+                .getAssets(), String.format("fonts/TACOTAC.ttf")));
+
+        actionBar.setCustomView(customView);
+        actionBar.setDisplayShowCustomEnabled(true);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
