@@ -46,9 +46,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-/*import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
-import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;*/
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -79,6 +76,9 @@ import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.CodelabPreferences;
 import movingforward.tutorapp3.TutChat.FriendlyMessage;
+
+/*import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;*/
 
 public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener
 {
@@ -180,6 +180,10 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
         classReminder.setText("Tutor: " + tUser.getFirstName() + " " + tUser.getLastName() + ", " + className);
 
+
+        if(mUser.getPermission().name()=="Teacher"|| mUser.getPermission().name()=="Tutor" && nUser.getPermission().name()=="Teacher"){
+            className="teacher";
+        }
         MESSAGES_CHILD = (mUsername.compareTo(nUsername) < 0 ? (mUsername + "_" + nUsername) : (nUsername + "_" + mUsername)) + "_" + className;
 
         mFirebaseAuth = FirebaseAuth.getInstance();
