@@ -112,6 +112,7 @@ public class nameBtnListAdapter extends ArrayAdapter<User_list_Button> implement
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+
             }
         };
 

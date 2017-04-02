@@ -229,7 +229,7 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.EditClasses)//------------------
         {
-            Intent mIntent = new Intent(Nav_MainActivity.this, AddClasses.class);
+            Intent mIntent = new Intent(Nav_MainActivity.this, EditClasses.class);
             mIntent.putExtra("mUser", mUser);
             startActivity(mIntent);
         }

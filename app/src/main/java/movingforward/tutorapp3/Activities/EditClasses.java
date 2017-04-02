@@ -14,12 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +23,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import movingforward.tutorapp3.Entities.User;
-import movingforward.tutorapp3.Entities.class_Helper.DepartAdapter;
-import movingforward.tutorapp3.Entities.class_Helper.HttpHandlerInsertUser;
-import movingforward.tutorapp3.Entities.class_Helper.HttpListHandler;
+import movingforward.tutorapp3.Entities.class_Helper.HttpTutorHandler;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.ProjectHelpers.StaticHelper;
+import movingforward.tutorapp3.ProjectHelpers.btnNameAdapter;
 import movingforward.tutorapp3.R;
 
 /**
@@ -43,31 +37,17 @@ public class EditClasses extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener, View.OnClickListener,AdapterView.OnItemClickListener
 {
     public User mUser;
-    private ScrollView sv_depart;
-    private ScrollView sv_course;
-    private Button bt_accept;
-    private Button bt_cancel;
-    public ArrayList<String> departments=new ArrayList<>();
-    LinearLayout departLinear;
-    LinearLayout courseLinear;
-    TextView tv_departItem;
-    TextView tv_courseItem;
-    ListView lv_departList;
-    ListView lv_courseList;
-    View item;
-    ArrayList<String> courses;
+    ListView lvTutoredClasses;
 
-
-    ArrayAdapter<String> adapter;
+    ArrayList<String> classes;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_tutor_classes);
+        setContentView(R.layout.edit_tutor_classes);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+     //   setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,33 +56,24 @@ public class EditClasses extends AppCompatActivity
         Intent mIntent = getIntent();
         mUser = (User) mIntent.getSerializableExtra("mUser");
 
+        lvTutoredClasses=(ListView) findViewById(R.id.lvTutoredClasses);
 
-
-
-
-
-
-
+        try {
+            classes = new generateTutoredClasses().execute(mUser.getID()).get();
+            btnNameAdapter btnNameAdapter=new btnNameAdapter(this, android.R.layout.simple_list_item_1,classes,mUser);
+            lvTutoredClasses.setAdapter(btnNameAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView = navigationView.getHeaderView(0);
+       View hView = navigationView.getHeaderView(0);
 
         toggle.syncState();
 
 
-
         navigationView.setNavigationItemSelectedListener(this);
-        bt_cancel.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent navIntent = new Intent(EditClasses.this, Nav_MainActivity.class);
-                navIntent.putExtra("mUser", mUser);
-                startActivity(navIntent);
-            }
-        });
     }
 
     public void onBackPressed()
@@ -179,82 +150,30 @@ public class EditClasses extends AppCompatActivity
     //DepartmentList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        tv_departItem= (TextView) findViewById(R.id.tv_departCourseItem);
 
-
-        String course=departments.get(position);
-
-        try {
-             courses = new generateCourseTask().execute("course", course).get();
-            DepartAdapter DepartAdapter = new DepartAdapter(this, android.R.layout.simple_list_item_1, courses);
-            lv_courseList.setAdapter(DepartAdapter);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-    }
-
-    public static class generateDepartmentTask extends AsyncTask<String,String, ArrayList<String>>{
-
-        ArrayList<String> departments=new ArrayList<>();
-
-
-        @Override
-        protected ArrayList<String> doInBackground(String... params) {
-
-            String what=params[0];
-            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateDepartList.php";
-            HttpListHandler departmentList = new HttpListHandler();
-            String response = departmentList.makeServiceCallPost(register_url, null, null,what,null);
-
-
-
-            if(response!=null){
-
-                try {
-                    JSONArray departJSONarray = new JSONArray(response);
-                    for (int i = 0; i < departJSONarray.length(); i++) {
-                        JSONObject departObject = departJSONarray.getJSONObject(i);
-                        departments.add(departObject.getString("departName"));
-
-                        String Test = "Test";
-                    }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-            }
-            return departments;
 }
 
-        @Override
-        protected void onPostExecute(ArrayList<String> departments) {
 
-            super.onPostExecute(departments);
-        }
-    }
-    public static class generateCourseTask extends AsyncTask<String,String, ArrayList<String>>{
+    public static class generateTutoredClasses extends AsyncTask<String,String, ArrayList<String>>{
 
-        ArrayList<String> courses=new ArrayList<>();
+        ArrayList<String> classes=new ArrayList<>();
 
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
 
-            String what=params[0];
-            String  departmentName=params[1];
-            String [] CourseList={what,departmentName};
-            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateCourseList.php";
-            HttpListHandler departmentList = new HttpListHandler();
-            String response = departmentList.makeServiceCallPost(register_url, null, null,null,CourseList);
+            String id=params[0];
+            String register_url = "http://" + StaticHelper.getDeviceIP() + "/android/CreateListorGrids/generateUserTutoredClasses.php";
+            HttpTutorHandler TutoredList = new HttpTutorHandler();
+            String response = TutoredList.makeServiceCallPost(register_url, id,null);
 
             if(response!=null){
 
                 try {
-                    JSONArray CourseJSONarray = new JSONArray(response);
-                    for (int i = 0; i < CourseJSONarray.length(); i++) {
-                        JSONObject courseObject = CourseJSONarray.getJSONObject(i);
-                        courses.add(courseObject.getString("departAbbr")+" "+courseObject.getString("courseNumber"));
+                    JSONArray TutoredJSONarray = new JSONArray(response);
+                    for (int i = 0; i < TutoredJSONarray.length(); i++) {
+                        JSONObject TutoredClassObj = TutoredJSONarray.getJSONObject(i);
+                        classes.add(TutoredClassObj.getString("departAbbr")+" "+TutoredClassObj.getString("courseNumber"));
 
                         String Test = "Test";
                     }
@@ -262,7 +181,7 @@ public class EditClasses extends AppCompatActivity
                     e.printStackTrace();
                 }
             }
-            return courses;
+            return classes;
         }
 
         @Override
@@ -271,37 +190,5 @@ public class EditClasses extends AppCompatActivity
             super.onPostExecute(courses);
         }
     }
-    private class InsertTutorClasses extends  AsyncTask<String,String,String>{
 
-
-
-
-        @Override
-        protected String doInBackground(String... params) {
-            String id=params[0];
-            String departmentAbbr=params[1];
-            String courseNumber=params[2];
-
-            String result="";
-            String [] idCourseNumber={id,departmentAbbr,courseNumber};
-
-            HttpHandlerInsertUser sh=new HttpHandlerInsertUser();
-
-            String InsertTutorClassesURL = "http://" + StaticHelper.getDeviceIP() + "/android/inserts/InsertTutorClass.php";
-            result=sh.makeServiceCallPost(InsertTutorClassesURL,idCourseNumber);
-
-
-            System.out.println(result);
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-        }
-    }
 }
