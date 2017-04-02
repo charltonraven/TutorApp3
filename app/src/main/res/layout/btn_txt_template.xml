@@ -10,15 +10,15 @@
     <!-- TODO: Update blank fragment layout -->
 
 
-    <CheckBox
-        android:id="@+id/cb_tutoredClass"
+    <Button
+        android:id="@+id/btn_removeTutoredClass"
         android:layout_width="wrap_content"
         android:layout_height="53dp"
         android:layout_weight="0.14"
-        android:text="CheckBox" />
+        android:text="Drop" />
 
     <TextView
-        android:id="@+id/tv_courseItem"
+        android:id="@+id/tv_ClassItems"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_weight="0.50"

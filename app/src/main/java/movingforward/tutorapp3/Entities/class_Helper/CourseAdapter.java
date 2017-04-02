@@ -73,7 +73,7 @@ public class CourseAdapter extends ArrayAdapter<String> implements AdapterView.O
             v = (View) convertView;
         }
 
-        tvDepartCourse = (TextView) v.findViewById(R.id.tv_courseItem);
+        tvDepartCourse = (TextView) v.findViewById(R.id.tv_ClassItems);
 
 
         tvDepartCourse.setText(values.get(position));
