@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler;
 import movingforward.tutorapp3.Entities.class_Helper.HttpHandler2;
@@ -219,7 +220,8 @@ public class User_list extends Fragment implements AdapterView.OnItemClickListen
                         //  String password=UserObj.getString("password");
 
 
-                        nUser=new User(StudentID,email,firstName,lastName,major,null,registered,3,null,null);
+
+                        nUser=new User(StudentID,email,firstName,lastName,major,null,registered,3,null, Role.Teacher);
 
                         String Test="Test";
                     }
