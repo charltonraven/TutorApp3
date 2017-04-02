@@ -4,15 +4,24 @@ package movingforward.tutorapp3.Activities;
  * Created by Jeebus Prime on 2/9/2017.
  */
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +38,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +48,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 /*import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;*/
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,9 +67,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Entities.User;
@@ -78,6 +98,7 @@ public class ChatActivity extends AppCompatActivity implements
         public TextView messageTextView;
         public TextView messengerTextView;
         public CircleImageView messengerImageView;
+        public ImageView messengerPicMessage;
 
         public MessageViewHolder(View v)
         {
@@ -85,13 +106,14 @@ public class ChatActivity extends AppCompatActivity implements
             messageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
             messengerTextView = (TextView) itemView.findViewById(R.id.messengerTextView);
             messengerImageView = (CircleImageView) itemView.findViewById(R.id.messengerImageView);
+            messengerPicMessage = (ImageView) itemView.findViewById(R.id.pic_message);
         }
     }
 
     private static final String TAG = "MainActivity";
     public static String MESSAGES_CHILD;
     private static final int REQUEST_INVITE = 1;
-    public static final int DEFAULT_MSG_LENGTH_LIMIT = 200;
+    public static final int DEFAULT_MSG_LENGTH_LIMIT = Integer.MAX_VALUE;
     private static final int RC_TAKE_PICTURE = 101;
     private Uri mFileUri = null;
     private Uri mDownloadUrl = null;
@@ -105,6 +127,7 @@ public class ChatActivity extends AppCompatActivity implements
     public FirebaseAuth mFirebaseAuth;
     public boolean amITutor;
     private static String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/";
+    private ImageView picMessage;
 
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
@@ -130,7 +153,7 @@ public class ChatActivity extends AppCompatActivity implements
 
     private TextView classReminder;
     private Button mSendButton;
-    private Button mImageButton;
+    private ImageButton mImageButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
@@ -149,6 +172,7 @@ public class ChatActivity extends AppCompatActivity implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         classReminder = (TextView) findViewById(R.id.ClassReminder);
+        picMessage = (ImageView) findViewById(R.id.pic_message);
 
         Intent i = getIntent();
 
@@ -249,8 +273,35 @@ public class ChatActivity extends AppCompatActivity implements
                 {
                     viewHolder.messageTextView.setTextColor(Color.BLACK);
                 }
-                viewHolder.messageTextView.setText(friendlyMessage.getText());
+
+                try
+                {
+                    String returnString = friendlyMessage.getText();
+
+                    Bitmap bitImage = decodeBase64(returnString);
+
+                    viewHolder.messengerPicMessage.setImageDrawable(null);
+                    viewHolder.messageTextView.setText("");
+
+                    if(bitImage != null && bitImage.getByteCount() > 500)
+                    {
+                      //  setImage(bitImage);
+                       //BitmapDrawable ob = new BitmapDrawable(getResources(), bitImage);
+                      //  viewHolder.messageTextView.setBackground(ob);
+                        viewHolder.messengerPicMessage.setImageBitmap(Bitmap.createScaledBitmap(bitImage, 1944, 2592, false));
+                    }
+                    else
+                    {
+                        viewHolder.messageTextView.setText(friendlyMessage.getText());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //viewHolder.messageTextView.setText(friendlyMessage.getText());
+                }
+
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
+
                 if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
                 {
                     if (friendlyMessage.getTutor() == 1)
@@ -355,7 +406,7 @@ public class ChatActivity extends AppCompatActivity implements
             }
         });
 
-        mImageButton = (Button) findViewById(R.id.imagebutton);
+        mImageButton = (ImageButton) findViewById(R.id.imagebutton);
         mImageButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -392,72 +443,218 @@ public class ChatActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-    private void launchCamera()
+    private boolean setImage(Bitmap mBitmap)
     {
-        Log.d(TAG, "launchCamera");
+        final Bitmap nBitmap = mBitmap;
 
-        // Pick an image from storage
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, RC_TAKE_PICTURE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-        if (requestCode == RC_TAKE_PICTURE)
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage,
+                MessageViewHolder>(
+                FriendlyMessage.class,
+                R.layout.item_message,
+                MessageViewHolder.class,
+                mFirebaseDatabaseReference.child(MESSAGES_CHILD))
         {
-            if (resultCode == RESULT_OK)
+
+            @Override
+            protected FriendlyMessage parseSnapshot(DataSnapshot snapshot)
             {
-                mFileUri = data.getData();
-
-                String uriTest = mFileUri.toString();
-
-                if (mFileUri != null)
+                FriendlyMessage friendlyMessage = super.parseSnapshot(snapshot);
+                if (friendlyMessage != null)
                 {
-                    try
+                    friendlyMessage.setId(snapshot.getKey());
+                }
+                return friendlyMessage;
+            }
+
+            @Override
+            protected void populateViewHolder(MessageViewHolder viewHolder,
+                                              FriendlyMessage friendlyMessage, int position)
+            {
+                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+
+                BitmapDrawable ob = new BitmapDrawable(getResources(), nBitmap);
+                picMessage.setBackground(ob);
+
+                viewHolder.messengerTextView.setText(friendlyMessage.getName());
+                if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
+                {
+                    if (friendlyMessage.getTutor() == 1)
                     {
-                        InputStream inputStream = new FileInputStream(mFileUri.getPath());//You can get an inputStream using any IO API
-                        byte[] bytes;
-                        byte[] buffer = new byte[8192];
-                        int bytesRead;
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-                        while ((bytesRead = inputStream.read(buffer)) != -1)
-                        {
-                            output.write(buffer, 0, bytesRead);
-                        }
-                        bytes = output.toByteArray();
-                        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
-
-                        FriendlyMessage friendlyMessage = new
-                                FriendlyMessage(encodedString,
-                                mUsername,
-                                mPhotoUrl,
-                                amITutor ? 1 : 0);
-                        mFirebaseDatabaseReference.child(MESSAGES_CHILD)
-                                .push().setValue(friendlyMessage);
-                        mMessageEditText.setText("");
-
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        viewHolder.messengerImageView
+                                .setImageDrawable(ContextCompat
+                                        .getDrawable(ChatActivity.this,
+                                                R.drawable.ic_launcher));
                     }
-
-                    uploadFromUri(mFileUri);
+                    else
+                    {
+                        viewHolder.messengerImageView
+                                .setImageDrawable(ContextCompat
+                                        .getDrawable(ChatActivity.this,
+                                                R.drawable.ic_account_circle_black_36dp));
+                    }
                 }
                 else
                 {
-                    Log.w(TAG, "File URI is null");
+                    Glide.with(ChatActivity.this)
+                            .load(friendlyMessage.getPhotoUrl())
+                            .into(viewHolder.messengerImageView);
+                }
+
+                // write this message to the on-device index
+                FirebaseAppIndex.getInstance().update(getMessageIndexable(friendlyMessage));
+
+                // log a view action on it
+                FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
+            }
+        };
+
+        return true;
+    }
+
+    private void launchCamera()
+    {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+
+        builder.setTitle("Pic It Up!");
+
+        builder.setItems(options, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int item)
+            {
+                if (options[item].equals("Take Photo"))
+                {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                    startActivityForResult(intent, 1);
+                }
+                else if (options[item].equals("Choose from Gallery"))
+                {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                    startActivityForResult(intent, 2);
+                }
+                else if (options[item].equals("Cancel"))
+                {
+                    dialog.dismiss();
                 }
             }
-            else
+        });
+        builder.show();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if ((requestCode == 1 || requestCode == RC_TAKE_PICTURE) && resultCode == RESULT_OK)
+        {
+            Bitmap picture = (Bitmap) data.getExtras().get("data");
+
+            String encodedImage = encodeImage(picture);
+
+            FriendlyMessage friendlyMessage = new
+                    FriendlyMessage(encodedImage,
+                    mUsername,
+                    mPhotoUrl,
+                    amITutor ? 1 : 0);
+            mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                    .push().setValue(friendlyMessage);
+
+
+            mMessageEditText.setText("");
+        }
+
+        if ((requestCode == 2 || requestCode == RC_TAKE_PICTURE) && resultCode == RESULT_OK) {
+            final Uri imageUri = data.getData();
+            InputStream imageStream = null;
+            try
             {
-                Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
+                imageStream = getContentResolver().openInputStream(imageUri);
+            } catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
             }
+            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
+            Bitmap rotatedMap = rotateBitmap(imageUri.getPath(), selectedImage);
+
+            String encodedImage = encodeImage(rotatedMap);
+
+            FriendlyMessage friendlyMessage = new
+                    FriendlyMessage(encodedImage,
+                    mUsername,
+                    mPhotoUrl,
+                    amITutor ? 1 : 0);
+            mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                    .push().setValue(friendlyMessage);
+
+
+            mMessageEditText.setText("");
         }
     }
+
+    private String encodeImage(Bitmap bm)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,65,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return encImage;
+    }
+
+    public static Bitmap decodeBase64(String input)
+    {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    private String encodeImage(String path)
+    {
+        File imagefile = new File(path);
+        FileInputStream fis = null;
+        try{
+            fis = new FileInputStream(imagefile);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        Bitmap bm = BitmapFactory.decodeStream(fis);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,65,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+        //Base64.de
+        return encImage;
+    }
+
+    private File savebitmap(Bitmap bmp)
+    {
+        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+        OutputStream outStream = null;
+        // String temp = null;
+        File file = new File(extStorageDirectory, "temp.png");
+        if (file.exists())
+        {
+            file.delete();
+            file = new File(extStorageDirectory, "temp.png");
+        }
+        try
+        {
+            outStream = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+            outStream.flush();
+            outStream.close();
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+        return file;
+    }
+
 
     @Override
     public void onNewIntent(Intent intent)
@@ -471,63 +668,88 @@ public class ChatActivity extends AppCompatActivity implements
         }
     }
 
-    private void uploadFromUri(Uri fileUri)
-    {
-        Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
+    public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
+        try {
+            int orientation = getExifOrientation(src);
 
-        // Save the File URI
-        mFileUri = fileUri;
+            if (orientation == 1) {
+                return bitmap;
+            }
 
-        // Clear the last download, if any
-        mDownloadUrl = null;
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case 0:
+                    matrix.setRotate(-90);
+                    break;
+                case 2:
+                    matrix.setScale(-1, 1);
+                    break;
+                case 3:
+                    matrix.setRotate(180);
+                    break;
+                case 4:
+                    matrix.setRotate(180);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 5:
+                    matrix.setRotate(90);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 6:
+                    matrix.setRotate(90);
+                    break;
+                case 7:
+                    matrix.setRotate(-90);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 8:
+                    matrix.setRotate(-90);
+                    break;
+                default:
+                    return bitmap;
+            }
 
-        // Start MyUploadService to upload the file, so that the file is uploaded
-        // even if this Activity is killed or put in the background
-        startService(new Intent(this, MyUploadService.class)
-                .putExtra(MyUploadService.EXTRA_FILE_URI, fileUri)
-                .putExtra("chatroom", MESSAGES_CHILD)
-                .setAction(MyUploadService.ACTION_UPLOAD));
+            try {
+                Bitmap oriented = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                bitmap.recycle();
+                return oriented;
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                return bitmap;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // Show loading spinner
-        showProgressDialog("Uploading...");
+        return bitmap;
     }
 
-    private void showProgressDialog(String caption)
+    private static int getExifOrientation(String src) throws IOException
     {
-        if (mProgressDialog == null)
+        int orientation = 1;
+
+        try
         {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setIndeterminate(true);
+
+             ExifInterface exif = new ExifInterface(src);
+             orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+            if (Build.VERSION.SDK_INT <= 5)
+            {
+                Class<?> exifClass = Class.forName("android.media.ExifInterface");
+                Constructor<?> exifConstructor = exifClass.getConstructor(new Class[]{String.class});
+                Object exifInstance = exifConstructor.newInstance(new Object[]{src});
+                Method getAttributeInt = exifClass.getMethod("getAttributeInt", new Class[]{String.class, int.class});
+                Field tagOrientationField = exifClass.getField("TAG_ORIENTATION");
+                String tagOrientation = (String) tagOrientationField.get(null);
+                orientation = (Integer) getAttributeInt.invoke(exifInstance, new Object[]{tagOrientation, 1});
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
-        mProgressDialog.setMessage(caption);
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog()
-    {
-        if (mProgressDialog != null && mProgressDialog.isShowing())
-        {
-            mProgressDialog.dismiss();
-        }
-    }
-
-    private void updateUI()
-    {
-
-        hideProgressDialog();
-
-        findViewById(R.id.layout_storage).setVisibility(View.VISIBLE);
-
-        // Download URL and Download button
-        if (mDownloadUrl != null)
-        {
-            findViewById(R.id.layout_storage).setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            findViewById(R.id.layout_storage).setVisibility(View.GONE);
-        }
+        return orientation;
     }
 
     private void onUploadResultIntent(Intent intent)
@@ -535,8 +757,6 @@ public class ChatActivity extends AppCompatActivity implements
         // Got a new intent from MyUploadService with a success or failure
         mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
         mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
-
-        updateUI();
     }
 
     @Override
@@ -671,7 +891,7 @@ public class ChatActivity extends AppCompatActivity implements
                 }
                 if (!task.isSuccessful())
                 {
-                   // Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
