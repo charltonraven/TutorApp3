@@ -101,6 +101,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.AddClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 mUser.setPermission(Role.Student);
 
                 break;
@@ -111,6 +112,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.AddClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 mUser.setPermission(Role.Teacher);
 
                 break;
@@ -244,7 +246,7 @@ public class Nav_MainActivity extends AppCompatActivity
             mIntent.putExtra("mUser", mUser);
             startActivity(mIntent);
         }
-        else if (id == R.id.EditClasses)//------------------
+        else if (id == R.id.EditClasses)
         {
             Intent mIntent = new Intent(Nav_MainActivity.this, EditClasses.class);
             mIntent.putExtra("mUser", mUser);

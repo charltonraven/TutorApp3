@@ -30,6 +30,9 @@
             <item
                 android:id="@+id/AddClasses"
                 android:title="Add Classes" />
+            <item
+                android:id="@+id/EditClasses"
+                android:title="View Classes" />
         </menu>
     </item>
 
