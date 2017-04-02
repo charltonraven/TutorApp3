@@ -14,18 +14,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
 
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
@@ -33,7 +27,6 @@ import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.Fragments.User_list;
 import movingforward.tutorapp3.Fragments.User_list_Button;
-import movingforward.tutorapp3.ProjectHelpers.TypefaceSpan;
 import movingforward.tutorapp3.R;
 
 import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
@@ -46,17 +39,17 @@ public class Nav_MainActivity extends AppCompatActivity
     User mUser;
     String mEmail;
     String mPassword;
+    public ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_nav__main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -79,22 +72,22 @@ public class Nav_MainActivity extends AppCompatActivity
 
         toggle.syncState();
 
-        String UserType = mUser.getPermission().toString();
         mEmail = mUser.getEmail();
         mPassword = mUser.getPassword();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
         TextView tvType = (TextView) hView.findViewById(R.id.tvType);
+        TextView tvType2 = (TextView) hView.findViewById(R.id.tvType2);
         TextView tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
         tvEmail.setText(mUser.getID());
-        tvType.setText("Logged in as a " + mUser.getPermission().name().toUpperCase());
+        tvType.setText("Logged in as a ");
+        tvType2.setText("sadasdsd");
 
         switch (mUser.getPermission().toString())
         {
             case "Tutor":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
                 mUser.setPermission(Role.Tutor);
@@ -102,27 +95,22 @@ public class Nav_MainActivity extends AppCompatActivity
                 break;
             case "Student":
                 navigationView.getMenu().findItem(R.id.MyClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.AddClasses).setVisible(false);
                 mUser.setPermission(Role.Student);
-
 
                 break;
             case "Teacher":
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 navigationView.getMenu().findItem(R.id.FindClass).setVisible(false);
                 navigationView.getMenu().findItem(TutorSessions).setVisible(false);
                 navigationView.getMenu().findItem(StudentSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
-                navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
-                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
+                navigationView.getMenu().findItem(R.id.AddClasses).setVisible(false);
                 mUser.setPermission(Role.Teacher);
 
                 break;
@@ -130,6 +118,11 @@ public class Nav_MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
         drawer.openDrawer(Gravity.LEFT);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        BySubjectFragmentOne subjectFragmentOne = newInstance(mUser);
+        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, subjectFragmentOne, subjectFragmentOne.getTag()).commit();
     }
 
     @Override
@@ -241,7 +234,7 @@ public class Nav_MainActivity extends AppCompatActivity
         else if (id == R.id.MyClasses)
         {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors", "Past Sessions with Tutors" );
+            Sessions TeacherTutorSessions = Sessions.newInstance(mUser, "TeacherTutors", "Past Sessions with Tutors");
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
         }
@@ -262,16 +255,17 @@ public class Nav_MainActivity extends AppCompatActivity
         }
         else if (id == R.id.TeacherList)
         {
-            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             User_list user_list = new User_list().newInstance(mUser);
             user_list.setArguments(bundle);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();
 
         }
-        else if(id==R.id.StudentList){
+        else if (id == R.id.StudentList)
+        {
 
-            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             User_list_Button user_list = new User_list_Button().newInstance(mUser);
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, user_list, user_list.getTag()).commit();

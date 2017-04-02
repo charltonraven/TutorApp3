@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        android:id="@+id/drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fitsSystemWindows="true">
 
     <include
         layout="@layout/app_bar_nav__main"
@@ -100,11 +98,11 @@
             android:id="@+id/tv_header"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Edit Your Classes"
-            android:textAlignment="center"
-            android:textSize="25sp"
             android:layout_above="@+id/sv_course"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+            android:text="Search for Classes to Add"
+            android:textAlignment="center"
+            android:textSize="25sp"/>
 
         <TextView
             android:id="@+id/tv_depart"

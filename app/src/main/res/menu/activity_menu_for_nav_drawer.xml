@@ -30,9 +30,6 @@
             <item
                 android:id="@+id/AddClasses"
                 android:title="Add Classes" />
-            <item
-                android:id="@+id/EditClasses"
-                android:title="Edit Classes" />
         </menu>
     </item>
 
@@ -45,9 +42,6 @@
             <item
                 android:id="@+id/MyClasses"
                 android:title="My Tutor Sessions"/>
-            <item
-                android:id="@+id/PostBulletin"
-                android:title="Bulletin Board"/>
             <Item
                 android:id="@+id/AppointTutor"
                 android:title="Bulletin Board"/>

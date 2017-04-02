@@ -4,25 +4,25 @@ package movingforward.tutorapp3.Activities;
  * Created by Jeebus Prime on 2/9/2017.
  */
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -67,31 +67,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import movingforward.tutorapp3.Entities.User;
 import movingforward.tutorapp3.R;
 import movingforward.tutorapp3.TutChat.CodelabPreferences;
 import movingforward.tutorapp3.TutChat.FriendlyMessage;
-import movingforward.tutorapp3.TutChat.MyUploadService;
 
-//import com.google.android.gms.auth.api.Auth;
-
-public class ChatActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener
+public class ChatActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener
 {
-
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder
     {
@@ -112,12 +102,10 @@ public class ChatActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
     public static String MESSAGES_CHILD;
-    private static final int REQUEST_INVITE = 1;
     public static final int DEFAULT_MSG_LENGTH_LIMIT = Integer.MAX_VALUE;
     private static final int RC_TAKE_PICTURE = 101;
+    private ContentValues values;
     private Uri mFileUri = null;
-    private Uri mDownloadUrl = null;
-    private ProgressDialog mProgressDialog;
     public static final String ANONYMOUS = "anonymous";
     private static final String MESSAGE_SENT_EVENT = "message_sent";
     private FirebaseUser mFirebaseUser;
@@ -127,10 +115,23 @@ public class ChatActivity extends AppCompatActivity implements
     public FirebaseAuth mFirebaseAuth;
     public boolean amITutor;
     private static String MESSAGE_URL = "https://tutitup-71061.firebaseio.com/";
-    private ImageView picMessage;
 
     private DatabaseReference mFirebaseDatabaseReference;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder> mFirebaseAdapter;
+
+    private TextView classReminder;
+
+
+    private Button mSendButton;
+    private ImageButton mImageButton;
+    private RecyclerView mMessageRecyclerView;
+    private LinearLayoutManager mLinearLayoutManager;
+    private ProgressBar mProgressBar;
+    private EditText mMessageEditText;
+    public User mUser;
+    private String mUsername;
+    public User nUser;
+    private String nUsername;
 
     /*private SimpleDateFormat mFormatter = new SimpleDateFormat("MMMM dd yyyy hh:mm aa");
 
@@ -151,19 +152,6 @@ public class ChatActivity extends AppCompatActivity implements
         }
     };*/
 
-    private TextView classReminder;
-    private Button mSendButton;
-    private ImageButton mImageButton;
-    private RecyclerView mMessageRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ProgressBar mProgressBar;
-    private EditText mMessageEditText;
-    public User mUser;
-    private String mUsername;
-    public User nUser;
-    private String nUsername;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -172,7 +160,6 @@ public class ChatActivity extends AppCompatActivity implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         classReminder = (TextView) findViewById(R.id.ClassReminder);
-        picMessage = (ImageView) findViewById(R.id.pic_message);
 
         Intent i = getIntent();
 
@@ -197,7 +184,6 @@ public class ChatActivity extends AppCompatActivity implements
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -278,24 +264,20 @@ public class ChatActivity extends AppCompatActivity implements
                 {
                     String returnString = friendlyMessage.getText();
 
-                    Bitmap bitImage = decodeBase64(returnString);
-
                     viewHolder.messengerPicMessage.setImageDrawable(null);
                     viewHolder.messageTextView.setText("");
 
-                    if(bitImage != null && bitImage.getByteCount() > 500)
+                    if (returnString.length() > 400)
                     {
-                      //  setImage(bitImage);
-                       //BitmapDrawable ob = new BitmapDrawable(getResources(), bitImage);
-                      //  viewHolder.messageTextView.setBackground(ob);
+                        Bitmap bitImage = decodeBase64(returnString);
+
                         viewHolder.messengerPicMessage.setImageBitmap(Bitmap.createScaledBitmap(bitImage, 1944, 2592, false));
                     }
                     else
                     {
                         viewHolder.messageTextView.setText(friendlyMessage.getText());
                     }
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     //viewHolder.messageTextView.setText(friendlyMessage.getText());
                 }
@@ -412,9 +394,35 @@ public class ChatActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view)
             {
-                launchCamera();
+                checkPermission();
             }
         });
+    }
+
+    private void checkPermission(){
+        int permissionCheck = ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    ChatActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            launchCamera();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+
+            case 1:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    launchCamera();
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override
@@ -443,74 +451,6 @@ public class ChatActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-    private boolean setImage(Bitmap mBitmap)
-    {
-        final Bitmap nBitmap = mBitmap;
-
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage,
-                MessageViewHolder>(
-                FriendlyMessage.class,
-                R.layout.item_message,
-                MessageViewHolder.class,
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD))
-        {
-
-            @Override
-            protected FriendlyMessage parseSnapshot(DataSnapshot snapshot)
-            {
-                FriendlyMessage friendlyMessage = super.parseSnapshot(snapshot);
-                if (friendlyMessage != null)
-                {
-                    friendlyMessage.setId(snapshot.getKey());
-                }
-                return friendlyMessage;
-            }
-
-            @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder,
-                                              FriendlyMessage friendlyMessage, int position)
-            {
-                mProgressBar.setVisibility(ProgressBar.INVISIBLE);
-
-                BitmapDrawable ob = new BitmapDrawable(getResources(), nBitmap);
-                picMessage.setBackground(ob);
-
-                viewHolder.messengerTextView.setText(friendlyMessage.getName());
-                if (friendlyMessage.getPhotoUrl() == null || friendlyMessage.getPhotoUrl().equals("n/a"))
-                {
-                    if (friendlyMessage.getTutor() == 1)
-                    {
-                        viewHolder.messengerImageView
-                                .setImageDrawable(ContextCompat
-                                        .getDrawable(ChatActivity.this,
-                                                R.drawable.ic_launcher));
-                    }
-                    else
-                    {
-                        viewHolder.messengerImageView
-                                .setImageDrawable(ContextCompat
-                                        .getDrawable(ChatActivity.this,
-                                                R.drawable.ic_account_circle_black_36dp));
-                    }
-                }
-                else
-                {
-                    Glide.with(ChatActivity.this)
-                            .load(friendlyMessage.getPhotoUrl())
-                            .into(viewHolder.messengerImageView);
-                }
-
-                // write this message to the on-device index
-                FirebaseAppIndex.getInstance().update(getMessageIndexable(friendlyMessage));
-
-                // log a view action on it
-                FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
-            }
-        };
-
-        return true;
-    }
-
     private void launchCamera()
     {
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
@@ -526,8 +466,17 @@ public class ChatActivity extends AppCompatActivity implements
             {
                 if (options[item].equals("Take Photo"))
                 {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//
+//                    startActivityForResult(intent, 1);
 
+                    values = new ContentValues();
+                    values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                    values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                    mFileUri = getContentResolver().insert(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
                     startActivityForResult(intent, 1);
                 }
                 else if (options[item].equals("Choose from Gallery"))
@@ -545,28 +494,41 @@ public class ChatActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         if ((requestCode == 1 || requestCode == RC_TAKE_PICTURE) && resultCode == RESULT_OK)
         {
-            Bitmap picture = (Bitmap) data.getExtras().get("data");
+            //Bitmap picture = (Bitmap) data.getExtras().get("data");
 
-            String encodedImage = encodeImage(picture);
+            try
+            {
 
-            FriendlyMessage friendlyMessage = new
-                    FriendlyMessage(encodedImage,
-                    mUsername,
-                    mPhotoUrl,
-                    amITutor ? 1 : 0);
-            mFirebaseDatabaseReference.child(MESSAGES_CHILD)
-                    .push().setValue(friendlyMessage);
+                Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), mFileUri);
+
+                thumbnail = rotateBitmap(mFileUri.getPath(), thumbnail);
+                String encodedImage = encodeImage(thumbnail);
+
+                FriendlyMessage friendlyMessage = new
+                        FriendlyMessage(encodedImage,
+                        mUsername,
+                        mPhotoUrl,
+                        amITutor ? 1 : 0);
+                mFirebaseDatabaseReference.child(MESSAGES_CHILD)
+                        .push().setValue(friendlyMessage);
 
 
-            mMessageEditText.setText("");
+                mMessageEditText.setText("");
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
 
-        if ((requestCode == 2 || requestCode == RC_TAKE_PICTURE) && resultCode == RESULT_OK) {
+        if ((requestCode == 2 || requestCode == RC_TAKE_PICTURE) && resultCode == RESULT_OK)
+        {
             final Uri imageUri = data.getData();
             InputStream imageStream = null;
             try
@@ -598,7 +560,7 @@ public class ChatActivity extends AppCompatActivity implements
     private String encodeImage(Bitmap bm)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG,65,baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 65, baos);
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
 
@@ -611,73 +573,26 @@ public class ChatActivity extends AppCompatActivity implements
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    private String encodeImage(String path)
-    {
-        File imagefile = new File(path);
-        FileInputStream fis = null;
-        try{
-            fis = new FileInputStream(imagefile);
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        Bitmap bm = BitmapFactory.decodeStream(fis);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG,65,baos);
-        byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-        //Base64.de
-        return encImage;
-    }
-
-    private File savebitmap(Bitmap bmp)
-    {
-        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-        OutputStream outStream = null;
-        // String temp = null;
-        File file = new File(extStorageDirectory, "temp.png");
-        if (file.exists())
-        {
-            file.delete();
-            file = new File(extStorageDirectory, "temp.png");
-        }
-        try
-        {
-            outStream = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-            outStream.flush();
-            outStream.close();
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-        return file;
-    }
-
-
     @Override
     public void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
-
-        // Check if this Activity was launched by clicking on an upload notification
-        if (intent.hasExtra(MyUploadService.EXTRA_DOWNLOAD_URL))
-        {
-            onUploadResultIntent(intent);
-        }
     }
 
-    public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
-        try {
+    public static Bitmap rotateBitmap(String src, Bitmap bitmap)
+    {
+        try
+        {
             int orientation = getExifOrientation(src);
 
-            if (orientation == 1) {
+            if (orientation == 1)
+            {
                 return bitmap;
             }
 
             Matrix matrix = new Matrix();
-            switch (orientation) {
+            switch (orientation)
+            {
                 case 0:
                     matrix.setRotate(-90);
                     break;
@@ -709,15 +624,18 @@ public class ChatActivity extends AppCompatActivity implements
                     return bitmap;
             }
 
-            try {
+            try
+            {
                 Bitmap oriented = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                 bitmap.recycle();
                 return oriented;
-            } catch (OutOfMemoryError e) {
+            } catch (OutOfMemoryError e)
+            {
                 e.printStackTrace();
                 return bitmap;
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
 
@@ -731,8 +649,8 @@ public class ChatActivity extends AppCompatActivity implements
         try
         {
 
-             ExifInterface exif = new ExifInterface(src);
-             orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            ExifInterface exif = new ExifInterface(src);
+            orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
 
             if (Build.VERSION.SDK_INT <= 5)
             {
@@ -750,13 +668,6 @@ public class ChatActivity extends AppCompatActivity implements
         }
 
         return orientation;
-    }
-
-    private void onUploadResultIntent(Intent intent)
-    {
-        // Got a new intent from MyUploadService with a success or failure
-        mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
-        mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
     }
 
     @Override
@@ -891,7 +802,7 @@ public class ChatActivity extends AppCompatActivity implements
                 }
                 if (!task.isSuccessful())
                 {
-                    // Toast.makeText(ChatActivity.this, "Could not verify account on Firebase!", Toast.LENGTH_SHORT).show();
+                    mFirebaseUser.updatePassword(mUser.getPassword());
                 }
             }
         });
@@ -911,11 +822,6 @@ public class ChatActivity extends AppCompatActivity implements
                 }
             }
         });
-    }
-
-    private void signOut()
-    {
-        mFirebaseAuth.signOut();
     }
 
 }
