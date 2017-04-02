@@ -17,17 +17,17 @@ import movingforward.tutorapp3.R;
  * Created by raven on 3/2/2017.
  */
 
-public class DepartCourseListAdapter extends ArrayAdapter<String> implements AdapterView.OnItemClickListener {
+public class DepartAdapter extends ArrayAdapter<String> implements AdapterView.OnItemClickListener {
 
 
     ArrayList<String> values;
 
-    public DepartCourseListAdapter(Context context, int resource, ArrayList<String> values) {
+    public DepartAdapter(Context context, int resource, ArrayList<String> values) {
         super(context, resource);
         this.values = values;
     }
 
-    public DepartCourseListAdapter(Context context, int resource) {
+    public DepartAdapter(Context context, int resource) {
         super(context, resource);
     }
 

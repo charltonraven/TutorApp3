@@ -1,5 +1,6 @@
 package movingforward.tutorapp3.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -39,7 +41,7 @@ import movingforward.tutorapp3.R;
  * Created by Jeebus on 3/28/2017.
  */
 
-public class EditClasses extends AppCompatActivity
+public class AddClasses extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener, View.OnClickListener,AdapterView.OnItemClickListener
 {
     public User mUser;
@@ -76,8 +78,62 @@ public class EditClasses extends AppCompatActivity
         Intent mIntent = getIntent();
         mUser = (User) mIntent.getSerializableExtra("mUser");
 
+        sv_depart = (ScrollView) findViewById(R.id.sv_depart);
+        sv_course = (ScrollView) findViewById(R.id.sv_course);
+        bt_accept = (Button) findViewById(R.id.bt_accept);
+        bt_cancel = (Button) findViewById(R.id.bt_cancel);
+        departLinear = (LinearLayout) findViewById(R.id.ll_departList);
+        courseLinear= (LinearLayout) findViewById(R.id.ll_courseList);
+        tv_courseItem=(TextView)findViewById(R.id.tv_course) ;
+        lv_courseList=(ListView) findViewById(R.id.lv_course) ;
+
+        lv_departList= (ListView) findViewById(R.id.lv_department);
 
 
+        try {
+            departments=new generateDepartmentTask().execute("department").get();
+            DepartAdapter DepartAdapter=new DepartAdapter(this, android.R.layout.simple_list_item_1,departments);
+            lv_departList.setAdapter(DepartAdapter);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        lv_departList.setOnItemClickListener(AddClasses.this);
+
+        lv_courseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+               final String departAbbr=courses.get(position).split(" ")[0];
+                final String courseNumber=courses.get(position).split(" ")[1];
+
+                AlertDialog.Builder addClassesDialog=new AlertDialog.Builder(AddClasses.this);
+                addClassesDialog.setMessage("Do you want to add this class?");
+                addClassesDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            new InsertTutorClasses().execute(mUser.getID(),departAbbr,courseNumber).get();
+
+                            System.out.println();
+                        }catch (Exception e){
+
+                        }
+                    }
+                });
+                addClassesDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                AlertDialog alertDialog=addClassesDialog.create();
+                alertDialog.show();
+
+            }
+        });
 
 
 
@@ -98,7 +154,7 @@ public class EditClasses extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent navIntent = new Intent(EditClasses.this, Nav_MainActivity.class);
+                Intent navIntent = new Intent(AddClasses.this, Nav_MainActivity.class);
                 navIntent.putExtra("mUser", mUser);
                 startActivity(navIntent);
             }
@@ -141,7 +197,7 @@ public class EditClasses extends AppCompatActivity
             }
             case R.id.action_settings:
             {
-                Intent mIntent = new Intent(EditClasses.this, EditAccountActivity.class);
+                Intent mIntent = new Intent(AddClasses.this, EditAccountActivity.class);
                 mIntent.putExtra("mUser", mUser);
                 startActivity(mIntent);
             }
@@ -191,6 +247,13 @@ public class EditClasses extends AppCompatActivity
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
+
+
+
+
+
 
 
     }
