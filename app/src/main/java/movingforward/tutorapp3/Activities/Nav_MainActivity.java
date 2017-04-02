@@ -85,6 +85,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.Find_ClassesT).setVisible(false);
                 navigationView.getMenu().findItem(R.id.StudentList).setVisible(false);
+                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 mUser.setPermission(Role.Student);
 
 
@@ -97,6 +98,7 @@ public class Nav_MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.TeacherSessions).setVisible(false);
                 navigationView.getMenu().findItem(R.id.TeacherList).setVisible(false);
                 navigationView.getMenu().findItem(R.id.PostBulletin).setVisible(false);
+                navigationView.getMenu().findItem(R.id.EditClasses).setVisible(false);
                 mUser.setPermission(Role.Teacher);
 
                 break;
@@ -219,9 +221,15 @@ public class Nav_MainActivity extends AppCompatActivity
             android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.relativeLayout_for_fragmentOnes, TeacherTutorSessions, TeacherTutorSessions.getTag()).commit();
         }
-        else if (id == R.id.EditClasses)
+        else if (id == R.id.AddClasses)
         {
-            Intent mIntent = new Intent(Nav_MainActivity.this, EditClasses.class);
+            Intent mIntent = new Intent(Nav_MainActivity.this, AddClasses.class);
+            mIntent.putExtra("mUser", mUser);
+            startActivity(mIntent);
+        }
+        else if (id == R.id.EditClasses)//------------------
+        {
+            Intent mIntent = new Intent(Nav_MainActivity.this, AddClasses.class);
             mIntent.putExtra("mUser", mUser);
             startActivity(mIntent);
         }

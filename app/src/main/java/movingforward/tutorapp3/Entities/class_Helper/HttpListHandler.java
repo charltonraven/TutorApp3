@@ -25,7 +25,7 @@ public class HttpListHandler {
 
 
 
-    public String makeServiceCallPost(String reqUrl,String userID,String who,String what) {
+    public String makeServiceCallPost(String reqUrl,String userID,String who,String what,String [] CourseList) {
         String response = null;
 
         //Runs the Tutor_List to generate Tutors
@@ -39,7 +39,7 @@ public class HttpListHandler {
 
                 OutputStream out = conn.getOutputStream();
 
-                response = PutInVariables(out, conn, null,null,what);
+                response = PutInVariables(out, conn, null,null,what,null);
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLException: " + e.getMessage());
             } catch (ProtocolException e) {
@@ -64,7 +64,31 @@ public class HttpListHandler {
 
                 OutputStream out = conn.getOutputStream();
 
-                response = PutInVariables(out, conn, userID,who,what);
+                response = PutInVariables(out, conn, userID,who,what,null);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "MalformedURLException: " + e.getMessage());
+            } catch (ProtocolException e) {
+                Log.e(TAG, "ProtocolException: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "IOException: " + e.getMessage());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+            }
+            return response;
+
+
+        }
+        if(CourseList!= null) {
+            try {
+                URL url = new URL(reqUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+
+                OutputStream out = conn.getOutputStream();
+
+                response = PutInVariables(out, conn, null,null,null,CourseList);
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLException: " + e.getMessage());
             } catch (ProtocolException e) {
@@ -107,7 +131,7 @@ public class HttpListHandler {
     }
 
 
-    private String PutInVariables(OutputStream out,HttpURLConnection conn,String userID,String who,String what) {
+    private String PutInVariables(OutputStream out,HttpURLConnection conn,String userID,String who,String what, String [] CourseList) {
         String response = "";
 
         if(what!=null) {
@@ -130,6 +154,22 @@ public class HttpListHandler {
             try {
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
                 String post_data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(userID, "UTF-8") + "&" + URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(who, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                out.close();
+                InputStream in = conn.getInputStream();
+                response = convertStreamToString(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+        if(CourseList!=null) {
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                String post_data = URLEncoder.encode("who", "UTF-8") + "=" + URLEncoder.encode(CourseList[0], "UTF-8") + "&" + URLEncoder.encode("departName", "UTF-8") + "=" + URLEncoder.encode(CourseList[1], "UTF-8");
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

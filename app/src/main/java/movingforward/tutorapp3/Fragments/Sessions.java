@@ -231,7 +231,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null,null);
             }
             if (who.equals("tutor"))
             {
@@ -239,7 +239,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null,null);
             }
             if (who.equals("TutorTeachers"))
             {
@@ -247,7 +247,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null,null);
             }
             if (who.equals("TeacherTutors"))
             {
@@ -255,7 +255,7 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
 
 
                 //Making a request to url and getting response
-                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null);
+                jsonStr  = sh.makeServiceCallPost(TutorList_url, mUser.getID(), who,null,null);
             }
 
             if (jsonStr != null)

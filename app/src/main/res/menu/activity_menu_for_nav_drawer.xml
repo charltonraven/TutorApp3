@@ -28,6 +28,9 @@
                 android:id="@+id/TeacherList"
                 android:title="Contact Teacher" />
             <item
+                android:id="@+id/AddClasses"
+                android:title="Add Classes" />
+            <item
                 android:id="@+id/EditClasses"
                 android:title="Edit Classes" />
         </menu>
