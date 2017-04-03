@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import movingforward.tutorapp3.Entities.ListItemHolder;
-import movingforward.tutorapp3.Find_Class.Tutor_list;
+import movingforward.tutorapp3.Fragments.Tutor_list;
 import movingforward.tutorapp3.R;
 
 /**

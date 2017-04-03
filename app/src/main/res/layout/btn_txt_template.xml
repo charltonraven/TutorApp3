@@ -1,9 +1,9 @@
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="movingforward.tutorapp3.Find_Class.Tutor_list"
+    tools:context="movingforward.tutorapp3.Fragments.Tutor_list"
     android:orientation="horizontal"
     android:weightSum="1">
 
@@ -12,19 +12,27 @@
 
     <Button
         android:id="@+id/btn_removeTutoredClass"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="53dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_weight="0.14"
-        android:text="Drop" />
+        android:text="Drop"/>
 
     <TextView
         android:id="@+id/tv_ClassItems"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_weight="0.50"
+        android:layout_alignBottom="@+id/btn_removeTutoredClass"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/btn_removeTutoredClass"
+        android:layout_toEndOf="@+id/btn_removeTutoredClass"
         android:focusable="false"
+        android:gravity="center"
         android:text="DepartmentList"
-        android:textSize="16sp" />
+        android:textAlignment="center"
+        android:textSize="20sp"/>
 
 
-</LinearLayout>
+</RelativeLayout>

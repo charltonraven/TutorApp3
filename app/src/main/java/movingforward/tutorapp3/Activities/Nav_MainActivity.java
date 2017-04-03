@@ -23,13 +23,13 @@ import android.widget.TextView;
 
 import movingforward.tutorapp3.Entities.Role;
 import movingforward.tutorapp3.Entities.User;
-import movingforward.tutorapp3.Find_Class.BySubjectFragmentOne;
+import movingforward.tutorapp3.Fragments.BySubjectFragmentOne;
 import movingforward.tutorapp3.Fragments.Sessions;
 import movingforward.tutorapp3.Fragments.User_list;
 import movingforward.tutorapp3.Fragments.User_list_Button;
 import movingforward.tutorapp3.R;
 
-import static movingforward.tutorapp3.Find_Class.BySubjectFragmentOne.newInstance;
+import static movingforward.tutorapp3.Fragments.BySubjectFragmentOne.newInstance;
 import static movingforward.tutorapp3.R.id.StudentSessions;
 import static movingforward.tutorapp3.R.id.TutorSessions;
 
@@ -78,11 +78,10 @@ public class Nav_MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
         TextView tvType = (TextView) hView.findViewById(R.id.tvType);
-        TextView tvType2 = (TextView) hView.findViewById(R.id.tvType2);
         TextView tvEmail = (TextView) hView.findViewById(R.id.tvEmail);
         tvEmail.setText(mUser.getID());
-        tvType.setText("Logged in as a ");
-        tvType2.setText("sadasdsd");
+        String text = mUser.getPermission().toString() + " Account";
+        tvType.setText(text);
 
         switch (mUser.getPermission().toString())
         {

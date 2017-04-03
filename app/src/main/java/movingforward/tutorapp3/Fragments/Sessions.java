@@ -291,11 +291,10 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
                             Name = T.getString("name");
 
                             if (Class.length() == 5)
-                                Class += "    ";
+                                Class += "     ";
                             else if (Class.length() == 6)
                                 Class += "  ";
 
-                            //TutorsAndClasses.add(new ListItemHolder(Class, Name));
                             TutorsAndClassesStrings.add(Class + "                 " +Name);
                         }
                     }
@@ -312,22 +311,11 @@ public class Sessions extends Fragment implements AdapterView.OnItemClickListene
         protected void onPreExecute()
         {
             super.onPreExecute();
-            //Toast.makeText(getActivity(), "Generating Tutors", Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onPostExecute(String s)
         {
-            /*if (!TutorsAndClasses.isEmpty())
-            {
-                adapter = new SessionListAdapter(getActivity(), R.layout.mylist, TutorsAndClasses);
-                lv.setAdapter(adapter);
-            }
-            else
-            {
-                adapter = new SessionListAdapter(getActivity(), R.layout.mylist, firstLastNames);
-                lv.setAdapter(adapter);
-            }*/
             if (!TutorsAndClassesStrings.isEmpty())
             {
 

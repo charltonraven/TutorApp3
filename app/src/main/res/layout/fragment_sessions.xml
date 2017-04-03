@@ -43,6 +43,7 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/session_name"
         android:text="Tutors:"
+        android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="italic"/>
 </RelativeLayout>

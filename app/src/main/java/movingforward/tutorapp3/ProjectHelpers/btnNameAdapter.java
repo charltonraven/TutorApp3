@@ -104,8 +104,6 @@ public class btnNameAdapter extends ArrayAdapter<String> implements AdapterView.
                             try {
                                 new RemoveClass().execute(mUser.getID(),coursNumber,departAbbr).get();
                                 values.remove(position);
-
-                                values.remove(position);
                                 btnNameAdapter.this.notifyDataSetChanged();
 
 

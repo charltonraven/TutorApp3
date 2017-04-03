@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="movingforward.tutorapp3.Find_Class.Tutor_list"
+    tools:context="movingforward.tutorapp3.Fragments.Tutor_list"
     android:weightSum="1">
 
     <!-- TODO: Update blank fragment layout -->
