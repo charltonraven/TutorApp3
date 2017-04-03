@@ -123,6 +123,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     private Button mSendButton;
+    private ImageButton bt_clock;
     private ImageButton mImageButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -376,6 +377,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
         });
 
         mSendButton = (Button) findViewById(R.id.sendButton);
+        bt_clock = (ImageButton) findViewById(R.id.bt_clock);
         mSendButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -389,6 +391,46 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 mFirebaseDatabaseReference.child(MESSAGES_CHILD)
                         .push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
+            }
+        });
+
+        bt_clock.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (amITutor)
+                {
+                    Calendar c = Calendar .getInstance();
+                    Date today = new Date();
+                    Date inOneYear = new Date();
+                    TypedValue typedValue = new TypedValue();
+                    getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+                    int color = typedValue.data;
+                    try
+                    {
+                        today = mFormatter.parse(mFormatter.format(c.getTime()));
+                        c.add(Calendar.YEAR, 1);
+                        inOneYear = mFormatter.parse(mFormatter.format(c.getTime()));
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
+                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
+                            .setListener(listener)
+                            .setInitialDate(new Date())
+                            .setMinDate(today)
+                            .setMaxDate(inOneYear)
+                            //.setTheme(SlideDateTimePicker.HOLO_DARK)
+                            .setIndicatorColor(color)
+                            .build()
+                            .show();
+                }
+                else
+                {
+                    Toast.makeText(ChatActivity.this, "Ask your tutor to email an Appointment.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -694,38 +736,7 @@ public class ChatActivity extends AppCompatActivity implements GoogleApiClient.O
                 return true;
             case R.id.invite_menu:
             {
-                if (amITutor)
-                {
-                    /*Calendar c = Calendar .getInstance();
-                    Date today = new Date();
-                    Date inOneYear = new Date();
-                    TypedValue typedValue = new TypedValue();
-                    getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
-                    int color = typedValue.data;
-                    try
-                    {
-                        today = mFormatter.parse(mFormatter.format(c.getTime()));
-                        c.add(Calendar.YEAR, 1);
-                        inOneYear = mFormatter.parse(mFormatter.format(c.getTime()));
-                    }
-                    catch (Exception ex)
-                    {
-                    }
 
-                    new SlideDateTimePicker.Builder(getSupportFragmentManager())
-                            .setListener(listener)
-                            .setInitialDate(new Date())
-                            .setMinDate(today)
-                            .setMaxDate(inOneYear)
-                            //.setTheme(SlideDateTimePicker.HOLO_DARK)
-                            .setIndicatorColor(color)
-                            .build()
-                            .show();*/
-                }
-                else
-                {
-                    Toast.makeText(ChatActivity.this, "Ask your tutor to email an Appointment.", Toast.LENGTH_SHORT).show();
-                }
             }
             default:
                 return super.onOptionsItemSelected(item);
