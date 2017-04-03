@@ -20,15 +20,57 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_nav__main"
-        app:menu="@menu/activity_menu_for_nav_drawer" />
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        app:menu="@menu/activity_menu_for_nav_drawer"/>
 
-    <ListView
+    <RelativeLayout
+        android:id="@+id/other_ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lvTutoredClasses"/>
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bt_return"
+            android:layout_width="125dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:text="return"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_above="@+id/view_ll"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="30dp"
+            android:text="View and Drop your Classes"
+            android:textAlignment="center"
+            android:textSize="25sp"/>
+
+        <LinearLayout
+            android:id="@+id/view_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="450dp"
+            android:orientation="vertical"
+            android:layout_above="@+id/bt_return"
+            android:layout_alignParentStart="true">
+
+            <ListView
+                android:id="@+id/lvTutoredClasses"
+                android:layout_width="match_parent"
+                android:layout_height="412dp"
+                />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_accept"
+            android:layout_width="125dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:text="Add Classes"/>
+
+    </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

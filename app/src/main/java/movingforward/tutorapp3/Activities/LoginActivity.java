@@ -21,8 +21,11 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -91,14 +94,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-      /*  int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
-        if(titleId == 0)
-            titleId = com.actionbarsherlock.R.id.abs__action_bar_title;
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
 
-        mAppName = (TextView) findViewById(titleId);
-        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/handsean.ttf");
-        mAppName.setTypeface(face);
-*/
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View customView = inflater.inflate(R.layout.custom_appbar, null);
+
+        TextView titleTV = (TextView) customView.findViewById(R.id.action_custom_title);
+        titleTV.setTypeface(Typeface.createFromAsset(LoginActivity.this
+                .getAssets(), String.format("fonts/TACOTAC.ttf")));
+
+        actionBar.setCustomView(customView);
+        actionBar.setDisplayShowCustomEnabled(true);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(email);
         populateAutoComplete();

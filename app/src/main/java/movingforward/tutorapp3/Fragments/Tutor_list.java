@@ -1,4 +1,4 @@
-package movingforward.tutorapp3.Find_Class;
+package movingforward.tutorapp3.Fragments;
 
 import android.content.Intent;
 import android.net.Uri;

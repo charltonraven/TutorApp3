@@ -4,17 +4,22 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,6 +57,22 @@ public class RegisterActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View customView = inflater.inflate(R.layout.custom_appbar, null);
+
+        TextView titleTV = (TextView) customView.findViewById(R.id.action_custom_title);
+        titleTV.setTypeface(Typeface.createFromAsset(RegisterActivity.this
+                .getAssets(), String.format("fonts/TACOTAC.ttf")));
+        titleTV.setText("Register It Up!");
+
+        actionBar.setCustomView(customView);
+        actionBar.setDisplayShowCustomEnabled(true);
+
         mFirstNameView = (EditText) findViewById(R.id.et_firstName);
         mLastNameView = (EditText) findViewById(R.id.et_lastName);
         mEmailView = (EditText) findViewById(R.id.et_email);
@@ -88,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity
                 {
                     Toast.makeText(RegisterActivity.this, "Fill in all fields.", Toast.LENGTH_SHORT).show();
                 }
-                else if (mTeacherCheckBox.isChecked() && email.length() > 1 && email.split("@")[1].equals("fmarion.edu"))
+                else if (mTeacherCheckBox.isChecked() && email.length() > 1 && (email.split("@")[1].equals("fmarion.edu") || email.split("@")[1].equals("g.fmarion.edu")))
                 {
                     Register();
                 }

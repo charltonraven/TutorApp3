@@ -1,20 +1,24 @@
 package movingforward.tutorapp3.Activities;
 
+import android.support.v7.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,10 +37,12 @@ import movingforward.tutorapp3.R;
  * Created by Jeebus on 3/28/2017.
  */
 
-public class EditClasses extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,Sessions.OnFragmentInteractionListener, View.OnClickListener,AdapterView.OnItemClickListener
+public class EditClasses extends AppCompatActivity implements View.OnClickListener,AdapterView.OnItemClickListener
 {
     public User mUser;
+    public ActionBar actionBar;
+    public Button bt_return;
+    public Button bt_accept;
     ListView lvTutoredClasses;
 
     ArrayList<String> classes;
@@ -47,16 +53,47 @@ public class EditClasses extends AppCompatActivity
         setContentView(R.layout.edit_tutor_classes);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-     //   setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View customView = inflater.inflate(R.layout.custom_appbar, null);
+
+        TextView titleTV = (TextView) customView.findViewById(R.id.action_custom_title);
+        titleTV.setTypeface(Typeface.createFromAsset(EditClasses.this
+                .getAssets(), String.format("fonts/TACOTAC.ttf")));
+
+        actionBar.setCustomView(customView);
+        actionBar.setDisplayShowCustomEnabled(true);
 
         Intent mIntent = getIntent();
         mUser = (User) mIntent.getSerializableExtra("mUser");
 
         lvTutoredClasses=(ListView) findViewById(R.id.lvTutoredClasses);
+        bt_return = (Button) findViewById(R.id.bt_return);
+        bt_accept = (Button) findViewById(R.id.bt_accept);
+
+        bt_return.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent navIntent = new Intent(EditClasses.this, Nav_MainActivity.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
+            }
+        });
+        bt_accept.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent navIntent = new Intent(EditClasses.this, AddClasses.class);
+                navIntent.putExtra("mUser", mUser);
+                startActivity(navIntent);
+            }
+        });
 
         try {
             classes = new generateTutoredClasses().execute(mUser.getID()).get();
@@ -65,15 +102,6 @@ public class EditClasses extends AppCompatActivity
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-       View hView = navigationView.getHeaderView(0);
-
-        toggle.syncState();
-
-
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     public void onBackPressed()
@@ -121,26 +149,6 @@ public class EditClasses extends AppCompatActivity
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item)
-    {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("mUser", mUser);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-
-    @Override
-    public void onFragmentInteraction(Uri uri)
-    {
-
-    }
-
     @Override
     public void onClick(View v) {
 
@@ -150,9 +158,7 @@ public class EditClasses extends AppCompatActivity
     //DepartmentList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
 }
-
 
     public static class generateTutoredClasses extends AsyncTask<String,String, ArrayList<String>>{
 
